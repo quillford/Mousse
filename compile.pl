@@ -26,12 +26,16 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
     # De-serialize JSON data
     my $json_data = JSON::DWIW->from_json($file_content);
 
+    # Get the path to the module file
+    my $javascript_file = dirname($module_file) . "/module.js"; 
+
     # Data for passing to template
     my $data = {
-        json_file => $json_data,
-        json_filename => $module_file,
+        json_file         => $json_data,
+        json_filename     => $module_file,
         json_file_content => $file_content,
-        folder => dirname $module_file
+        folder            => dirname $module_file,
+        module_base_code  => `cat $module_file`
     }; 
 
     # Add data to list of modules
@@ -46,7 +50,7 @@ my $engine = Template->new({});
 
 # The two files to generate 
 my $files = [
-    { type => 'dev', filename => 'dev.html' },
+    { type => 'dev' , filename => 'dev.html' },
     { type => 'prod', filename => 'index.html' }
 ];
 
