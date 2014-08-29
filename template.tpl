@@ -12,11 +12,11 @@
         <title>MOUSSE</title>
         [% IF file.type == 'dev' %]
             [% FOREACH module = modules %]
-                <script src="[% module.folder %]/module.js"></script> 
+                <script src="[% module.javascript_file %]"></script> 
             [% END %] 
         [% ELSE %]
             [% FOREACH module = modules %]
-                <script type="text/javascript"> [% module.module_base_code %] </script> 
+               <script type="text/javascript"> [% module.javascript_file_content %] </script> 
             [% END %] 
         [% END %] 
     </head>

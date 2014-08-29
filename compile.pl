@@ -29,13 +29,20 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
     # Get the path to the module file
     my $javascript_file = dirname($module_file) . "/module.js"; 
 
+    # Get the content of the javascript file
+    my $javascript_file_content = `cat $javascript_file`;
+
+print $javascript_file, "\n";
+print $javascript_file_content, "\n";
+
     # Data for passing to template
     my $data = {
-        json_file         => $json_data,
-        json_filename     => $module_file,
-        json_file_content => $file_content,
-        folder            => dirname $module_file,
-        module_base_code  => `cat $module_file`
+        json_file               => $json_data,
+        json_filename           => $module_file,
+        json_file_content       => $file_content,
+        folder                  => dirname($module_file),
+        javascript_file         => $javascript_file,
+        javascript_file_content => $javascript_file_content
     }; 
 
     # Add data to list of modules
@@ -56,11 +63,11 @@ my $files = [
 
 # Generate each of the two files
 for my $file ( @{$files} ){
-
+    
     # Make the data to pass to the template
     my $data = {
         file => $file,
-        modules => $modules
+        modules => [ @$modules ]
     };
 
     # Process the template
