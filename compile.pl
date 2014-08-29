@@ -56,11 +56,13 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
 
 }
 
+
+
 # Sort modules respecting dependencies
 sort_dependencies($modules);
 
 # Generate the HTML files from the template file
-my $engine = Template->new({});
+my $engine = Template->new({RELATIVE => 1});
 
 # The two files to generate 
 my $files = [
@@ -78,8 +80,7 @@ for my $file ( @{$files} ){
     };
 
     # Process the template
-    $engine->process( 'template.tpl', $data, $file->{filename} );
-
+    $engine->process( 'template.tpl', $data, $file->{filename} ) || die $engine->error(), "\n";
 }
 
 

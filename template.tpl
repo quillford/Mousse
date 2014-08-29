@@ -12,11 +12,18 @@
         <title>MOUSSE</title>
         [% IF file.type == 'dev' %]
             [% FOREACH module = modules %]
-                <script src="[% module.javascript_file %]"></script> 
+                [% FOREACH to_include = module.json_data.Include %]
+                   <script src="[% module.folder %]/[% to_include %]"></script> 
+                [% END %].
+                   <script src="[% module.javascript_file %]"></script> 
             [% END %] 
         [% ELSE %]
+
             [% FOREACH module = modules %]
-               <script type="text/javascript"> [% module.javascript_file_content %] </script> 
+                [% FOREACH to_include = module.json_data.Include %]
+                   <script type="text/javascript"> [% INSERT "$module.folder/$to_include"  %]</script> 
+                [% END %].
+                   <script type="text/javascript"> [% INSERT "$module.javascript_file" %] </script> 
             [% END %] 
         [% END %] 
     </head>
