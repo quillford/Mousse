@@ -10,6 +10,9 @@ use JSON::DWIW;
 use File::Basename;
 use Data::Dumper;
 use Template;
+use Algorithm::Dependency;
+use Algorithm::Dependency::Ordered;
+use Algorithm::Dependency::Source::HoA;
 
 # List of modules, including module data
 my $modules = [];
@@ -32,14 +35,17 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
     # Get the content of the javascript file
     my $javascript_file_content = `cat $javascript_file`;
 
-print $javascript_file, "\n";
-print $javascript_file_content, "\n";
+    # Get module name
+    my $module_name = pop( [split('/', dirname($module_file) )] );
+
+    print "> $module_name\n";
 
     # Data for passing to template
     my $data = {
-        json_file               => $json_data,
+        module_name             => $module_name,
         json_filename           => $module_file,
         json_file_content       => $file_content,
+        json_data               => $json_data,
         folder                  => dirname($module_file),
         javascript_file         => $javascript_file,
         javascript_file_content => $javascript_file_content
@@ -50,7 +56,8 @@ print $javascript_file_content, "\n";
 
 }
 
-# print Dumper $modules;
+# Sort modules respecting dependencies
+sort_dependencies($modules);
 
 # Generate the HTML files from the template file
 my $engine = Template->new({});
@@ -75,3 +82,41 @@ for my $file ( @{$files} ){
 
 }
 
+
+
+# Sort all modules taking dependencies into consideration
+sub sort_dependencies{
+    my $passed_modules = shift;
+
+    # Make unsorted list for passing to dependency resolver
+    my $unsorted_modules = {};
+    for my $module ( @{$passed_modules} ){
+        $unsorted_modules->{$module->{'module_name'}} = [];
+        next unless exists $module->{'json_data'}->{'Requires'};
+        $unsorted_modules->{$module->{'module_name'}} = $module->{'json_data'}->{'Requires'};
+    }
+
+    # Create the source from it
+    my $source = Algorithm::Dependency::Source::HoA->new( $unsorted_modules );
+
+    # Sort everything
+    my $dep = Algorithm::Dependency::Ordered->new( source => $source );
+    my $schedule = $dep->schedule_all;
+
+    # Create new list based on the new order
+    my $ordered_modules = [];
+    for my $ordered_module ( @{$schedule} ){
+        #Find the module in the original list
+        my $module = {};
+        for my $candidate ( @{$passed_modules} ){
+            if( $candidate->{module_name} eq $ordered_module ){ 
+                $module = $candidate;
+                last;
+            }
+        }
+        push @{$ordered_modules}, $module;
+    }
+
+    # Replace the undordered list by the one ordered by dependencies
+    $passed_modules = $ordered_modules;
+}
