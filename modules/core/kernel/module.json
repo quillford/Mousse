@@ -1,6 +1,6 @@
 {
     "Authors": "",
     "Version": "projectversion",
-    "Include": ["libs/js.class/src/js.class.js", "libs/jquery/jquery.js"],
+    "Include": ["libs/js.class/src/js.class.js", "libs/jquery/jquery.js","libs/jquery.storage/j/jquery.html5storage.js"],
 }
 
