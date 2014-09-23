@@ -200,4 +200,6 @@ var Class = (function() {
         })(null, classBody);
     }
 })();
-module.exports = Class;
+
+// This is needed only for node.js, commenting in Mousse
+// module.exports = Class;

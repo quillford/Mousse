@@ -1,1 +1,4 @@
-alert("test");
+var Module = Class({});
+
+
+

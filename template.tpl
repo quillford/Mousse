@@ -26,8 +26,26 @@
                    <script type="text/javascript"> [% INSERT "$module.javascript_file" %] </script> 
             [% END %] 
         [% END %] 
+
+        <script type="text/javascript">
+
+            // Instantiate kernel
+            var kernel = new Kernel();
+           
+            // Instantiate all of the modules 
+            [% FOREACH module = modules %]
+                [% NEXT IF module.module_name == 'kernel' %]
+                [% NEXT IF module.module_name == 'module' %]
+                var [% module.module_name %] = new [% module.class_name %]();
+                kernel.add_module( "[% module.module_name %]", [% module.module_name %] );
+            [% END %] 
+
+
+            kernel.signal_modules_loaded();
+
+
+        </script>
     </head>
-  
      <body>
     </body>
 

@@ -48,7 +48,8 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
         json_data               => $json_data,
         folder                  => dirname($module_file),
         javascript_file         => $javascript_file,
-        javascript_file_content => $javascript_file_content
+        javascript_file_content => $javascript_file_content,
+        class_name              => ucfirst $module_name
     }; 
 
     # Add data to list of modules
@@ -59,7 +60,7 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
 
 
 # Sort modules respecting dependencies
-sort_dependencies($modules);
+$modules = [sort_dependencies($modules)];
 
 # Generate the HTML files from the template file
 my $engine = Template->new({RELATIVE => 1});
@@ -118,6 +119,8 @@ sub sort_dependencies{
         push @{$ordered_modules}, $module;
     }
 
+    print Dumper $schedule;
+
     # Replace the undordered list by the one ordered by dependencies
-    $passed_modules = $ordered_modules;
+    return @{$ordered_modules};
 }
