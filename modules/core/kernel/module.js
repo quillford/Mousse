@@ -23,14 +23,17 @@ var Kernel = Class({
     },
 
     signal_modules_loaded: function( ){
-
         // Signal each module that it is now loaded
+        this.call_event('on_module_loaded');
+    },
+
+    call_event: function(event_name, parameters){
+        // Call this event for each module that has a function for it 
         this.module_list.forEach(function(module, index, array){    
-            if( typeof module.on_module_loaded === 'function' ){
-                module.on_module_loaded();
+            if( typeof module[event_name] === 'function' ){
+                module[event_name].call(module, parameters);
             }
         });
-    
     }
 
 
