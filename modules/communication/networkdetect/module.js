@@ -24,6 +24,8 @@ var Networkdetect = Module.extend({
         // Also see if localhost answers
         this.scan_ip({ip: '127.0.0.1', mode: 'single'}); 
 
+        return;
+
         // Scan several local ranges of IPs at the same time
         var _that = this;
         setTimeout(function(){
@@ -32,7 +34,7 @@ var Networkdetect = Module.extend({
                 _that.scan_ip({ip:"192.168." + range + "." + terminator, mode:'exploration'}); 
             }
         }
-        },2000);
+        },5000);
 
     },
     
@@ -93,7 +95,6 @@ var Networkdetect = Module.extend({
         // Mark this IP as found so we don't find it again
         this.found_ips[ip] = data;
 
-        $('body').append('/' + ip + " " + data);
 
         // Add this IP to the list of IPs found in local storage so we find it faster next time
         var previous_ips = $.localStorage.getItem('previous_ips');

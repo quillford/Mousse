@@ -2,5 +2,6 @@
     "Authors": "",
     "Version": "projectversion",
     "Requires" : ["module","networkdetect"],
+    "Include": ["machine.js","interface.js","queue.js","request.js","configuration.js"],
 }
 
