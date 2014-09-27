@@ -2,12 +2,12 @@ var Configuration = new Class({
 
     create: function( machine ){
         // This object retrieves, stores and allows access to configuration for a specific machine
-        this.machine = machine;
+        this.parent_machine = machine;
     },
 
     get_configuration: function(){
         // Retrieve the configuration from the machine, parse it and store it
-        this.machine.interface.get_file({
+        this.parent_machine.interface.get_file({
             file: "/sd/config", 
             done: this.parse_config_file,
             caller: this    
@@ -52,8 +52,10 @@ var Configuration = new Class({
                 if( this[key_path[0]][key_path[1]] == undefined ){ this[key_path[0]][key_path[1]] = {}; }
                 this[key_path[0]][key_path[1]][key_path[2]] = value;
             } 
-        
         } 
+
+        // The configuration is ready, call the on_config_parsed event
+        kernel.call_event("on_config_parsed", this.parent_machine);
 
     }
 
