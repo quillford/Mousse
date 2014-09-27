@@ -25,6 +25,7 @@ var Networkdetect = Module.extend({
         this.scan_ip({ip: '127.0.0.1', mode: 'single'}); 
 
         return;
+        // TODO : If this page was just reloaded, wait before scanning or browsers will be unhappy about limits in requests
 
         // Scan several local ranges of IPs at the same time
         var _that = this;

@@ -2,6 +2,5 @@
     "Authors": "",
     "Version": "projectversion",
     "Requires" : ["module","machines"],
-    "Include" : ["controller.js"]
 }
 
