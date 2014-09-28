@@ -9,6 +9,9 @@
 
     <head>
         <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <title>MOUSSE</title>
         [% IF file.type == 'dev' %]
             [% FOREACH module = modules %]
@@ -53,7 +56,11 @@
         </script>
     </head>
      <body>
-        
+       
+        <div id="root">
+
+        </div>
+ 
         <div id="assets" style="display:none">
             [% FOREACH module = modules %]
                 [% FOREACH asset = module.asset_files %]
