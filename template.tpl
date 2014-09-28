@@ -46,6 +46,7 @@
                 kernel.add_module( "[% module.module_name %]", [% module.module_name %] );
             [% END %] 
 
+            // When the document is loaded, have kernel tell all the modules
             $().ready( function(){ kernel.signal_modules_loaded(); } );
 
 
@@ -70,8 +71,6 @@
             [% END %] 
         </div>
 
-
     </body>
-
 </html> 
 
