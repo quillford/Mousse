@@ -1,8 +1,8 @@
-var Machineupdater = Module.extend({
+var Updater = Module.extend({
 
     on_config_parsed: function( machine ){
-        this.parent_machine = this;
-        machine.updater = this;
+        // Create an updater and add it to the machine
+        new Machineupdater(machine); 
     }
 
 });

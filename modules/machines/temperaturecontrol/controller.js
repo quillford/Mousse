@@ -5,6 +5,12 @@ var Temperaturecontroller = new Class({
         this.name = name;
         this.configuration = configuration;
         console.log(name);
+    },
+
+    // Our values were updated by the updater ( from readings from the machine )
+    values_updated: function(){
+
+
     }
 
 });

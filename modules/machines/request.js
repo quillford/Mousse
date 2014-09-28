@@ -2,6 +2,7 @@ var Interfacerequest = new Class({
     create: function( arguments ){
         // Take along with us any argument passed to the Interface call
         this.file = arguments.file;
+        this.command = arguments.command;
         this.type = arguments.type;
         this.caller = arguments.caller;
         this.success_function = arguments.done;
@@ -31,8 +32,20 @@ var Interfacerequest = new Class({
                 type: "GET",
                 async: true,
             }).done( this.request_successful ).fail( this.request_failed );
+        }else if( this.type == 'command' ){
+            // We are sending a command
+             $.ajax({ 
+                url: "http://" + this.parent_queue.parent_interface.machine.ip + "/command", 
+                timeout: 2000 , 
+                interface_request: this,
+                interface_caller: this.caller,
+                success_function: this.success_function,
+                type: "POST",
+                async: true,
+                data: this.command,
+            }).done( this.request_successful ).fail( this.request_failed );
         }else{
-
+            console.log("ERROR: unknown request type, this should never happen");
         }
 
     },
