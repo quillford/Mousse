@@ -38,6 +38,21 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
     # Get module name
     my $module_name = pop( [split('/', dirname($module_file) )] );
 
+    # Get folder
+    my $folder = dirname($module_file);
+
+    # Find the list of assets
+    my $asset_files = [];
+    for my $file ( split("\n", `find $folder -name '*.html'`) ){
+        my $asset = {};
+        $asset->{file} = $file;
+        my ($path) = ( $file =~ /assets\/(.*)\.html$/ );
+        $path =~ s/\//-/g;
+        $path = lc($module_name) . "-" . $path;
+        $asset->{path} = $path;
+        push @$asset_files, $asset;
+    }
+
     print "> $module_name\n";
 
     # Data for passing to template
@@ -46,10 +61,11 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
         json_filename           => $module_file,
         json_file_content       => $file_content,
         json_data               => $json_data,
-        folder                  => dirname($module_file),
+        folder                  => $folder,
         javascript_file         => $javascript_file,
         javascript_file_content => $javascript_file_content,
-        class_name              => ucfirst $module_name
+        class_name              => ucfirst $module_name,
+        asset_files             => $asset_files,
     }; 
 
     # Add data to list of modules

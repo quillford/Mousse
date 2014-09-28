@@ -15,6 +15,9 @@ var Kernel = Class({
         // Add module to the hash of modules
         this.modules[ name ] = module;
 
+        // Tell the module it's name
+        module.name = name;
+
         // Add module to the list of modules
         this.module_list.push( module );
 

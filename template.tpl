@@ -46,13 +46,31 @@
                 kernel.add_module( "[% module.module_name %]", [% module.module_name %] );
             [% END %] 
 
-
-            kernel.signal_modules_loaded();
+            $().ready( function(){ kernel.signal_modules_loaded(); } );
 
 
         </script>
     </head>
      <body>
+        
+        <div id="assets" style="display:none">
+            [% FOREACH module = modules %]
+                [% FOREACH asset = module.asset_files %]
+                    <div id="[% asset.path %]">
+                        [% IF file.type == 'dev' %]
+                            <script type="text/javascript">
+                                $("#[% asset.path %]").load( "[% asset.file %]" );
+                            </script> 
+                           [% asset.path %]
+                        [% ELSE %]
+                            [% INSERT "$asset.file" %]
+                        [% END %] 
+                    </div>
+                [% END %] 
+            [% END %] 
+        </div>
+
+
     </body>
 
 </html> 
