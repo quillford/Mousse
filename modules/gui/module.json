@@ -1,0 +1,8 @@
+{
+    "Authors": "",
+    "Version": "projectversion",
+    "Requires" : ["module","machines","updater"],
+    "Include": ["libs/bootstrap/js/bootstrap.js"],
+    "IncludeCSS": ["libs/bootstrap/css/bootstrap.css", "libs/bootstrap/css/bootstrap-theme.css"],
+}
+

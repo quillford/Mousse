@@ -1,7 +1,7 @@
 {
     "Authors": "",
     "Version": "projectversion",
-    "Requires" : ["module","machines"],
+    "Requires" : ["module","machines","updater"],
     "Include" : ["controller.js"]
 }
 

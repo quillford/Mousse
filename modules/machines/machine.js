@@ -10,8 +10,6 @@ var Machine = Class({
         // Get configuration from the machine 
         this.configuration.get_configuration();
 
-        $('body').append('/' + this.ip + " " + this.version);
-
     },
 
 
