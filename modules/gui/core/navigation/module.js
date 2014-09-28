@@ -21,11 +21,10 @@ var Navigation = Module.extend({
         $(clicked_element).addClass("active"); 
 
         // Call the correct screen
-        var screen = $(clicked_element).text().toLowerCase();
+        var screen = $(clicked_element).text().toLowerCase().replace(/[^a-z]/g,'');
+        console.log("on_main_menu_call_" + screen);
         kernel.call_event("on_main_menu_call_" + screen);
     }
-
-
 });
 
 
