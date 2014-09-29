@@ -56,6 +56,10 @@
         </script>
     </head>
      <body>
+
+        <div id="current_modal">
+
+        </div>
        
         <div id="root">
 

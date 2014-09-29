@@ -1,8 +1,15 @@
 var Networkdetect = Module.extend({
    
     on_module_loaded: function(){
+        // We are currently scanning
+        this.scanning = true;
+        this.ranges_scanning = 3*6;
+
         // Set up a hash of valid IPs found ( this session ) so that we don't report the same IP found twice
         this.found_ips = {};
+
+        // Keep a list of currently scanning IPs
+        this.currently_scanning = {};
 
         // First thing, try to see if the current domain answers
         var domain = String(window.location);
@@ -24,7 +31,6 @@ var Networkdetect = Module.extend({
         // Also see if localhost answers
         this.scan_ip({ip: '127.0.0.1', mode: 'single'}); 
 
-        return;
         // TODO : If this page was just reloaded, wait before scanning or browsers will be unhappy about limits in requests
 
         // Scan several local ranges of IPs at the same time
@@ -35,11 +41,19 @@ var Networkdetect = Module.extend({
                 _that.scan_ip({ip:"192.168." + range + "." + terminator, mode:'exploration'}); 
             }
         }
-        },5000);
+        },1000);
 
     },
     
     scan_ip: function( attempt ){
+        // Keep a list of currently scanning IPs
+        this.currently_scanning[attempt.ip] = true;
+
+        console.log(attempt.ip);
+
+        // Signal that we are scanning a new IP
+        kernel.call_event("on_networkdetect_scan_new_ip", attempt.ip);
+ 
         // Check this IP for an answer, if it answers it's potentially a machine
         $.ajax({ 
             url: "http://" + attempt.ip + '/command', 
@@ -56,6 +70,12 @@ var Networkdetect = Module.extend({
         // This IP answered, it may be good, check it's validity, and explore a new one
         var ip = this.url.split('/')[2];
 
+        // Remove this from the list of currently scanning IPs
+        delete this.caller.currently_scanning[ip]; 
+
+        // Signal other modules we are no longer scanning this IP
+        kernel.call_event("on_networkdetect_ip_scanned", { ip: ip, valid: true } );
+
         // Did that IP answer in a valid way
         if( data.match("Build date") ){
             this.caller.found_valid_ip.call( this.caller, ip, data );
@@ -70,7 +90,13 @@ var Networkdetect = Module.extend({
     ip_failed: function( xhr, status ){
         // This IP did not answer or returned an error, explore the next one
         var ip = this.url.split('/')[2];
-        
+
+        // Remove this from the list of currently scanning IPs
+        delete this.caller.currently_scanning[ip]; 
+
+        // Signal other modules we are no longer scanning this IP
+        kernel.call_event("on_networkdetect_ip_scanned", { ip: ip, valid: false } );
+
         // Explore the next IP adress
         if( this.mode == 'exploration' ){
             this.caller.explore_next_ip.call( this.caller, ip );
@@ -83,7 +109,15 @@ var Networkdetect = Module.extend({
         exploded[3] = Number(exploded[3]) + 6;
 
         // Don't explore passed what is reasonable
-        if( exploded[3] > 255 ){ return; }
+        if( exploded[3] > 255 ){ 
+            // Figure out if the module as a whole is still scanning 
+            this.ranges_scanning--;
+            if( this.ranges_scanning == 0 ){
+               this.scanning = false;
+               kernel.call_event("on_networkdetect_scan_finished");
+            } 
+            return; 
+        }
 
         // Scan the new IP
         this.scan_ip({ip: exploded.join('.'), mode:'exploration'});
