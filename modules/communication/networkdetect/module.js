@@ -3,7 +3,7 @@ var Networkdetect = Module.extend({
     on_module_loaded: function(){
         // We are currently scanning
         this.scanning = true;
-        this.ranges_scanning = 3*6;
+        this.ranges_scanning = 4;
 
         // Set up a hash of valid IPs found ( this session ) so that we don't report the same IP found twice
         this.found_ips = {};
@@ -31,13 +31,16 @@ var Networkdetect = Module.extend({
         // Also see if localhost answers
         this.scan_ip({ip: '127.0.0.1', mode: 'single'}); 
 
+        // Don't scan if the user asked us not to
+        if( $.localStorage.getItem('scan_for_new_machines_on_startup') == "false" ){ return; }
+
         // TODO : If this page was just reloaded, wait before scanning or browsers will be unhappy about limits in requests
 
         // Scan several local ranges of IPs at the same time
         var _that = this;
         setTimeout(function(){
-        for( var range in [0,1,2] ){
-            for( var terminator in [0,1,2,3,4,5] ){
+        for( var range in [0,1] ){
+            for( var terminator in [0,1] ){
                 _that.scan_ip({ip:"192.168." + range + "." + terminator, mode:'exploration'}); 
             }
         }
@@ -49,15 +52,13 @@ var Networkdetect = Module.extend({
         // Keep a list of currently scanning IPs
         this.currently_scanning[attempt.ip] = true;
 
-        console.log(attempt.ip);
-
         // Signal that we are scanning a new IP
         kernel.call_event("on_networkdetect_scan_new_ip", attempt.ip);
  
         // Check this IP for an answer, if it answers it's potentially a machine
         $.ajax({ 
             url: "http://" + attempt.ip + '/command', 
-            timeout: ( attempt.mode == 'single' ? 60000 : 500 ) , 
+            timeout: ( (attempt.mode == 'single') ? 60000 : ( 350 + Math.floor( Math.random()*50 ) ) ) , 
             caller: this,
             type: "POST",
             data: "version\n",
@@ -79,6 +80,7 @@ var Networkdetect = Module.extend({
         // Did that IP answer in a valid way
         if( data.match("Build date") ){
             this.caller.found_valid_ip.call( this.caller, ip, data );
+            kernel.call_event("on_found_valid_ip");
         }
         
         // Explore the next IP adress
@@ -106,7 +108,7 @@ var Networkdetect = Module.extend({
     explore_next_ip: function( ip ){
         // Increment the IP adress
         var exploded = ip.split('.');
-        exploded[3] = Number(exploded[3]) + 6;
+        exploded[3] = Number(exploded[3]) + 2;
 
         // Don't explore passed what is reasonable
         if( exploded[3] > 255 ){ 
@@ -114,7 +116,14 @@ var Networkdetect = Module.extend({
             this.ranges_scanning--;
             if( this.ranges_scanning == 0 ){
                this.scanning = false;
-               kernel.call_event("on_networkdetect_scan_finished");
+
+               // If we have found nothing, we need to start the scanning again from scratch
+               if( kernel.machines.length == 0 ){
+                    this.on_module_loaded();
+                }else{
+                    kernel.call_event("on_networkdetect_scan_finished");
+                }
+
             } 
             return; 
         }
