@@ -2,7 +2,7 @@
     "Authors": "",
     "Version": "projectversion",
     "Requires" : ["module","machines","updater"],
-    "Include": ["libs/bootstrap/js/bootstrap.js","modal.js"],
-    "IncludeCSS": ["libs/bootstrap/css/bootstrap.css", "libs/bootstrap/css/bootstrap-theme.css"],
+    "Include": ["libs/bootstrap/js/bootstrap.js", "libs/fuelux/js/fuelux.js", "modal.js"],
+    "IncludeCSS": ["libs/bootstrap/css/bootstrap.css", "libs/fuelux/css/fuelux.css", "libs/bootstrap/css/bootstrap-theme.css"],
 }
 

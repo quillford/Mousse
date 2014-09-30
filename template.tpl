@@ -54,6 +54,15 @@
 
 
         </script>
+
+        <style>
+            .wholescreen{
+                width:100%;
+                height:100%;
+            }
+        </style>
+
+
     </head>
      <body>
 
@@ -61,14 +70,14 @@
 
         </div>
        
-        <div id="root">
+        <div id="root" class="wholescreen">
 
         </div>
  
         <div id="assets" style="display:none">
             [% FOREACH module = modules %]
                 [% FOREACH asset = module.asset_files %]
-                    <div id="[% asset.path %]">
+                    <div id="[% asset.path %]" class="wholescreen">
                         [% IF file.type == 'dev' %]
                             <script type="text/javascript">
                                 $("#[% asset.path %]").load( "[% asset.file %]" );
