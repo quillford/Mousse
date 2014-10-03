@@ -35,6 +35,7 @@ var Networkdetect = Module.extend({
         if( $.localStorage.getItem('scan_for_new_machines_on_startup') == "false" ){ return; }
 
         // TODO : If this page was just reloaded, wait before scanning or browsers will be unhappy about limits in requests
+        // TODO : Do this with images !!!
 
         // Scan several local ranges of IPs at the same time
         var _that = this;

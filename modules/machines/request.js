@@ -6,6 +6,7 @@ var Interfacerequest = new Class({
         this.type = arguments.type;
         this.caller = arguments.caller;
         this.success_function = arguments.done;
+        this.pass_along = arguments.pass_along;
         this.tries_left = 10;
     },
 
@@ -29,6 +30,7 @@ var Interfacerequest = new Class({
                 interface_request: this,
                 interface_caller: this.caller,
                 success_function: this.success_function,
+                pass_along: this.pass_along,
                 type: "GET",
                 async: true,
             }).done( this.request_successful ).fail( this.request_failed );
@@ -40,6 +42,7 @@ var Interfacerequest = new Class({
                 interface_request: this,
                 interface_caller: this.caller,
                 success_function: this.success_function,
+                pass_along: this.pass_along,
                 type: "POST",
                 async: true,
                 data: this.command,
@@ -53,7 +56,7 @@ var Interfacerequest = new Class({
     request_successful: function(data, state, xhr){
         // Pass back the request to the queue
         var queue = this.interface_request.parent_queue;
-        queue.request_successful.call(queue,this,data);
+        queue.request_successful.call(queue,this,data,state,xhr);
     },
 
     request_failed: function(xhr, status){

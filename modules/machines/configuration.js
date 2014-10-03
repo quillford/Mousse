@@ -1,4 +1,4 @@
-var Configuration = new Class({
+var Machineconfiguration = new Class({
 
     create: function( machine ){
         // This object retrieves, stores and allows access to configuration for a specific machine
@@ -14,7 +14,7 @@ var Configuration = new Class({
         });
     },
 
-    parse_config_file: function( config_file ){
+    parse_config_file: function( request, config_file ){
         // Parse the config file and store the values in myself 
         config_file = config_file.split("\n");
     

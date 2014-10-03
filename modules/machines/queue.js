@@ -29,10 +29,10 @@ var Interfacequeue = new Class({
 
     },
 
-    request_successful: function(result_request, data){
+    request_successful: function(result_request, data, xhr, status){
         // The request was succesful, pass it back to whomever requested it, then mark this request as executed, remove it, and remove it from the queue
         // Pass this request back to whomever called
-        result_request.success_function.call(result_request.interface_caller, data);
+        result_request.success_function.call(result_request.interface_caller, result_request, data, xhr, status);
 
         // Remove from the queue
         var queue = result_request.interface_request.parent_queue;

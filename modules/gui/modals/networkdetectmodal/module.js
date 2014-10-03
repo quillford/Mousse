@@ -1,5 +1,7 @@
 var Networkdetectmodal = Module.extend({
 
+    // TODO : Add a "manually add a machine" button
+
     // The GUI basics were loaded, we can start the modal for scanning
     on_gui_container_loaded: function(){
         // Request authorisation to display a new modal

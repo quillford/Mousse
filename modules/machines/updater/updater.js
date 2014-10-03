@@ -27,7 +27,7 @@ var Machineupdater = new Class({
         });
     },
 
-    update_received: function( answer ){
+    update_received: function( request, answer ){
         // Parse the answer
         var result = {};
 
