@@ -4,7 +4,7 @@ var Module = Class({
     asset: function(path){
         path = path.split('/').join('-'); 
         path = this.name + "-" + path; 
-        return $("#assets").find("#" + path); 
+        return $("#assets").find("#" + path).clone(); 
     }
 
 
