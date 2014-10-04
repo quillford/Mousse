@@ -11,6 +11,12 @@ var Machinefilesystem = new Class({
         this.root = new Filesystemfolder('');
         this.root.explored = false;
 
+        // Name this filesystem for display in GUIs
+        this.root.text = this.parent_machine.ip; 
+
+        // Also show it as open
+        this.root.state = { opened: true };
+
         // On a regular basis, try to go further into the filesystem
         var _that = this; 
         setInterval(function(){
@@ -46,7 +52,7 @@ var Machinefilesystem = new Class({
                     // Exploring this folder, we append files and folders to it 
                     var results = answer.split("\r\n");
                     for( var index in results ){
-                        var result = results[index]; 
+                        var result = results[index].replace(/\s$/g,''); 
                         if( result == "" ){ continue; }
                         // We have a new line ! We must append it to the list of children for this folder
                         if( result.match(/\/$/g) ){

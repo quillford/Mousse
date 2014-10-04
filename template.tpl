@@ -64,7 +64,7 @@
 
 
     </head>
-     <body>
+     <body class="fuelux">
 
         <div id="current_modal">
 
