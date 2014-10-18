@@ -45,7 +45,7 @@ var Machinefilesystem = new Class({
         }else{
             // This folder was never explored before, we return true to make sure we don't explore further this time, and do the ajax request to explore this folder
             this.parent_machine.interface.send_command({
-                command: "ls " + folder.path + "\n",
+                command: "ls -s " + folder.path + "\n",
                 caller: this,
                 pass_along: {folder: folder},
                 done: function( request, answer ){
@@ -69,8 +69,17 @@ var Machinefilesystem = new Class({
                             // Add to the calling folder
                             request.pass_along.folder.children.push(folder); 
                         }else{
+                            // Get the filesize
+                            var filesize = result.match(/^.+\s(\d*)$/)[1];
+
+                            // Get the filename
+                            var filename = result.match(/^(.+)\s\d*$/)[1];
+
                             // This is a file, make a file
-                            var file = new Filesystemfile(request.pass_along.folder.path + "/" + result); 
+                            var file = new Filesystemfile(request.pass_along.folder.path + "/" + filename); 
+
+                            // Set the file's size
+                            file.filesize = filesize;
 
                             // Add to the calling folder
                             request.pass_along.folder.children.push(file); 

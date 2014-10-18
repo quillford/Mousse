@@ -16,6 +16,18 @@ var Filesystemfolder = new Class({
 
     is_folder: function(){
         return true;
+    },
+
+    find: function( path ){
+        if( path.length == 0 ){ return this; }
+        var target = path.shift();
+        for( var index in this.children ){
+            var child = this.children[index];
+            if( child.text == target ){
+                return child.find(path);
+            }
+        } 
+        return false;
     }
 
 });

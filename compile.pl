@@ -21,7 +21,7 @@ my $modules = [];
 for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
 
     # Modules are found by the fact their folder contains a "module.json" file
-    print "> $module_file\n";
+    print "+ $module_file\n";
 
     # Get the JSON data in the module.json file
     my $file_content = `cat $module_file`;
