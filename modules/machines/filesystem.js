@@ -17,14 +17,25 @@ var Machinefilesystem = new Class({
         // Also show it as open
         this.root.state = { opened: true };
 
+        // Make sure it knows where it came from
+        //this.root.parent = this;
+
+        // Attribute the correct filesystem id
+        this.root.filesystem_id = this.parent_machine.kernel.filesystems.length;
+
+        // Make sure the kernel knows about it
+        this.parent_machine.kernel.filesystems.push(this.root);
+
         // On a regular basis, try to go further into the filesystem
         var _that = this; 
         setInterval(function(){
+            if( _that.scanning ){ return; } 
+            _that.scanning = true;
             _that.continue_exploration.call(_that,_that.root);
+            _that.scanning = false;
         },100);
     },
 
-    // Descend the filesystem until we find something we have not explored, or we have finished
     continue_exploration: function( folder ){
 
         // If explored, descend into it and try to explore, if not explored, explore 
@@ -66,8 +77,18 @@ var Machinefilesystem = new Class({
                             var folder = new Filesystemfolder(request.pass_along.folder.path + "/" + result);
                             folder.explored = false;
 
+                            // Make sure the folder recalls it's parent
+                            folder.parent_id = request.pass_along.folder.id; 
+
+                            // Remember our filesystem
+                            folder.filesystem_id = request.pass_along.folder.filesystem_id;
+                            
                             // Add to the calling folder
                             request.pass_along.folder.children.push(folder); 
+
+                            // Warn other modules that the structure changed
+                            kernel.call_event("on_filesystem_folder_update", folder);
+                    
                         }else{
                             // Get the filesize
                             var filesize = result.match(/^.+\s(\d*)$/)[1];
@@ -78,6 +99,12 @@ var Machinefilesystem = new Class({
                             // This is a file, make a file
                             var file = new Filesystemfile(request.pass_along.folder.path + "/" + filename); 
 
+                            // Make sure the folder recalls it's parent
+                            file.parent_id = request.pass_along.folder.id; 
+
+                            // Remember our filesystem
+                            file.filesystem_id = request.pass_along.folder.filesystem_id;
+                            
                             // Set the file's size
                             file.filesize = filesize;
 

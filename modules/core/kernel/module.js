@@ -1,5 +1,4 @@
 // Kernel stores a list of modules, and passes events to them when requested to
-
 var Kernel = Class({
 
     create: function(){
@@ -9,6 +8,8 @@ var Kernel = Class({
         // Array of modules for dependency-ordered calling
         this.module_list = [];
 
+        // Add filesystems
+        this.filesystems = [];
     },
 
     add_module: function( name, module ){

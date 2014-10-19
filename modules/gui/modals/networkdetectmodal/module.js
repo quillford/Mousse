@@ -9,9 +9,9 @@ var Networkdetectmodal = Module.extend({
     },
 
     // We were allowed by the modal queue to display the modal
-    display_modal: function(){
+    display_modal: function( force ){
         // Do nothing if we are not scanning or the "hide this window on future startups" option was checked
-        if( networkdetect.scanning == false || $.localStorage.getItem('hide_window_on_future_startups') == "true" ){ 
+        if( ( networkdetect.scanning == false || $.localStorage.getItem('hide_window_on_future_startups') == "true" ) && force != true ){ 
             gui.modal.current_modal_closed();     
             return; 
         }

@@ -12,6 +12,9 @@ var Filesystemfolder = new Class({
             this.state = { opened: true };
         }
 
+        // Generate an ID
+        this.id = Math.random().toString().split('.')[1];
+
     },
 
     is_folder: function(){

@@ -73,8 +73,6 @@ for my $module_file ( split("\n", `find ./modules/ -name 'module.json'`) ){
 
 }
 
-
-
 # Sort modules respecting dependencies
 $modules = [sort_dependencies($modules)];
 
@@ -113,6 +111,8 @@ sub sort_dependencies{
         next unless exists $module->{'json_data'}->{'Requires'};
         $unsorted_modules->{$module->{'module_name'}} = $module->{'json_data'}->{'Requires'};
     }
+
+    print Dumper $unsorted_modules;
 
     # Create the source from it
     my $source = Algorithm::Dependency::Source::HoA->new( $unsorted_modules );
