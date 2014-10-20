@@ -75,8 +75,17 @@ var Control = Module.extend({
 
     // Display the full machine interface
     display_control_interface: function( machine ){
-        $("#control_interface").text( machine.ip ); 
-
+        $(".gridster").gridster({
+            widget_margins: [10, 10],
+            widget_base_dimensions: [140, 140],
+            widget_selector: "div",
+            draggable: {
+                handle: "div .panel-heading",
+            },
+            resize: {
+                enabled: true,
+            }
+        });
     }
 
 });
