@@ -4,16 +4,18 @@ var Networkdetectmodal = Module.extend({
 
     // The GUI basics were loaded, we can start the modal for scanning
     on_gui_container_loaded: function(){
-        // Request authorisation to display a new modal
-        //gui.modal.add_demand(this, this.display_modal);
         this.display_modal();
+
+        // Add scan network button to the navigation menu
+        $("#scan_the_network").click(function(){
+           networkdetectmodal.display_modal(true); 
+        });
     },
 
     // We were allowed by the modal queue to display the modal
     display_modal: function( force ){
         // Do nothing if we are not scanning or the "hide this window on future startups" option was checked
         if( ( networkdetect.scanning == false || $.localStorage.getItem('hide_window_on_future_startups') == "true" ) && force != true ){ 
-            //gui.modal.current_modal_closed();     
             return; 
         }
 
@@ -28,6 +30,9 @@ var Networkdetectmodal = Module.extend({
 
         // Setup the checkboxes
         this.set_up_checkboxes();
+
+        // If the scan is not running, start it now
+        kernel.call_event("on_networkdetect_start_new_scan");
     },
 
     // The networkdetect module started pinging a new IP

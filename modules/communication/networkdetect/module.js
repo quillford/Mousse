@@ -1,6 +1,20 @@
 var Networkdetect = Module.extend({
    
     on_module_loaded: function(){
+        // Start a network scan, without forcing
+        this.scan_all( false );
+
+    },
+
+    on_networkdetect_start_new_scan: function(){
+        // Start a network scan, ignoring config not to scan ranges
+        this.scan_all(true);
+    },
+
+    scan_all: function( force ){
+        // Return if we are already scanning
+        if( this.scanning == false ){ return; }
+
         // We are currently scanning
         this.scanning = true;
         this.ranges_scanning = 4;
@@ -32,7 +46,7 @@ var Networkdetect = Module.extend({
         this.scan_ip({ip: '127.0.0.1', mode: 'single'}); 
 
         // Don't scan if the user asked us not to
-        if( $.localStorage.getItem('scan_for_new_machines_on_startup') == "false" ){ return; }
+        if( $.localStorage.getItem('scan_for_new_machines_on_startup') == "false" && force == false ){ return; }
 
         // TODO : If this page was just reloaded, wait before scanning or browsers will be unhappy about limits in requests
         // TODO : Do this with images !!!
@@ -47,8 +61,10 @@ var Networkdetect = Module.extend({
         }
         },1000);
 
+
+
     },
-    
+
     scan_ip: function( attempt ){
         // Keep a list of currently scanning IPs
         this.currently_scanning[attempt.ip] = true;

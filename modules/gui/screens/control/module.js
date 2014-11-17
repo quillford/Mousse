@@ -30,8 +30,24 @@ var Control = Module.extend({
         if( kernel.machines.length > 0 ){
             // Select the first machine by default
             this.select_new_machine_tab( kernel.machines[0] );
+            
+            // Hide the no machines message
+            $("#no_machines").hide();
+
+            // Show the control interface
+            $("#control_interface").show();
         }else{
             // TODO : display a nice message explaining there is no machine available
+            $("#control_interface").hide();
+
+            // Show the no machines message
+            $("#no_machines").show();
+
+            // Set up the scan network button
+            $("#control_start_network_scan").click(function(){
+               networkdetectmodal.display_modal(true); 
+            });
+
         }
     },
 

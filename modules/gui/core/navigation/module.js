@@ -15,12 +15,7 @@ var Navigation = Module.extend({
 
         // By default we display the "explore" screen
         this.main_menu_button_clicked( $("#header button.main-menu:contains('Explore')") ); 
-
-        // Add scan network button
-        $("#scan_the_network").click(function(){
-           networkdetectmodal.display_modal(true); 
-        });
-    },
+   },
 
     // A button in the main menu was clicked
     main_menu_button_clicked: function( clicked_element ){
