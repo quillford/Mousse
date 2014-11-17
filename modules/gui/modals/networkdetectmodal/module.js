@@ -5,20 +5,23 @@ var Networkdetectmodal = Module.extend({
     // The GUI basics were loaded, we can start the modal for scanning
     on_gui_container_loaded: function(){
         // Request authorisation to display a new modal
-        gui.modal.add_demand(this, this.display_modal);
+        //gui.modal.add_demand(this, this.display_modal);
+        this.display_modal();
     },
 
     // We were allowed by the modal queue to display the modal
     display_modal: function( force ){
         // Do nothing if we are not scanning or the "hide this window on future startups" option was checked
         if( ( networkdetect.scanning == false || $.localStorage.getItem('hide_window_on_future_startups') == "true" ) && force != true ){ 
-            gui.modal.current_modal_closed();     
+            //gui.modal.current_modal_closed();     
             return; 
         }
 
         // Display the new modal
-        $(this.asset('modal')).appendTo("#current_modal");
         $("#networkdetectmodal").modal();
+        
+        // Set the modal in the right order in the page so it is not confused with it's asset 
+        $(".modal-scrollable").insertBefore("#assets");
 
         // Display currently found machines
         this.display_found_machines();

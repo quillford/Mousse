@@ -134,11 +134,6 @@
 
     </head>
      <body class="fuelux">
-
-        <div id="current_modal">
-
-        </div>
-       
         <div id="root" class="wholescreen">
 
         </div>
