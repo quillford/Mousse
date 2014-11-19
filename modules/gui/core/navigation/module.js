@@ -19,21 +19,28 @@ var Navigation = Module.extend({
 
     // A button in the main menu was clicked
     main_menu_button_clicked: function( clicked_element ){
+        // Close the currently open screen
+        this.on_main_menu_close_all(); 
+    
         // Set the new button to active
-        $("#header button.main-menu").removeClass("active");
         $(clicked_element).addClass("active"); 
        
         // Find out which button was clicked 
         var screen = $(clicked_element).text().toLowerCase().replace(/[^a-z]/g,'');
        
-        // Close the currently open screen
-        kernel.call_event("on_main_menu_close_" + this.selected);
-
         // Mark the new one as selected
         this.selected = screen;
 
         // Call the correct screen
         kernel.call_event("on_main_menu_open_" + screen);
+    },
+
+    on_main_menu_close_all: function(){
+        // Remove all active statuses
+        $("#header button.main-menu").removeClass("active");
+       
+        // Close the currently open screen
+        kernel.call_event("on_main_menu_close_" + this.selected);
     }
 });
 

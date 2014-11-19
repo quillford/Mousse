@@ -3,7 +3,6 @@ var Networkdetect = Module.extend({
     on_module_loaded: function(){
         // Start a network scan, without forcing
         this.scan_all( false );
-
     },
 
     on_networkdetect_start_new_scan: function(){
@@ -37,7 +36,7 @@ var Networkdetect = Module.extend({
         var previous_ips = $.localStorage.getItem('previous_ips');
         if( previous_ips ){
             var previous_ips = previous_ips.split(',');
-            for( var index in [previous_ips] ){
+            for( var index in previous_ips ){
                 this.scan_ip({ip: previous_ips[index], mode: 'single'}); 
             }
         }
@@ -60,8 +59,6 @@ var Networkdetect = Module.extend({
             }
         }
         },1000);
-
-
 
     },
 
