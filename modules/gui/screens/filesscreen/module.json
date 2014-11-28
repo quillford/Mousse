@@ -1,0 +1,8 @@
+{
+    "Authors": "",
+    "Version": "projectversion",
+    "Requires" : ["module","machines","gui","navigation"],
+    "Include" : ["libs/jstree.js"],
+    "IncludeCSS": ["libs/themes/proton/style.css"]
+}
+

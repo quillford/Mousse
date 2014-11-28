@@ -1,0 +1,10 @@
+var Machineconfiguration = Module.extend({
+   
+    on_module_loaded: function(){
+        console.log("machineconfiguration");
+    },
+
+});
+
+
+

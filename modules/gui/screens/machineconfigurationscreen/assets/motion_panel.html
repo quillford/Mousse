@@ -1,0 +1,112 @@
+<h3> Motion </h3> 
+
+<p> This panel allows you to configure the basic parameters of motion control. </p>
+<p> The most important is probably the steps per millimeter paramaters, which allows your machine to move the exact distance you request in each axis </p>
+
+<br/>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Steps per millimeter</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-info">
+            <h4> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About </h4>
+            <p> When you control your machine, you ( or your control software ) gives it instructions to move to given positions, in millimeters </p>
+            <p> However, when your board actually controls a given axis, it does so by sending «steps» </p>
+            <p> You need to know, or calculate, the ratio of steps per millimeter, so that your machine will be capable of moving the correct distance </p>
+            <p> This calculation depends on your motors, drivers, and drive system ( you can watch <a href="https://www.youtube.com/watch?v=VIHgDiCCY0Y"> this guide on youtube </a> to learn more ) </p>
+        </div>
+        <h4> Manual settings </h4>
+        <p> If you already know your values, you can set them manually here </p>
+
+        <table class="table table-hover">
+            <tr>
+                <th> Linear actuator </th>
+                <th> </th>
+                <th class="cartesian_display"> Axis </th>
+                <th class="cartesian_display"> Direction </th>
+                <th class="linear_delta_display"> Tower </th>
+                <th> Option name </th>
+                <th> Value </th>
+            </tr>
+            <tr>
+                <td> Alpha </td>
+                <td> &alpha; </td>
+                <td class="cartesian_display"> X </td>
+                <td class="cartesian_display"> Left and right </td>
+                <th class="linear_delta_display"> Front left </th>
+                <td> <kbd> alpha_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="alpha_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="alpha_steps_per_mm" placeholder="Alpha steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_alpha_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+            </tr>
+             <tr>
+                <td> Beta </td>
+                <td> &beta; </td>
+                <td class="cartesian_display"> Y </td>
+                <td class="cartesian_display"> Forward and backward </td>
+                <th class="linear_delta_display"> Front right </th>
+                <td> <kbd> beta_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="beta_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="beta_steps_per_mm" placeholder="Beta steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_beta_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+            </tr>
+              <tr>
+                <td> Gamma </td>
+                <td> &gamma; </td>
+                <td class="cartesian_display"> Z </td>
+                <td class="cartesian_display"> Up and down </td>
+                <th class="linear_delta_display"> Back </th>
+                <td> <kbd> gamma_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="gamma_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="gamma_steps_per_mm" placeholder="Gamma steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_gamma_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+           </tr>
+       </table>
+
+        <hr/>
+        <h4> Wizards </h4> 
+        <p> These wizards help you figure out the correct values if you don't know them </p>
+        <p> If you know the properties of your mechanical system ( pitches, microstepping, reductions etc ), you can input those to find the right value :</p>
+        <p> <button type="button" class="btn btn-primary" id="start_calculator_wizard"> <span class="glyphicon glyphicon-plus" aria-hidden="true"> </span> &nbsp; Start the calculator wizard </button> </p>
+        <p> If you do not know some of the properties of your mechanical system, you can also figure the values out by measuring the current movement distances, then from them the wizard will deduce the right value : </p>
+        <p> <button type="button" class="btn btn-primary" id="start_proportional_wizard"><span class="glyphicon glyphicon-random" aria-hidden="true"> </span> &nbsp;  Start the proportional wizard </button></p>
+        <p>
+            <div class="bs-callout bs-callout-warning">
+                <h4> Accuracy </h4>
+                <p> Finding the values by measuring ( with the proportional wizard ) will only be as accurate as your measurements </p>
+                <p> It is very likely that the values you will find will not be perfectly correct, but just a good approximation </p>
+                <p> Only calculating the values, either by using the calculator wizard, or manually, will give you the exact right values </p>
+            </div> 
+        </p>
+    </div>
+</div>

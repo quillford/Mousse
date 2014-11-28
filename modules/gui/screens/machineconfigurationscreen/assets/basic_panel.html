@@ -1,0 +1,48 @@
+<h3> Basics </h3> 
+
+<div class="panel panel-default">
+    <div class="panel-heading">Machine information</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
+            </div>    
+            <div class="col-md-6">
+                <p> IP Address <pre id="ip_address"></pre> </p>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Machine name</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-warning" id="no_machine_name">
+            <h4> No machine name </h4>
+            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
+            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
+        </div>
+        <br/>
+        <p>
+            <form class="form-horizontal" role="form" data-toggle="validator">
+              <div class="form-group">
+                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
+                <div class="col-sm-10">
+                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                        <div class="placard-popup"></div>
+                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
+                        <div class="placard-footer">
+                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
+                        </div>
+                    </div> 
+                    <div class="help-block">
+                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
+                      <p> It is recommended that you set one even if you only have one machine </p>
+                    </div>  
+                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
+                </div>
+              </div>
+            </form>
+        </p>
+    </div>
+</div>

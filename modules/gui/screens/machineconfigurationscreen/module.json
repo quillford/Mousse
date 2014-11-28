@@ -1,0 +1,7 @@
+{
+    "Authors": "",
+    "Version": "projectversion",
+    "Include": ["panel_basic.js","panel_motion.js", "wizard_steps_calculator.js"],
+    "Requires" : ["module","gui","navigation"],
+}
+

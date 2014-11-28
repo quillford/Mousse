@@ -1,0 +1,8 @@
+{
+    "Authors": "",
+    "Version": "projectversion",
+    "Requires" : ["module","machines","gui","navigation"],
+    "Include" : ["libs/jquery.gridster.js"],
+    "IncludeCSS": ["libs/jquery.gridster.css"]
+}
+

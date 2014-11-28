@@ -1,0 +1,294 @@
+<!-- Modal -->
+<div class="modal container fade" id="wizardstepscalculatormodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Calculate steps</h4>
+    </div>
+    <div class="modal-body">
+        <div class="wizard" id="wizardstepscalculator"> 
+            <ul class="steps">
+                <li data-step="1" class="active"><span class="badge">1</span>Actuator<span class="chevron"></span></li>
+                <li data-step="2"><span class="badge">2</span>Type<span class="chevron"></span></li>
+                <li data-step="3"><span class="badge">3</span>Motor<span class="chevron"></span></li>
+                <li data-step="4"><span class="badge">4</span>Mechanical<span class="chevron"></span></li>
+                <li data-step="5"><span class="badge">5</span>Calculation<span class="chevron"></span></li>
+            </ul>
+            <div class="actions">
+                <button class="btn btn-default btn-prev"><span class="glyphicon glyphicon-arrow-left"></span>Prev</button>
+                <button class="btn btn-default btn-next" data-last="Complete">Next<span class="glyphicon glyphicon-arrow-right"></span></button>
+            </div>
+            <div class="step-content">
+                <div class="step-pane active sample-pane alert" data-step="1">
+                    <h4>Select an actuator</h4>
+                    <p>Please select the actuator we will be calculating the steps per millimeter for</p>
+                    <p>
+                        <table class="table">
+                            <tr>
+                                <th> Actuator </th>
+                                <td> &alpha; &nbsp; Alpha </td>
+                                <td> &beta;  &nbsp; Beta </td>
+                                <td> &gamma; &nbsp; Gamma </td>
+                            </tr>
+                            <tr class="cartesian_display">
+                                <th> Axis </th>
+                                <td> X </td>
+                                <td> Y </td>
+                                <td> Z </td>
+                            </tr>
+                            <tr class="cartesian_display">
+                                <th> Direction </th>
+                                <td> Left and right </td>
+                                <td> Forward and backward </td>
+                                <td> Up and down </td>
+                            </tr>
+                            <tr class="linear_delta_display">
+                                <th> Tower </th>
+                                <td> Front left </td>
+                                <td> Front right </td>
+                                <td> Back </td>
+                            <tr> 
+                                <th> Option name </th>
+                                <td> <kbd> alpha_steps_per_mm </kbd> </td>
+                                <td> <kbd> beta_steps_per_mm </kbd> </td>
+                                <td> <kbd> gamma_steps_per_mm </kbd> </td>
+                            </tr>
+                            <tr>
+                                <th> Current value </th>
+                                <td id="wizard_array_alpha_steps_per_mm"> </td>
+                                <td id="wizard_array_beta_steps_per_mm"> </td>
+                                <td id="wizard_array_gamma_steps_per_mm"> </td>
+                            <tr> 
+                                <th> </th>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_alpha"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Alpha</button> </td>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_beta">  <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Beta </button> </td>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_gamma"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Gamma</button> </td>
+                            </tr>
+                        </table>
+                    </p>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="2">
+                    <h4>Select an actuator type</h4>
+                    <p> Your actuator can be either belt-driven, or leadscrew-driven, please select one </p>
+                    <br/> 
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <button type="button" class="btn btn-primary" id="wizard_actuator_type_belt"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Belt-driven actuator </button> 
+                        </div> 
+                        <div class="col-md-6 text-center">
+                            <button type="button" class="btn btn-primary" id="wizard_actuator_type_screw"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Leadscrew-driven actuator </button> 
+                        </div>
+                    </div> 
+                </div>
+                <div class="step-pane sample-pane alert" data-step="3">
+                    <h4>Motor parameters</h4>
+                    <p> Now please enter the parameters for your motor </p>
+                    <hr/>
+                    <p> <b> Number of full steps per rotation for your stepper motor </b> </p>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Full steps" value="200" id="wizard_motor_steps_per_turn">    
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="wizard_motor_steps_per_turn_select">
+                                <option value="25">25 ( 14.4° per step )</option>
+                                <option value="75">75 ( 4.8° per step )</option>
+                                <option value="100">100 ( 3.6° per step )</option>
+                                <option value="200" selected>200 ( 1.8° per step ), most common</option>
+                                <option value="400">400 ( 0.9° per step )</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br/>
+                    <p> <b> Stepper driver microstepping setting </b> </p>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">1 / </div>
+                                <input type="text" class="form-control" placeholder="Microstepping" value="16" id="wizard_motor_microstepping">    
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="wizard_motor_microstepping_select">
+                                <option value="1"> 1/1 ( Full steps ) </option>
+                                <option value="2"> 1/2 ( Half steps ) </option>
+                                <option value="4"> 1/4 ( Quarter steps ) </option>
+                                <option value="8"> 1/8 ( TI DRV8818 ) </option>
+                                <option value="10"> 1/10 ( Gecko ) </option>
+                                <option value="16" selected> 1/16 ( A4982, A4988, Smoothieboard ) </option>
+                                <option value="32"> 1/32 ( TI DRV8825 ) </option>
+                                <option value="64"> 1/64 </option>
+                                <option value="128"> 1/128 </option>
+                                <option value="256"> 1/256 </option>
+                            </select>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" id="wizard_motor_configuration_next"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Next </button> 
+                        </div>
+                    </div>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="4">
+                    <h4>Mechanical parameters</h4>
+                    <p> Now please enter the parameters for your mechanical system </p>
+                    <hr/>
+                    <div id="wizard_mechanical_belt_config">
+                        <p> <b> Belt pitch : Distance between two teeth, in millimeters </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Belt pitch" value="2" id="wizard_mechanical_belt_pitch">    
+                                    <div class="input-group-addon"> mm </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="wizard_mechanical_belt_pitch_select">
+                                    <option value="2" selected>2mm ( GT2 )</option>
+                                    <option value="2.03">2.03mm ( MXL )</option>
+                                    <option value="2.5">2.5mm ( T2.5 )</option>
+                                    <option value="3">3mm ( HTD3 )</option>
+                                    <option value="5">5mm ( HTD5 )</option>
+                                    <option value="5.08">5.08mm ( 0.2" XL )</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+                        <p> <b> Pulley teeth count : number of teeth on the pulley </b> </p>
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_pulley_teeth_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Pulley teeth" value="8" id="wizard_mechanical_pulley_teeth">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                    </div> 
+                    <div id="wizard_mechanical_leadscrew_config">
+                        <p> <b> Leadscrew pitch : Distance moved by the leadscrew's nut for one of the leadscrew's rotations </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Belt pitch" value="0.8" id="wizard_mechanical_leadscrew_pitch">    
+                                    <div class="input-group-addon"> mm </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="wizard_mechanical_leadscrew_pitch_select">
+                                    <option value="0.8" selected> M5 ( Metric, 0.8mm per rotation )</option>
+                                    <option value="1"> M6 ( Metric, 1mm per rotation )</option>
+                                    <option value="1.25"> M8 ( Metric, 1.25mm per rotation )</option>
+                                    <option value="1.27"> 3/16"-20 ( Imperial, 1.27mm per rotation )</option>
+                                    <option value="1.41111"> 5/16"-20 ( Imperial, 1.41111mm per rotation )</option>
+                                    <option value="1.5"> M10 ( Metric, 1.5mm per rotation )</option>
+                                    <option value="1.5875">1/4"-16 ( Imperial, 1.5875mm per rotation )</option>
+                                    <option value="8">8mm per rotation</option>
+                                    <option value="12">12mm per rotation</option>
+                                    <option value="16">16mm per rotation</option>
+                                    <option value="20">20mm per rotation</option>
+                                    <option value="25">25mm per rotation</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+                        <p> <b> Gear ratio : A gear reductor between your stepper motor and your leadscrew, reducing or increasing the number of rotations per turn </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_ratio_in_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Ratio in" value="1" id="wizard_mechanical_ratio_in">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                rotations at input becomes
+                            </div>
+                            <div class="col-md-3">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_ratio_out_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Ratio out" value="1" id="wizard_mechanical_ratio_out">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                rotations at output
+                            </div>
+                        </div>
+                        <br/>
+                        <p id="wizard_mechanical_ratio_display"> </p>
+                        <br/>
+                        <div class="bs-callout bs-callout-warning">
+                            <h4> If you don't have gears </h4>
+                            <p> This is only for setups in which you have a gear reducer between your stepper motor and your leadscrew </p>
+                            <p> Those are used to increase speed ( by increasing the number of turns per rotation ) or increasing torque ( by reducing the number of turns per rotation ) </p>
+                            <p> If you do not have gears for reduction, and connect your leadscrew directly to your stepper motor's shaft ( the most common setup ), simply leave this value at 1:1 </p>
+                        </div>
+                        <br/>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" id="wizard_mechanical_configuration_next"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Next </button> 
+                        </div>
+                    </div>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="5">
+                    <h4>Calculation</h4>
+                    <p> Here are the results for the parameters you entered </p>
+                    <hr/>
+                    <p> <b> Microsteps per rotation </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_microsteps_per_turn"> </samp></div> 
+                    </p>
+                    <p> <b> Millimeters per rotation </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_millimeters_per_rotation"> </samp></div> 
+                    </p>
+                    <p> <b> Microsteps per millimeter </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_microsteps_per_millimeter"> </samp></div> 
+                    </p>
+                    <hr/>
+                    <h4> Result </h4>
+                    <p> Your calculated steps per millimeter value for the <span id="wizard_calculation_result_actuator"> </span> actuator is <kbd id="wizard_calculation_result_value"> </kbd> </p>
+                    <br/>
+                    <div class="text-center" style="width:100%">
+                        <button type="button" class="btn btn-success" id="wizard_calculation_save"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Click here to save this value </button>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+

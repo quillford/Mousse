@@ -1,0 +1,39 @@
+<div id="configuration_interface">
+    <div class="col-md-2">
+        <div id="machine_list">
+            <h3> Machines </h3>
+            <p> Select a machine to configure </p>
+            <p> 
+                <ul id="configuration_machine_list" class="list-group">
+                </ul>
+            </p>
+        </div>
+
+        <h3><a href="#" id="basic_panel"> Basics </a></h3>
+        
+        <h3><a href="#" id="motion_panel"> Motion </a></h3>
+
+    </div>
+    <div class="col-md-10">
+        <div class="container">
+            <div class="row" id="configuration_panel">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="no_machines">
+    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
+        <p> There is currently no machine connected to this interface </p>
+        <p> If there is a machine on your network, you should start a network scan to find it </p>
+        <p> 
+            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
+        </p>
+    </div>
+</div>
+
+
+
+
