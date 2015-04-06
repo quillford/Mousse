@@ -33089,7 +33089,7 @@ var Temperaturecontrol = Module.extend({
         
         // Add a listener for the set bed temperature button
         $("#set_bed_temperature").click(function(){
-            kernel.call_event("send_gcode", "M140 S"+$("#extruder_bed_input").val());
+            kernel.call_event("send_gcode", "M140 S"+$("#bed_temperature_input").val());
         });
         
         // Add a listener for the set extruder temperature button
