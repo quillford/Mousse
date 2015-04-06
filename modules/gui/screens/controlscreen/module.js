@@ -179,6 +179,16 @@ var Controlscreen = Module.extend({
         $("#bed_heat_off").click(function(){
             kernel.call_event("send_gcode", "M140 S0");
         });
+        
+        // Add a listener for the extrude button
+        $("#extrude").click(function(){
+            kernel.call_event("send_gcode", "G91 G0 E"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
+        });
+        
+        // Add a listener for the retract button
+        $("#retract").click(function(){
+            kernel.call_event("send_gcode", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
+        });
     },
 
     // Display the full machine interface

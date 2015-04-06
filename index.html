@@ -33101,6 +33101,16 @@ var Temperaturecontrol = Module.extend({
         $("#bed_heat_off").click(function(){
             kernel.call_event("send_gcode", "M140 S0");
         });
+        
+        // Add a listener for the extrude button
+        $("#extrude").click(function(){
+            kernel.call_event("send_gcode", "G91 G0 E"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
+        });
+        
+        // Add a listener for the retract button
+        $("#retract").click(function(){
+            kernel.call_event("send_gcode", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
+        });
     },
 
     // Display the full machine interface
@@ -42374,8 +42384,18 @@ filter: gray;
             <div class="panel-heading">Panel</div>
         </div>
 
-        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="1" data-sizey="2">
-            <div class="panel-heading">Panel</div>
+        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Extrusion</div>
+            <div class="panel-body">
+              <div class="input-group">
+                <input type="text" class="form-control" value="5" id="extrude_length">
+                <span class="input-group-addon" id="sizing-addon2">mm @</span>
+                <input type="text" class="form-control" value="100" id="e_velocity">
+                <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+              </div>
+              <button class="btn btn-default" id="extrude">Extrude</button>
+              <button class="btn btn-default" id="retract">Retract</button>
+            </div>
         </div>
 
     </div>
@@ -43179,8 +43199,18 @@ filter: gray;
             <div class="panel-heading">Panel</div>
         </div>
 
-        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="1" data-sizey="2">
-            <div class="panel-heading">Panel</div>
+        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Extrusion</div>
+            <div class="panel-body">
+              <div class="input-group">
+                <input type="text" class="form-control" value="5" id="extrude_length">
+                <span class="input-group-addon" id="sizing-addon2">mm @</span>
+                <input type="text" class="form-control" value="100" id="e_velocity">
+                <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+              </div>
+              <button class="btn btn-default" id="extrude">Extrude</button>
+              <button class="btn btn-default" id="retract">Retract</button>
+            </div>
         </div>
 
     </div>
