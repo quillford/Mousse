@@ -33066,6 +33066,21 @@ var Temperaturecontrol = Module.extend({
         $("#send_command").click(function(){
             kernel.call_event("send_gcode", $("#command_text").val());
         });
+        
+        // Add a listener for the motors off button
+        $("#motors_off").click(function(){
+            kernel.call_event("send_gcode", "M18");
+        });
+        
+        // Add a listener for the fans on button
+        $("#fans_on").click(function(){
+            kernel.call_event("send_gcode", "M106");
+        });
+        
+        // Add a listener for the fans off button
+        $("#fans_off").click(function(){
+            kernel.call_event("send_gcode", "M107");
+        });
     },
 
     // Display the full machine interface
@@ -42283,7 +42298,12 @@ filter: gray;
         </div>
 
         <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
+            <div class="panel-heading">Shortcuts</div>
+            <div class="panel-body">
+              <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
+              <button type="button" class="btn btn-default" aria-expanded="false" id="fans_on">Fans on</button>
+              <button type="button" class="btn btn-default" aria-expanded="false" id="fans_off">Fans off</button>
+            </div>
         </div>
 
         <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="1">
@@ -43064,7 +43084,12 @@ filter: gray;
         </div>
 
         <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
+            <div class="panel-heading">Shortcuts</div>
+            <div class="panel-body">
+              <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
+              <button type="button" class="btn btn-default" aria-expanded="false" id="fans_on">Fans on</button>
+              <button type="button" class="btn btn-default" aria-expanded="false" id="fans_off">Fans off</button>
+            </div>
         </div>
 
         <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="1">

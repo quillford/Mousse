@@ -144,6 +144,21 @@ var Controlscreen = Module.extend({
         $("#send_command").click(function(){
             kernel.call_event("send_gcode", $("#command_text").val());
         });
+        
+        // Add a listener for the motors off button
+        $("#motors_off").click(function(){
+            kernel.call_event("send_gcode", "M18");
+        });
+        
+        // Add a listener for the fans on button
+        $("#fans_on").click(function(){
+            kernel.call_event("send_gcode", "M106");
+        });
+        
+        // Add a listener for the fans off button
+        $("#fans_off").click(function(){
+            kernel.call_event("send_gcode", "M107");
+        });
     },
 
     // Display the full machine interface
