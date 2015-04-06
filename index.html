@@ -9989,7 +9989,7 @@ var Kernel = Class({
     get_configuration: function(){
         // Retrieve the configuration from the machine, parse it and store it
         this.parent_machine.interface.get_file({
-            file: "/sd/config", 
+            file: "/sd/config.txt", 
             done: this.parse_config_file,
             caller: this    
         });
@@ -33008,7 +33008,27 @@ var Temperaturecontrol = Module.extend({
 
         // Display this machine's interface
         this.display_control_interface( machine );
+        this.update_temperature();
     
+        $("#update_temperature").click(function(){
+           kernel.call_event("update_temperature");
+        });
+        
+        $("#home_all").click(function(){
+           kernel.call_event("send_gcode", "G28");
+        });
+        
+        $("#home_x").click(function(){
+           kernel.call_event("send_gcode", "G28 X0");
+        });
+        
+        $("#home_y").click(function(){
+           kernel.call_event("send_gcode", "G28 Y0");
+        });
+        
+        $("#home_z").click(function(){
+           kernel.call_event("send_gcode", "G28 Z0");
+        });
     },
 
     // Display the full machine interface
@@ -33025,6 +33045,37 @@ var Temperaturecontrol = Module.extend({
                 enabled: true,
             }
         });
+    },
+    
+    // update the extruder and bed temperature
+    update_temperature: function(){
+      console.log("update temp");
+      // get machine ip address
+      this.ip = this.selected_machine.ip;
+      // send M105
+      $.ajax({ 
+          url: "http://" + this.ip + '/command',
+          caller: this,
+          type: "POST",
+          data: "M105\n",
+          async: true,
+      }).done(function(result){console.log("success! : "+result);$("p#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
+    },
+    
+    // send gcode to the machine
+    send_gcode: function( command ){
+      // get machine ip address
+      this.ip = this.selected_machine.ip;
+      
+      this.command = command + "\n";
+      // send the command
+      $.ajax({ 
+          url: "http://" + this.ip + '/command',
+          caller: this,
+          type: "POST",
+          data: this.command,
+          async: true,
+      }).done(function(result){console.log("gcode successfully sent");}).fail( console.log("Failed to send gcode.") );
     }
 
 });
@@ -41383,12 +41434,25 @@ filter: gray;
         }
 
         // Setup the calculator wizard
+        $("#start_calculator_wizard").click(function(panel){
+            return function(){ panel.open_calculator_wizard(); }
+        }(this));
+
+        // Create the wizard 
         this.calculator_wizard = new Wizardstepscalculator(this);
-        $("#start_calculator_wizard").click(function(wizard){
-            return function(){ wizard.open(); }
-        }(this.calculator_wizard));
+    },
 
+    // Open the calculator wizard
+    open_calculator_wizard: function(){
 
+        // Open the wizard 
+        this.calculator_wizard.open( function(panel){
+            return function(){
+                $("#" + panel.calculator_wizard.selected_actuator + "_steps_per_mm").val( panel.calculator_wizard.result );
+                $("#save_" + panel.calculator_wizard.selected_actuator + "_steps_per_mm").click(); 
+                console.log("callback");
+            };
+        }(this));
     }
 
 
@@ -41401,25 +41465,230 @@ filter: gray;
         this.parent = parent;
     },
 
-    open: function(){
+    open: function( callback ){
         // Remember the machine we are currently operating on
-        this.machine = parent.machine;
+        this.machine = this.parent.machine;
+
+        // Remember the callback
+        this.callback = callback;
+
+        // Setup selected values
+        this.selected_actuator = false;
+        this.selected_type = false;
 
         // Setup and open the modal
         this.setup();
     },
 
+    // Setup the wizard
     setup: function(){
-
         // Display the new modal
-        $("#wizardstepcalculatormodal").modal();
+        $("#wizardstepscalculatormodal").modal();
  
         // Set the modal in the right order in the page so it is not confused with it's asset 
         $(".modal-scrollable").insertBefore("#assets");
 
+        // Set up the wizard
+        $("#wizardstepscalculator").wizard();
+
+        // Set up wizard steps
+        var _that = this;
+        $('#wizardstepscalculator').on('changed.fu.wizard', function (evt, data) {
+            switch( data.step ){
+                case 1: _that.goto_axis_selection_step(); break;
+                case 2: _that.goto_axis_type_step(); break;
+                case 3: _that.goto_configuration_step(); break;
+                case 4: _that.goto_mechanical_step(); break;
+                case 5: _that.goto_calculation_step(); break;
+            } 
+        });
+
+        // Go to the first step if we were not already there
+        $('#wizardstepscalculator').wizard('selectedItem', { step: 1 });
+
+        // Go to the axis selection step
+        //this.goto_axis_selection_step();
 
     },
 
+    goto_axis_selection_step: function(){
+        // Modify display according to the current arm solution
+        if( this.machine.configuration.arm_solution == 'linear_delta' ){
+            $('.cartesian_display').hide();
+            $('.linear_delta_display').show();
+        }else{
+            $('.cartesian_display').show();
+            $('.linear_delta_display').hide();
+        }
+
+        // For each axis, display current values and setup buttons
+        var axes = ['alpha', 'beta', 'gamma'];
+        for( var index in axes ){
+            var axis = axes[index]; 
+            // Display values for steps_per_mm
+            if( typeof this.machine.configuration[ axis + '_steps_per_mm' ] !== "undefined" ){
+                $("#wizard_array_" + axis + "_steps_per_mm").html( this.machine.configuration[ axis + "_steps_per_mm" ] );
+            }
+
+            // Make selection buttons clickable
+            $("#wizard_array_select_" + axis).off().click(function(axis, wizard){
+                return function(){
+                    wizard.selected_actuator = axis; 
+                    $('#wizardstepscalculator').wizard('selectedItem', { step: 2 });
+                };
+            }(axis, this));
+        }
+        
+        // Set up buttons
+        $("#wizardstepscalculator .btn-next").prop('disabled', 'true');
+
+    },
+
+    goto_axis_type_step: function(){
+        // Set up the buttons
+        var types = ['belt', 'screw'];
+        for( var index in types ){
+            var type = types[index];
+
+            // Make selection buttons clickable
+            $("#wizard_actuator_type_" + type).off().click(function(type, wizard){
+                return function(){ 
+                    wizard.selected_type = type;
+                    $('#wizardstepscalculator').wizard('selectedItem', { step: 3 });
+                };
+            }(type, this));
+        }   
+     
+        // Set up buttons
+        $("#wizardstepscalculator .btn-next").prop('disabled', 'true');
+    },
+
+    goto_configuration_step: function(){
+        // Set up the form
+        $("#wizard_motor_steps_per_turn_select").change(function(){
+            $("#wizard_motor_steps_per_turn").val($(this).val());
+        });
+        $("#wizard_motor_microstepping_select").change(function(){
+            $("#wizard_motor_microstepping").val($(this).val());
+        });
+
+        // Next button
+        $("#wizard_motor_configuration_next").off().click(function(wizard){
+            return function(){ 
+                $('#wizardstepscalculator').wizard('selectedItem', { step: 4 });
+            };
+        }(this));
+ 
+        // Set up buttons
+        $("#wizardstepscalculator .btn-next").prop('disabled', 'false');
+
+
+    },
+
+    goto_mechanical_step: function(){
+        // Hide the panel we are not using
+        if( this.selected_type == 'belt' ){
+            $("#wizard_mechanical_leadscrew_config").hide();
+            $("#wizard_mechanical_belt_config").show();
+        }else{
+            $("#wizard_mechanical_leadscrew_config").show();
+            $("#wizard_mechanical_belt_config").hide();
+        }
+
+        // Set up the form
+        $("#wizard_mechanical_belt_pitch_select").change(function(){
+            $("#wizard_mechanical_belt_pitch").val($(this).val());
+        });
+        $("#wizard_mechanical_leadscrew_pitch_select").change(function(){
+            $("#wizard_mechanical_leadscrew_pitch").val($(this).val());
+        });
+
+        // Ratio display
+        var ratio_changed = function(wizard){
+            return function(){
+                var ratio_in  = $("#wizard_mechanical_ratio_in" ).val();
+                var ratio_out = $("#wizard_mechanical_ratio_out").val();
+                if( ratio_in == ratio_out ){
+                    $("#wizard_mechanical_ratio_display").html(
+                        "This ratio of <kbd>" + ratio_in + ":" + ratio_out + "</kbd> results in no reduction"    
+                    ); 
+                }
+                if( ratio_out > ratio_in ){
+                    $("#wizard_mechanical_ratio_display").html(
+                        "This ratio of <kbd>" + ratio_in + ":" + ratio_out + "</kbd> results in an increase of " + Math.abs(Math.round( ( ( ratio_out / ratio_in )) * 100 )) + "%"   
+                    ); 
+                }
+                if( ratio_in > ratio_out ){
+                    $("#wizard_mechanical_ratio_display").html(
+                        "This ratio of <kbd>" + ratio_in + ":" + ratio_out + "</kbd> results in a reduction of " + Math.abs(Math.round( ( ( ratio_in / ratio_out )) * 100 )) + "%"   
+                    ); 
+                }
+            } 
+        }(this); 
+        $("#wizard_mechanical_ratio_in").change( ratio_changed );
+        $("#wizard_mechanical_ratio_out").change( ratio_changed );
+        $('#wizard_mechanical_ratio_in_spinbox').on('changed.fu.spinbox', ratio_changed );
+        $('#wizard_mechanical_ratio_out_spinbox').on('changed.fu.spinbox', ratio_changed );
+        ratio_changed.call();       
+
+        // Next button
+        $("#wizard_mechanical_configuration_next").off().click(function(wizard){
+            return function(){ 
+                $('#wizardstepscalculator').wizard('selectedItem', { step: 5 });
+            };
+        }(this));
+
+        // Set up buttons
+        $("#wizardstepscalculator .btn-next").prop('disabled', 'false');
+    },
+
+    goto_calculation_step: function(){
+        // Set up buttons
+        $("#wizardstepscalculator .btn-next").prop('disabled', 'false');
+
+        // Get the values
+        var steps_per_turn = $("#wizard_motor_steps_per_turn").val();
+        var microstepping = $("#wizard_motor_microstepping").val(); 
+        var belt_pitch = $("#wizard_mechanical_belt_pitch").val();
+        var pulley_teeth = $("#wizard_mechanical_pulley_teeth").val();
+
+        // Compute and display microstepssteps per turn
+        var microsteps_per_turn = steps_per_turn * microstepping; 
+        $("#wizard_calculation_microsteps_per_turn").html( 
+            "steps per turn <kbd>" + steps_per_turn + "</kbd> x microstepping <kbd>" + microstepping + "</kbd> = microsteps per rotation <kbd>" + microsteps_per_turn + "</kbd>"
+        );
+
+        // Compute and display rotations per millimeter
+        var millimeters_per_rotation = belt_pitch * pulley_teeth;
+        $("#wizard_calculation_millimeters_per_rotation").html(
+            "belt pitch <kbd>" + belt_pitch + "</kbd> x pulley teeth <kbd>" + pulley_teeth + "</kbd> = millimeters per rotation <kbd>" + millimeters_per_rotation + "</kbd>"
+        );
+
+        // Compute and display microsteps per millimeter
+        var microsteps_per_millimeter = microsteps_per_turn / millimeters_per_rotation;
+        $("#wizard_calculation_microsteps_per_millimeter").html(
+            "microsteps per rotation <kbd>" + microsteps_per_turn + "</kbd> &divide; millimeters per rotation <kbd>" + millimeters_per_rotation + "</kbd> = microsteps per millimeter <kbd>" + microsteps_per_millimeter + "</kbd>" 
+        );
+
+        // Display the result
+        $("#wizard_calculation_result_actuator").html( this.selected_actuator );
+        $("#wizard_calculation_result_value").html(microsteps_per_millimeter);
+
+        // Remember the result
+        this.result = microsteps_per_millimeter;
+
+        // Setup the save button
+        $("#wizard_calculation_save").off().click(function(wizard){
+            return function(){
+                // Call the callback
+                wizard.callback.call();
+
+                // Close the modal
+                $("#wizardstepscalculatormodalclose").click(); 
+            };
+        }(this));
+
+    },
 
 }); 
 </script> 
@@ -41785,6 +42054,23 @@ filter: gray;
                  
             
                 
+                    <div id="gui-body" class="wholescreen">
+                        
+                            <div id="container" class="wholescreen">
+    <div id="header">
+
+    </div>
+    <div id="main" class="wholescreen">
+
+    </div>
+    <div id="footer">
+
+    </div>
+</div>
+
+                         
+                    </div>
+                
                     <div id="gui-navigation" class="wholescreen">
                         
                             <nav class="navbar navbar-default" role="navigation">
@@ -41902,6 +42188,256 @@ filter: gray;
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
 </div>
+
+                         
+                    </div>
+                
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <ul class="nav nav-tabs" role="tablist" id="control_machine_list">
+</ul>
+
+<div id="control_interface" class="wholescreen">
+
+    <div class="gridster" style="margin: 0">
+
+        <div class='panel panel-primary' data-row="1" data-col="1" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="2" data-col="1" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="3" data-col="1" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Temperatures</div>
+            <div class="panel-body">
+                <p id="tempReport">temp</p>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="update_temperature">Update</button>
+            </div>
+        </div>
+
+        <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
+            <div class="panel-heading">Control</div>
+            <div class="panel-body">
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
+            </div>
+        </div>
+
+        <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="3" data-col="4" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+         
+        <div class='panel panel-primary' data-row="1" data-col="5" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="3" data-col="5" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+         
+        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="1" data-sizey="2">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="no_machines">
+    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
+        <p> There is currently no machine connected to this interface </p>
+        <p> If there is a machine on your network, you should start a network scan to find it </p>
+        <p> 
+            <button id="control_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
+        </p>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-explore" class="wholescreen">
+                        
+                            <div style="height:50px; width:300px;margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+
+    <h2> Find things </h2>
+
+<div class="search input-group" role="search" id="search_things">
+  <input type="search" class="form-control" placeholder="Search"/>
+  <span class="input-group-btn">
+    <button class="btn btn-default" type="button">
+      <span class="glyphicon glyphicon-search"></span>
+      <span class="sr-only">Search</span>
+    </button>
+  </span>
+</div>
+
+
+
+</div>
+
+
+                         
+                    </div>
+                
+                    <div id="gui-thumbnail" class="wholescreen">
+                        
+                            <div class="col-sm-3 col-md-2" >
+    <a href="#">
+        <div class="thumbnail" style="height:300px;">
+          <img>
+          <div class="caption" style="text-align:center">
+            <h4></h4>
+          </div>
+        </div>
+    </a>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-files" class="wholescreen">
+                        
+                            <div class="row">
+    <div class="col-md-2">
+        <table class="wholescreen">
+            <tr>
+                <td>
+                    <div id="file_tree"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="margin-top: 50px"> <button id="connect_to_dropbox" type="button" class="btn btn-primary" style="width:100%" >Connect to dropbox</button> </div> 
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-10">
+        <ol class="breadcrumb" id="file_navigation_breadcrumb"></ol> 
+        <table class="table table-hover" id="file_list"></table>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-basic_panel" class="wholescreen">
+                        
+                            <h3> Basics </h3> 
+
+<div class="panel panel-default">
+    <div class="panel-heading">Machine information</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
+            </div>    
+            <div class="col-md-6">
+                <p> IP Address <pre id="ip_address"></pre> </p>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Machine name</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-warning" id="no_machine_name">
+            <h4> No machine name </h4>
+            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
+            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
+        </div>
+        <br/>
+        <p>
+            <form class="form-horizontal" role="form" data-toggle="validator">
+              <div class="form-group">
+                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
+                <div class="col-sm-10">
+                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                        <div class="placard-popup"></div>
+                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
+                        <div class="placard-footer">
+                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
+                        </div>
+                    </div> 
+                    <div class="help-block">
+                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
+                      <p> It is recommended that you set one even if you only have one machine </p>
+                    </div>  
+                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
+                </div>
+              </div>
+            </form>
+        </p>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-main" class="wholescreen">
+                        
+                            <div id="configuration_interface">
+    <div class="col-md-2">
+        <div id="machine_list">
+            <h3> Machines </h3>
+            <p> Select a machine to configure </p>
+            <p> 
+                <ul id="configuration_machine_list" class="list-group">
+                </ul>
+            </p>
+        </div>
+
+        <h3><a href="#" id="basic_panel"> Basics </a></h3>
+        
+        <h3><a href="#" id="motion_panel"> Motion </a></h3>
+
+    </div>
+    <div class="col-md-10">
+        <div class="container">
+            <div class="row" id="configuration_panel">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="no_machines">
+    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
+        <p> There is currently no machine connected to this interface </p>
+        <p> If there is a machine on your network, you should start a network scan to find it </p>
+        <p> 
+            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
+        </p>
+    </div>
+</div>
+
+
+
+
 
                          
                     </div>
@@ -42024,277 +42560,302 @@ filter: gray;
                          
                     </div>
                 
-                    <div id="gui-main" class="wholescreen">
+                    <div id="gui-wizard_calculator" class="wholescreen">
                         
-                            <div id="configuration_interface">
-    <div class="col-md-2">
-        <div id="machine_list">
-            <h3> Machines </h3>
-            <p> Select a machine to configure </p>
-            <p> 
-                <ul id="configuration_machine_list" class="list-group">
-                </ul>
-            </p>
-        </div>
-
-        <h3><a href="#" id="basic_panel"> Basics </a></h3>
-        
-        <h3><a href="#" id="motion_panel"> Motion </a></h3>
-
+                            <!-- Modal -->
+<div class="modal container fade" id="wizardstepscalculatormodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Calculate steps</h4>
     </div>
-    <div class="col-md-10">
-        <div class="container">
-            <div class="row" id="configuration_panel">
+    <div class="modal-body">
+        <div class="wizard" id="wizardstepscalculator"> 
+            <ul class="steps">
+                <li data-step="1" class="active"><span class="badge">1</span>Actuator<span class="chevron"></span></li>
+                <li data-step="2"><span class="badge">2</span>Type<span class="chevron"></span></li>
+                <li data-step="3"><span class="badge">3</span>Motor<span class="chevron"></span></li>
+                <li data-step="4"><span class="badge">4</span>Mechanical<span class="chevron"></span></li>
+                <li data-step="5"><span class="badge">5</span>Calculation<span class="chevron"></span></li>
+            </ul>
+            <div class="actions">
+                <button class="btn btn-default btn-prev"><span class="glyphicon glyphicon-arrow-left"></span>Prev</button>
+                <button class="btn btn-default btn-next" data-last="Complete">Next<span class="glyphicon glyphicon-arrow-right"></span></button>
+            </div>
+            <div class="step-content">
+                <div class="step-pane active sample-pane alert" data-step="1">
+                    <h4>Select an actuator</h4>
+                    <p>Please select the actuator we will be calculating the steps per millimeter for</p>
+                    <p>
+                        <table class="table">
+                            <tr>
+                                <th> Actuator </th>
+                                <td> &alpha; &nbsp; Alpha </td>
+                                <td> &beta;  &nbsp; Beta </td>
+                                <td> &gamma; &nbsp; Gamma </td>
+                            </tr>
+                            <tr class="cartesian_display">
+                                <th> Axis </th>
+                                <td> X </td>
+                                <td> Y </td>
+                                <td> Z </td>
+                            </tr>
+                            <tr class="cartesian_display">
+                                <th> Direction </th>
+                                <td> Left and right </td>
+                                <td> Forward and backward </td>
+                                <td> Up and down </td>
+                            </tr>
+                            <tr class="linear_delta_display">
+                                <th> Tower </th>
+                                <td> Front left </td>
+                                <td> Front right </td>
+                                <td> Back </td>
+                            <tr> 
+                                <th> Option name </th>
+                                <td> <kbd> alpha_steps_per_mm </kbd> </td>
+                                <td> <kbd> beta_steps_per_mm </kbd> </td>
+                                <td> <kbd> gamma_steps_per_mm </kbd> </td>
+                            </tr>
+                            <tr>
+                                <th> Current value </th>
+                                <td id="wizard_array_alpha_steps_per_mm"> </td>
+                                <td id="wizard_array_beta_steps_per_mm"> </td>
+                                <td id="wizard_array_gamma_steps_per_mm"> </td>
+                            <tr> 
+                                <th> </th>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_alpha"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Alpha</button> </td>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_beta">  <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Beta </button> </td>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_gamma"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Gamma</button> </td>
+                            </tr>
+                        </table>
+                    </p>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="2">
+                    <h4>Select an actuator type</h4>
+                    <p> Your actuator can be either belt-driven, or leadscrew-driven, please select one </p>
+                    <br/> 
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <button type="button" class="btn btn-primary" id="wizard_actuator_type_belt"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Belt-driven actuator </button> 
+                        </div> 
+                        <div class="col-md-6 text-center">
+                            <button type="button" class="btn btn-primary" id="wizard_actuator_type_screw"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Leadscrew-driven actuator </button> 
+                        </div>
+                    </div> 
+                </div>
+                <div class="step-pane sample-pane alert" data-step="3">
+                    <h4>Motor parameters</h4>
+                    <p> Now please enter the parameters for your motor </p>
+                    <hr/>
+                    <p> <b> Number of full steps per rotation for your stepper motor </b> </p>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Full steps" value="200" id="wizard_motor_steps_per_turn">    
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="wizard_motor_steps_per_turn_select">
+                                <option value="25">25 ( 14.4° per step )</option>
+                                <option value="75">75 ( 4.8° per step )</option>
+                                <option value="100">100 ( 3.6° per step )</option>
+                                <option value="200" selected>200 ( 1.8° per step ), most common</option>
+                                <option value="400">400 ( 0.9° per step )</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br/>
+                    <p> <b> Stepper driver microstepping setting </b> </p>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">1 / </div>
+                                <input type="text" class="form-control" placeholder="Microstepping" value="16" id="wizard_motor_microstepping">    
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="wizard_motor_microstepping_select">
+                                <option value="1"> 1/1 ( Full steps ) </option>
+                                <option value="2"> 1/2 ( Half steps ) </option>
+                                <option value="4"> 1/4 ( Quarter steps ) </option>
+                                <option value="8"> 1/8 ( TI DRV8818 ) </option>
+                                <option value="10"> 1/10 ( Gecko ) </option>
+                                <option value="16" selected> 1/16 ( A4982, A4988, Smoothieboard ) </option>
+                                <option value="32"> 1/32 ( TI DRV8825 ) </option>
+                                <option value="64"> 1/64 </option>
+                                <option value="128"> 1/128 </option>
+                                <option value="256"> 1/256 </option>
+                            </select>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" id="wizard_motor_configuration_next"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Next </button> 
+                        </div>
+                    </div>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="4">
+                    <h4>Mechanical parameters</h4>
+                    <p> Now please enter the parameters for your mechanical system </p>
+                    <hr/>
+                    <div id="wizard_mechanical_belt_config">
+                        <p> <b> Belt pitch : Distance between two teeth, in millimeters </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Belt pitch" value="2" id="wizard_mechanical_belt_pitch">    
+                                    <div class="input-group-addon"> mm </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="wizard_mechanical_belt_pitch_select">
+                                    <option value="2" selected>2mm ( GT2 )</option>
+                                    <option value="2.03">2.03mm ( MXL )</option>
+                                    <option value="2.5">2.5mm ( T2.5 )</option>
+                                    <option value="3">3mm ( HTD3 )</option>
+                                    <option value="5">5mm ( HTD5 )</option>
+                                    <option value="5.08">5.08mm ( 0.2" XL )</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+                        <p> <b> Pulley teeth count : number of teeth on the pulley </b> </p>
+                        <br/>
 
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_pulley_teeth_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Pulley teeth" value="8" id="wizard_mechanical_pulley_teeth">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                    </div> 
+                    <div id="wizard_mechanical_leadscrew_config">
+                        <p> <b> Leadscrew pitch : Distance moved by the leadscrew's nut for one of the leadscrew's rotations </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Belt pitch" value="0.8" id="wizard_mechanical_leadscrew_pitch">    
+                                    <div class="input-group-addon"> mm </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="wizard_mechanical_leadscrew_pitch_select">
+                                    <option value="0.8" selected> M5 ( Metric, 0.8mm per rotation )</option>
+                                    <option value="1"> M6 ( Metric, 1mm per rotation )</option>
+                                    <option value="1.25"> M8 ( Metric, 1.25mm per rotation )</option>
+                                    <option value="1.27"> 3/16"-20 ( Imperial, 1.27mm per rotation )</option>
+                                    <option value="1.41111"> 5/16"-20 ( Imperial, 1.41111mm per rotation )</option>
+                                    <option value="1.5"> M10 ( Metric, 1.5mm per rotation )</option>
+                                    <option value="1.5875">1/4"-16 ( Imperial, 1.5875mm per rotation )</option>
+                                    <option value="8">8mm per rotation</option>
+                                    <option value="12">12mm per rotation</option>
+                                    <option value="16">16mm per rotation</option>
+                                    <option value="20">20mm per rotation</option>
+                                    <option value="25">25mm per rotation</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+                        <p> <b> Gear ratio : A gear reductor between your stepper motor and your leadscrew, reducing or increasing the number of rotations per turn </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_ratio_in_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Ratio in" value="1" id="wizard_mechanical_ratio_in">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                rotations at input becomes
+                            </div>
+                            <div class="col-md-3">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_ratio_out_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Ratio out" value="1" id="wizard_mechanical_ratio_out">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                rotations at output
+                            </div>
+                        </div>
+                        <br/>
+                        <p id="wizard_mechanical_ratio_display"> </p>
+                        <br/>
+                        <div class="bs-callout bs-callout-warning">
+                            <h4> If you don't have gears </h4>
+                            <p> This is only for setups in which you have a gear reducer between your stepper motor and your leadscrew </p>
+                            <p> Those are used to increase speed ( by increasing the number of turns per rotation ) or increasing torque ( by reducing the number of turns per rotation ) </p>
+                            <p> If you do not have gears for reduction, and connect your leadscrew directly to your stepper motor's shaft ( the most common setup ), simply leave this value at 1:1 </p>
+                        </div>
+                        <br/>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" id="wizard_mechanical_configuration_next"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Next </button> 
+                        </div>
+                    </div>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="5">
+                    <h4>Calculation</h4>
+                    <p> Here are the results for the parameters you entered </p>
+                    <hr/>
+                    <p> <b> Microsteps per rotation </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_microsteps_per_turn"> </samp></div> 
+                    </p>
+                    <p> <b> Millimeters per rotation </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_millimeters_per_rotation"> </samp></div> 
+                    </p>
+                    <p> <b> Microsteps per millimeter </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_microsteps_per_millimeter"> </samp></div> 
+                    </p>
+                    <hr/>
+                    <h4> Result </h4>
+                    <p> Your calculated steps per millimeter value for the <span id="wizard_calculation_result_actuator"> </span> actuator is <kbd id="wizard_calculation_result_value"> </kbd> </p>
+                    <br/>
+                    <div class="text-center" style="width:100%">
+                        <button type="button" class="btn btn-success" id="wizard_calculation_save"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Click here to save this value </button>
+                    </div>
+                </div> 
             </div>
         </div>
     </div>
 </div>
 
-<div id="no_machines">
-    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
-        <p> There is currently no machine connected to this interface </p>
-        <p> If there is a machine on your network, you should start a network scan to find it </p>
-        <p> 
-            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
-        </p>
-    </div>
-</div>
 
-
-
-
-
-                         
-                    </div>
-                
-                    <div id="gui-wizard_calculator" class="wholescreen">
-                        
-                            <!-- Modal -->
-<div class="modal fade" id="wizardstepcalculatormodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Calculate steps</h4>
-      </div>
-      <div class="modal-body">
-test
-      </div>
-</div>
-
-
-
-                         
-                    </div>
-                
-                    <div id="gui-basic_panel" class="wholescreen">
-                        
-                            <h3> Basics </h3> 
-
-<div class="panel panel-default">
-    <div class="panel-heading">Machine information</div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
-            </div>    
-            <div class="col-md-6">
-                <p> IP Address <pre id="ip_address"></pre> </p>
-            </div>    
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">Machine name</div>
-    <div class="panel-body">
-        <div class="bs-callout bs-callout-warning" id="no_machine_name">
-            <h4> No machine name </h4>
-            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
-            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
-        </div>
-        <br/>
-        <p>
-            <form class="form-horizontal" role="form" data-toggle="validator">
-              <div class="form-group">
-                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
-                <div class="col-sm-10">
-                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                        <div class="placard-popup"></div>
-                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
-                        <div class="placard-footer">
-                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
-                        </div>
-                    </div> 
-                    <div class="help-block">
-                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
-                      <p> It is recommended that you set one even if you only have one machine </p>
-                    </div>  
-                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
-                </div>
-              </div>
-            </form>
-        </p>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-files" class="wholescreen">
-                        
-                            <div class="row">
-    <div class="col-md-2">
-        <table class="wholescreen">
-            <tr>
-                <td>
-                    <div id="file_tree"></div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="margin-top: 50px"> <button id="connect_to_dropbox" type="button" class="btn btn-primary" style="width:100%" >Connect to dropbox</button> </div> 
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="col-md-10">
-        <ol class="breadcrumb" id="file_navigation_breadcrumb"></ol> 
-        <table class="table table-hover" id="file_list"></table>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-thumbnail" class="wholescreen">
-                        
-                            <div class="col-sm-3 col-md-2" >
-    <a href="#">
-        <div class="thumbnail" style="height:300px;">
-          <img>
-          <div class="caption" style="text-align:center">
-            <h4></h4>
-          </div>
-        </div>
-    </a>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-explore" class="wholescreen">
-                        
-                            <div style="height:50px; width:300px;margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-
-    <h2> Find things </h2>
-
-<div class="search input-group" role="search" id="search_things">
-  <input type="search" class="form-control" placeholder="Search"/>
-  <span class="input-group-btn">
-    <button class="btn btn-default" type="button">
-      <span class="glyphicon glyphicon-search"></span>
-      <span class="sr-only">Search</span>
-    </button>
-  </span>
-</div>
-
-
-
-</div>
-
-
-                         
-                    </div>
-                
-                    <div id="gui-control" class="wholescreen">
-                        
-                            <ul class="nav nav-tabs" role="tablist" id="control_machine_list">
-</ul>
-
-<div id="control_interface" class="wholescreen">
-
-    <div class="gridster" style="margin: 0">
-
-        <div class='panel panel-primary' data-row="1" data-col="1" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="2" data-col="1" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="3" data-col="1" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="3" data-col="4" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-         
-        <div class='panel panel-primary' data-row="1" data-col="5" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="3" data-col="5" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-         
-        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="1" data-sizey="2">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-    </div>
-
-</div>
-
-<div id="no_machines">
-    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
-        <p> There is currently no machine connected to this interface </p>
-        <p> If there is a machine on your network, you should start a network scan to find it </p>
-        <p> 
-            <button id="control_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
-        </p>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-body" class="wholescreen">
-                        
-                            <div id="container" class="wholescreen">
-    <div id="header">
-
-    </div>
-    <div id="main" class="wholescreen">
-
-    </div>
-    <div id="footer">
-
-    </div>
-</div>
 
                          
                     </div>
@@ -42412,11 +42973,21 @@ test
         </div>
 
         <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Panel</div>
+            <div class="panel-heading">Temperatures</div>
+            <div class="panel-body">
+                <p id="tempReport">temp</p>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="update_temperature">Update</button>
+            </div>
         </div>
 
         <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
-            <div class="panel-heading">Panel</div>
+            <div class="panel-heading">Control</div>
+            <div class="panel-body">
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
+                <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
+            </div>
         </div>
 
         <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="1" data-sizey="1">
@@ -42467,22 +43038,6 @@ test
                  
             
                 
-                    <div id="explorescreen-thumbnail" class="wholescreen">
-                        
-                            <div class="col-sm-3 col-md-2" >
-    <a href="#">
-        <div class="thumbnail" style="height:300px;">
-          <img>
-          <div class="caption" style="text-align:center">
-            <h4></h4>
-          </div>
-        </div>
-    </a>
-</div>
-
-                         
-                    </div>
-                
                     <div id="explorescreen-explore" class="wholescreen">
                         
                             <div style="height:50px; width:300px;margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
@@ -42503,6 +43058,22 @@ test
 
 </div>
 
+
+                         
+                    </div>
+                
+                    <div id="explorescreen-thumbnail" class="wholescreen">
+                        
+                            <div class="col-sm-3 col-md-2" >
+    <a href="#">
+        <div class="thumbnail" style="height:300px;">
+          <img>
+          <div class="caption" style="text-align:center">
+            <h4></h4>
+          </div>
+        </div>
+    </a>
+</div>
 
                          
                     </div>
@@ -42536,6 +43107,105 @@ test
                     </div>
                  
             
+                
+                    <div id="machineconfigurationscreen-basic_panel" class="wholescreen">
+                        
+                            <h3> Basics </h3> 
+
+<div class="panel panel-default">
+    <div class="panel-heading">Machine information</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
+            </div>    
+            <div class="col-md-6">
+                <p> IP Address <pre id="ip_address"></pre> </p>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Machine name</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-warning" id="no_machine_name">
+            <h4> No machine name </h4>
+            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
+            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
+        </div>
+        <br/>
+        <p>
+            <form class="form-horizontal" role="form" data-toggle="validator">
+              <div class="form-group">
+                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
+                <div class="col-sm-10">
+                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                        <div class="placard-popup"></div>
+                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
+                        <div class="placard-footer">
+                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
+                        </div>
+                    </div> 
+                    <div class="help-block">
+                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
+                      <p> It is recommended that you set one even if you only have one machine </p>
+                    </div>  
+                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
+                </div>
+              </div>
+            </form>
+        </p>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="machineconfigurationscreen-main" class="wholescreen">
+                        
+                            <div id="configuration_interface">
+    <div class="col-md-2">
+        <div id="machine_list">
+            <h3> Machines </h3>
+            <p> Select a machine to configure </p>
+            <p> 
+                <ul id="configuration_machine_list" class="list-group">
+                </ul>
+            </p>
+        </div>
+
+        <h3><a href="#" id="basic_panel"> Basics </a></h3>
+        
+        <h3><a href="#" id="motion_panel"> Motion </a></h3>
+
+    </div>
+    <div class="col-md-10">
+        <div class="container">
+            <div class="row" id="configuration_panel">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="no_machines">
+    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
+        <p> There is currently no machine connected to this interface </p>
+        <p> If there is a machine on your network, you should start a network scan to find it </p>
+        <p> 
+            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
+        </p>
+    </div>
+</div>
+
+
+
+
+
+                         
+                    </div>
                 
                     <div id="machineconfigurationscreen-motion_panel" class="wholescreen">
                         
@@ -42655,119 +43325,302 @@ test
                          
                     </div>
                 
-                    <div id="machineconfigurationscreen-main" class="wholescreen">
+                    <div id="machineconfigurationscreen-wizard_calculator" class="wholescreen">
                         
-                            <div id="configuration_interface">
-    <div class="col-md-2">
-        <div id="machine_list">
-            <h3> Machines </h3>
-            <p> Select a machine to configure </p>
-            <p> 
-                <ul id="configuration_machine_list" class="list-group">
-                </ul>
-            </p>
-        </div>
-
-        <h3><a href="#" id="basic_panel"> Basics </a></h3>
-        
-        <h3><a href="#" id="motion_panel"> Motion </a></h3>
-
+                            <!-- Modal -->
+<div class="modal container fade" id="wizardstepscalculatormodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Calculate steps</h4>
     </div>
-    <div class="col-md-10">
-        <div class="container">
-            <div class="row" id="configuration_panel">
+    <div class="modal-body">
+        <div class="wizard" id="wizardstepscalculator"> 
+            <ul class="steps">
+                <li data-step="1" class="active"><span class="badge">1</span>Actuator<span class="chevron"></span></li>
+                <li data-step="2"><span class="badge">2</span>Type<span class="chevron"></span></li>
+                <li data-step="3"><span class="badge">3</span>Motor<span class="chevron"></span></li>
+                <li data-step="4"><span class="badge">4</span>Mechanical<span class="chevron"></span></li>
+                <li data-step="5"><span class="badge">5</span>Calculation<span class="chevron"></span></li>
+            </ul>
+            <div class="actions">
+                <button class="btn btn-default btn-prev"><span class="glyphicon glyphicon-arrow-left"></span>Prev</button>
+                <button class="btn btn-default btn-next" data-last="Complete">Next<span class="glyphicon glyphicon-arrow-right"></span></button>
+            </div>
+            <div class="step-content">
+                <div class="step-pane active sample-pane alert" data-step="1">
+                    <h4>Select an actuator</h4>
+                    <p>Please select the actuator we will be calculating the steps per millimeter for</p>
+                    <p>
+                        <table class="table">
+                            <tr>
+                                <th> Actuator </th>
+                                <td> &alpha; &nbsp; Alpha </td>
+                                <td> &beta;  &nbsp; Beta </td>
+                                <td> &gamma; &nbsp; Gamma </td>
+                            </tr>
+                            <tr class="cartesian_display">
+                                <th> Axis </th>
+                                <td> X </td>
+                                <td> Y </td>
+                                <td> Z </td>
+                            </tr>
+                            <tr class="cartesian_display">
+                                <th> Direction </th>
+                                <td> Left and right </td>
+                                <td> Forward and backward </td>
+                                <td> Up and down </td>
+                            </tr>
+                            <tr class="linear_delta_display">
+                                <th> Tower </th>
+                                <td> Front left </td>
+                                <td> Front right </td>
+                                <td> Back </td>
+                            <tr> 
+                                <th> Option name </th>
+                                <td> <kbd> alpha_steps_per_mm </kbd> </td>
+                                <td> <kbd> beta_steps_per_mm </kbd> </td>
+                                <td> <kbd> gamma_steps_per_mm </kbd> </td>
+                            </tr>
+                            <tr>
+                                <th> Current value </th>
+                                <td id="wizard_array_alpha_steps_per_mm"> </td>
+                                <td id="wizard_array_beta_steps_per_mm"> </td>
+                                <td id="wizard_array_gamma_steps_per_mm"> </td>
+                            <tr> 
+                                <th> </th>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_alpha"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Alpha</button> </td>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_beta">  <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Beta </button> </td>
+                                <td> <button type="button" class="btn btn-primary" id="wizard_array_select_gamma"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Select Gamma</button> </td>
+                            </tr>
+                        </table>
+                    </p>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="2">
+                    <h4>Select an actuator type</h4>
+                    <p> Your actuator can be either belt-driven, or leadscrew-driven, please select one </p>
+                    <br/> 
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <button type="button" class="btn btn-primary" id="wizard_actuator_type_belt"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Belt-driven actuator </button> 
+                        </div> 
+                        <div class="col-md-6 text-center">
+                            <button type="button" class="btn btn-primary" id="wizard_actuator_type_screw"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Leadscrew-driven actuator </button> 
+                        </div>
+                    </div> 
+                </div>
+                <div class="step-pane sample-pane alert" data-step="3">
+                    <h4>Motor parameters</h4>
+                    <p> Now please enter the parameters for your motor </p>
+                    <hr/>
+                    <p> <b> Number of full steps per rotation for your stepper motor </b> </p>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Full steps" value="200" id="wizard_motor_steps_per_turn">    
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="wizard_motor_steps_per_turn_select">
+                                <option value="25">25 ( 14.4° per step )</option>
+                                <option value="75">75 ( 4.8° per step )</option>
+                                <option value="100">100 ( 3.6° per step )</option>
+                                <option value="200" selected>200 ( 1.8° per step ), most common</option>
+                                <option value="400">400 ( 0.9° per step )</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br/>
+                    <p> <b> Stepper driver microstepping setting </b> </p>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-addon">1 / </div>
+                                <input type="text" class="form-control" placeholder="Microstepping" value="16" id="wizard_motor_microstepping">    
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="wizard_motor_microstepping_select">
+                                <option value="1"> 1/1 ( Full steps ) </option>
+                                <option value="2"> 1/2 ( Half steps ) </option>
+                                <option value="4"> 1/4 ( Quarter steps ) </option>
+                                <option value="8"> 1/8 ( TI DRV8818 ) </option>
+                                <option value="10"> 1/10 ( Gecko ) </option>
+                                <option value="16" selected> 1/16 ( A4982, A4988, Smoothieboard ) </option>
+                                <option value="32"> 1/32 ( TI DRV8825 ) </option>
+                                <option value="64"> 1/64 </option>
+                                <option value="128"> 1/128 </option>
+                                <option value="256"> 1/256 </option>
+                            </select>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" id="wizard_motor_configuration_next"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Next </button> 
+                        </div>
+                    </div>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="4">
+                    <h4>Mechanical parameters</h4>
+                    <p> Now please enter the parameters for your mechanical system </p>
+                    <hr/>
+                    <div id="wizard_mechanical_belt_config">
+                        <p> <b> Belt pitch : Distance between two teeth, in millimeters </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Belt pitch" value="2" id="wizard_mechanical_belt_pitch">    
+                                    <div class="input-group-addon"> mm </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="wizard_mechanical_belt_pitch_select">
+                                    <option value="2" selected>2mm ( GT2 )</option>
+                                    <option value="2.03">2.03mm ( MXL )</option>
+                                    <option value="2.5">2.5mm ( T2.5 )</option>
+                                    <option value="3">3mm ( HTD3 )</option>
+                                    <option value="5">5mm ( HTD5 )</option>
+                                    <option value="5.08">5.08mm ( 0.2" XL )</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+                        <p> <b> Pulley teeth count : number of teeth on the pulley </b> </p>
+                        <br/>
 
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_pulley_teeth_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Pulley teeth" value="8" id="wizard_mechanical_pulley_teeth">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                    </div> 
+                    <div id="wizard_mechanical_leadscrew_config">
+                        <p> <b> Leadscrew pitch : Distance moved by the leadscrew's nut for one of the leadscrew's rotations </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Belt pitch" value="0.8" id="wizard_mechanical_leadscrew_pitch">    
+                                    <div class="input-group-addon"> mm </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="wizard_mechanical_leadscrew_pitch_select">
+                                    <option value="0.8" selected> M5 ( Metric, 0.8mm per rotation )</option>
+                                    <option value="1"> M6 ( Metric, 1mm per rotation )</option>
+                                    <option value="1.25"> M8 ( Metric, 1.25mm per rotation )</option>
+                                    <option value="1.27"> 3/16"-20 ( Imperial, 1.27mm per rotation )</option>
+                                    <option value="1.41111"> 5/16"-20 ( Imperial, 1.41111mm per rotation )</option>
+                                    <option value="1.5"> M10 ( Metric, 1.5mm per rotation )</option>
+                                    <option value="1.5875">1/4"-16 ( Imperial, 1.5875mm per rotation )</option>
+                                    <option value="8">8mm per rotation</option>
+                                    <option value="12">12mm per rotation</option>
+                                    <option value="16">16mm per rotation</option>
+                                    <option value="20">20mm per rotation</option>
+                                    <option value="25">25mm per rotation</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+                        <p> <b> Gear ratio : A gear reductor between your stepper motor and your leadscrew, reducing or increasing the number of rotations per turn </b> </p>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_ratio_in_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Ratio in" value="1" id="wizard_mechanical_ratio_in">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                rotations at input becomes
+                            </div>
+                            <div class="col-md-3">
+                                <div class="spinbox" data-initialize="spinbox" id="wizard_mechanical_ratio_out_spinbox">
+                                    <input type="text" class="form-control input-mini spinbox-input" placeholder="Ratio out" value="1" id="wizard_mechanical_ratio_out">
+                                    <div class="spinbox-buttons btn-group btn-group-vertical">
+                                        <button type="button" class="btn btn-default spinbox-up btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-up"></span><span class="sr-only">Increase</span>
+                                        </button>
+                                        <button type="button" class="btn btn-default spinbox-down btn-xs">
+                                            <span class="glyphicon glyphicon-chevron-down"></span><span class="sr-only">Decrease</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                rotations at output
+                            </div>
+                        </div>
+                        <br/>
+                        <p id="wizard_mechanical_ratio_display"> </p>
+                        <br/>
+                        <div class="bs-callout bs-callout-warning">
+                            <h4> If you don't have gears </h4>
+                            <p> This is only for setups in which you have a gear reducer between your stepper motor and your leadscrew </p>
+                            <p> Those are used to increase speed ( by increasing the number of turns per rotation ) or increasing torque ( by reducing the number of turns per rotation ) </p>
+                            <p> If you do not have gears for reduction, and connect your leadscrew directly to your stepper motor's shaft ( the most common setup ), simply leave this value at 1:1 </p>
+                        </div>
+                        <br/>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" id="wizard_mechanical_configuration_next"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"> </span> Next </button> 
+                        </div>
+                    </div>
+                </div>
+                <div class="step-pane sample-pane alert" data-step="5">
+                    <h4>Calculation</h4>
+                    <p> Here are the results for the parameters you entered </p>
+                    <hr/>
+                    <p> <b> Microsteps per rotation </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_microsteps_per_turn"> </samp></div> 
+                    </p>
+                    <p> <b> Millimeters per rotation </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_millimeters_per_rotation"> </samp></div> 
+                    </p>
+                    <p> <b> Microsteps per millimeter </b> </p>
+                    <p> 
+                        <div class="well"><samp id="wizard_calculation_microsteps_per_millimeter"> </samp></div> 
+                    </p>
+                    <hr/>
+                    <h4> Result </h4>
+                    <p> Your calculated steps per millimeter value for the <span id="wizard_calculation_result_actuator"> </span> actuator is <kbd id="wizard_calculation_result_value"> </kbd> </p>
+                    <br/>
+                    <div class="text-center" style="width:100%">
+                        <button type="button" class="btn btn-success" id="wizard_calculation_save"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Click here to save this value </button>
+                    </div>
+                </div> 
             </div>
         </div>
     </div>
 </div>
 
-<div id="no_machines">
-    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
-        <p> There is currently no machine connected to this interface </p>
-        <p> If there is a machine on your network, you should start a network scan to find it </p>
-        <p> 
-            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
-        </p>
-    </div>
-</div>
 
-
-
-
-
-                         
-                    </div>
-                
-                    <div id="machineconfigurationscreen-wizard_calculator" class="wholescreen">
-                        
-                            <!-- Modal -->
-<div class="modal fade" id="wizardstepcalculatormodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Calculate steps</h4>
-      </div>
-      <div class="modal-body">
-test
-      </div>
-</div>
-
-
-
-                         
-                    </div>
-                
-                    <div id="machineconfigurationscreen-basic_panel" class="wholescreen">
-                        
-                            <h3> Basics </h3> 
-
-<div class="panel panel-default">
-    <div class="panel-heading">Machine information</div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
-            </div>    
-            <div class="col-md-6">
-                <p> IP Address <pre id="ip_address"></pre> </p>
-            </div>    
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">Machine name</div>
-    <div class="panel-body">
-        <div class="bs-callout bs-callout-warning" id="no_machine_name">
-            <h4> No machine name </h4>
-            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
-            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
-        </div>
-        <br/>
-        <p>
-            <form class="form-horizontal" role="form" data-toggle="validator">
-              <div class="form-group">
-                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
-                <div class="col-sm-10">
-                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                        <div class="placard-popup"></div>
-                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
-                        <div class="placard-footer">
-                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
-                        </div>
-                    </div> 
-                    <div class="help-block">
-                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
-                      <p> It is recommended that you set one even if you only have one machine </p>
-                    </div>  
-                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
-                </div>
-              </div>
-            </form>
-        </p>
-    </div>
-</div>
 
                          
                     </div>

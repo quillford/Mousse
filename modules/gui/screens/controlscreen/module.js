@@ -86,7 +86,27 @@ var Controlscreen = Module.extend({
 
         // Display this machine's interface
         this.display_control_interface( machine );
+        this.update_temperature();
     
+        $("#update_temperature").click(function(){
+           kernel.call_event("update_temperature");
+        });
+        
+        $("#home_all").click(function(){
+           kernel.call_event("send_gcode", "G28");
+        });
+        
+        $("#home_x").click(function(){
+           kernel.call_event("send_gcode", "G28 X0");
+        });
+        
+        $("#home_y").click(function(){
+           kernel.call_event("send_gcode", "G28 Y0");
+        });
+        
+        $("#home_z").click(function(){
+           kernel.call_event("send_gcode", "G28 Z0");
+        });
     },
 
     // Display the full machine interface
@@ -103,6 +123,37 @@ var Controlscreen = Module.extend({
                 enabled: true,
             }
         });
+    },
+    
+    // update the extruder and bed temperature
+    update_temperature: function(){
+      console.log("update temp");
+      // get machine ip address
+      this.ip = this.selected_machine.ip;
+      // send M105
+      $.ajax({ 
+          url: "http://" + this.ip + '/command',
+          caller: this,
+          type: "POST",
+          data: "M105\n",
+          async: true,
+      }).done(function(result){console.log("success! : "+result);$("p#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
+    },
+    
+    // send gcode to the machine
+    send_gcode: function( command ){
+      // get machine ip address
+      this.ip = this.selected_machine.ip;
+      
+      this.command = command + "\n";
+      // send the command
+      $.ajax({ 
+          url: "http://" + this.ip + '/command',
+          caller: this,
+          type: "POST",
+          data: this.command,
+          async: true,
+      }).done(function(result){console.log("gcode successfully sent");}).fail( console.log("Failed to send gcode.") );
     }
 
 });
