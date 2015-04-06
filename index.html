@@ -33081,6 +33081,26 @@ var Temperaturecontrol = Module.extend({
         $("#fans_off").click(function(){
             kernel.call_event("send_gcode", "M107");
         });
+        
+        // Add a listener for the set extruder temperature button
+        $("#set_extruder_temperature").click(function(){
+            kernel.call_event("send_gcode", "M104 S"+$("#extruder_temperature_input").val());
+        });
+        
+        // Add a listener for the set bed temperature button
+        $("#set_bed_temperature").click(function(){
+            kernel.call_event("send_gcode", "M140 S"+$("#extruder_bed_input").val());
+        });
+        
+        // Add a listener for the set extruder temperature button
+        $("#extruder_heat_off").click(function(){
+            kernel.call_event("send_gcode", "M104 S0");
+        });
+        
+        // Add a listener for the set bed temperature button
+        $("#bed_heat_off").click(function(){
+            kernel.call_event("send_gcode", "M140 S0");
+        });
     },
 
     // Display the full machine interface
@@ -42328,12 +42348,26 @@ filter: gray;
             </div>
         </div>
 
-        <div class='panel panel-primary' data-row="3" data-col="4" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-         
-        <div class='panel panel-primary' data-row="3" data-col="5" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
+        <div class='panel panel-primary' data-row="3" data-col="4" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Temperature Control</div>
+            <div class="panel-body">
+              <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+                <input type="text" class="form-control" id="extruder_temperature_input">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" id="set_extruder_temperature">Set</button>
+                  <button class="btn btn-default" id="extruder_heat_off">Off</button>
+                </span>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Bed</span>
+                <input type="text" class="form-control" id="bed_temperature_input">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" id="set_bed_temperature">Set</button>
+                  <button class="btn btn-default" id="bed_heat_off">Off</button>
+                </span>
+              </div>
+            </div>
         </div>
          
         <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="1" data-sizey="1">
@@ -43119,12 +43153,26 @@ filter: gray;
             </div>
         </div>
 
-        <div class='panel panel-primary' data-row="3" data-col="4" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-         
-        <div class='panel panel-primary' data-row="3" data-col="5" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
+        <div class='panel panel-primary' data-row="3" data-col="4" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Temperature Control</div>
+            <div class="panel-body">
+              <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+                <input type="text" class="form-control" id="extruder_temperature_input">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" id="set_extruder_temperature">Set</button>
+                  <button class="btn btn-default" id="extruder_heat_off">Off</button>
+                </span>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Bed</span>
+                <input type="text" class="form-control" id="bed_temperature_input">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" id="set_bed_temperature">Set</button>
+                  <button class="btn btn-default" id="bed_heat_off">Off</button>
+                </span>
+              </div>
+            </div>
         </div>
          
         <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="1" data-sizey="1">

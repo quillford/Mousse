@@ -159,6 +159,26 @@ var Controlscreen = Module.extend({
         $("#fans_off").click(function(){
             kernel.call_event("send_gcode", "M107");
         });
+        
+        // Add a listener for the set extruder temperature button
+        $("#set_extruder_temperature").click(function(){
+            kernel.call_event("send_gcode", "M104 S"+$("#extruder_temperature_input").val());
+        });
+        
+        // Add a listener for the set bed temperature button
+        $("#set_bed_temperature").click(function(){
+            kernel.call_event("send_gcode", "M140 S"+$("#extruder_bed_input").val());
+        });
+        
+        // Add a listener for the set extruder temperature button
+        $("#extruder_heat_off").click(function(){
+            kernel.call_event("send_gcode", "M104 S0");
+        });
+        
+        // Add a listener for the set bed temperature button
+        $("#bed_heat_off").click(function(){
+            kernel.call_event("send_gcode", "M140 S0");
+        });
     },
 
     // Display the full machine interface
