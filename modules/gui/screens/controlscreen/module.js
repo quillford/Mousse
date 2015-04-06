@@ -87,9 +87,6 @@ var Controlscreen = Module.extend({
         // Display this machine's interface
         this.display_control_interface( machine );
         this.update_temperature();
-        
-        // Make a variable for jogging increment
-        this.jog_increment = 10;
 
         // Add a listener for the update temperature button
         $("#update_temperature").click(function(){
@@ -118,26 +115,26 @@ var Controlscreen = Module.extend({
         
         // Add a listener for the jog x buttons
         $("#positive_x").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 X"+"10"+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_x").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 X-"+"10"+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog y buttons
         $("#positive_y").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Y"+"10"+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_y").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Y-"+"10"+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog z buttons
         $("#positive_z").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Z"+"10"+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("send_gcode", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
         });
         $("#negative_z").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Z-"+"10"+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("send_gcode", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
         });
         
         // Add a listener for the send command button
