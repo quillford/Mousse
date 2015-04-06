@@ -87,25 +87,57 @@ var Controlscreen = Module.extend({
         // Display this machine's interface
         this.display_control_interface( machine );
         this.update_temperature();
-    
+        
+        // Make a variable for jogging increment
+        this.jog_increment = 10;
+
+        // Add a listener for the update temperature button
         $("#update_temperature").click(function(){
            kernel.call_event("update_temperature");
         });
         
+        // Add a listener for the home all axes button
         $("#home_all").click(function(){
            kernel.call_event("send_gcode", "G28");
         });
         
+        // Add a listener for the home x button
         $("#home_x").click(function(){
            kernel.call_event("send_gcode", "G28 X0");
         });
         
+        // Add a listener for the home y button
         $("#home_y").click(function(){
            kernel.call_event("send_gcode", "G28 Y0");
         });
         
+        // Add a listener for the home z button
         $("#home_z").click(function(){
            kernel.call_event("send_gcode", "G28 Z0");
+        });
+        
+        // Add a listener for the jog x buttons
+        $("#positive_x").click(function(){
+           kernel.call_event("send_gcode", "G91 G0 X"+"10"+" F200 G90");
+        });
+        $("#negative_x").click(function(){
+           kernel.call_event("send_gcode", "G91 G0 X-"+"10"+" F200 G90");
+        });
+        
+        // Add a listener for the jog y buttons
+        $("#positive_y").click(function(){
+           kernel.call_event("send_gcode", "G91 G0 Y"+"10"+" F200 G90");
+        });
+        $("#negative_y").click(function(){
+           kernel.call_event("send_gcode", "G91 G0 Y-"+"10"+" F200 G90");
+        });
+        
+        // Add a listener for the jog z buttons
+        $("#positive_z").click(function(){
+           kernel.call_event("send_gcode", "G91 G0 Z"+"10"+" F200 G90");
+        });
+        $("#negative_z").click(function(){
+           kernel.call_event("send_gcode", "G91 G0 Z-"+"10"+" F200 G90");
         });
     },
 
@@ -127,7 +159,6 @@ var Controlscreen = Module.extend({
     
     // update the extruder and bed temperature
     update_temperature: function(){
-      console.log("update temp");
       // get machine ip address
       this.ip = this.selected_machine.ip;
       // send M105
@@ -137,15 +168,17 @@ var Controlscreen = Module.extend({
           type: "POST",
           data: "M105\n",
           async: true,
-      }).done(function(result){console.log("success! : "+result);$("p#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
+      }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
     },
     
     // send gcode to the machine
     send_gcode: function( command ){
       // get machine ip address
       this.ip = this.selected_machine.ip;
-      
+
       this.command = command + "\n";
+      
+      console.log("sending: "+this.command);
       // send the command
       $.ajax({ 
           url: "http://" + this.ip + '/command',
