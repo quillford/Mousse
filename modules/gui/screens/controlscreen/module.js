@@ -93,51 +93,56 @@ var Controlscreen = Module.extend({
 
         // Add a listener for the update temperature button
         $("#update_temperature").click(function(){
-           kernel.call_event("update_temperature");
+            kernel.call_event("update_temperature");
         });
         
         // Add a listener for the home all axes button
         $("#home_all").click(function(){
-           kernel.call_event("send_gcode", "G28");
+            kernel.call_event("send_gcode", "G28");
         });
         
         // Add a listener for the home x button
         $("#home_x").click(function(){
-           kernel.call_event("send_gcode", "G28 X0");
+            kernel.call_event("send_gcode", "G28 X0");
         });
         
         // Add a listener for the home y button
         $("#home_y").click(function(){
-           kernel.call_event("send_gcode", "G28 Y0");
+            kernel.call_event("send_gcode", "G28 Y0");
         });
         
         // Add a listener for the home z button
         $("#home_z").click(function(){
-           kernel.call_event("send_gcode", "G28 Z0");
+            kernel.call_event("send_gcode", "G28 Z0");
         });
         
         // Add a listener for the jog x buttons
         $("#positive_x").click(function(){
-           kernel.call_event("send_gcode", "G91 G0 X"+"10"+" F200 G90");
+            kernel.call_event("send_gcode", "G91 G0 X"+"10"+" F200 G90");
         });
         $("#negative_x").click(function(){
-           kernel.call_event("send_gcode", "G91 G0 X-"+"10"+" F200 G90");
+            kernel.call_event("send_gcode", "G91 G0 X-"+"10"+" F200 G90");
         });
         
         // Add a listener for the jog y buttons
         $("#positive_y").click(function(){
-           kernel.call_event("send_gcode", "G91 G0 Y"+"10"+" F200 G90");
+            kernel.call_event("send_gcode", "G91 G0 Y"+"10"+" F200 G90");
         });
         $("#negative_y").click(function(){
-           kernel.call_event("send_gcode", "G91 G0 Y-"+"10"+" F200 G90");
+            kernel.call_event("send_gcode", "G91 G0 Y-"+"10"+" F200 G90");
         });
         
         // Add a listener for the jog z buttons
         $("#positive_z").click(function(){
-           kernel.call_event("send_gcode", "G91 G0 Z"+"10"+" F200 G90");
+            kernel.call_event("send_gcode", "G91 G0 Z"+"10"+" F200 G90");
         });
         $("#negative_z").click(function(){
-           kernel.call_event("send_gcode", "G91 G0 Z-"+"10"+" F200 G90");
+            kernel.call_event("send_gcode", "G91 G0 Z-"+"10"+" F200 G90");
+        });
+        
+        // Add a listener for the send command button
+        $("#send_command").click(function(){
+            kernel.call_event("send_gcode", $("#command_text").val());
         });
     },
 
