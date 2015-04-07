@@ -95,96 +95,101 @@ var Controlscreen = Module.extend({
         
         // Add a listener for the home all axes button
         $("#home_all").click(function(){
-            kernel.call_event("send_gcode", "G28");
+            kernel.call_event("send_gcode_silent", "G28");
         });
         
         // Add a listener for the home x button
         $("#home_x").click(function(){
-            kernel.call_event("send_gcode", "G28 X0");
+            kernel.call_event("send_gcode_silent", "G28 X0");
         });
         
         // Add a listener for the home y button
         $("#home_y").click(function(){
-            kernel.call_event("send_gcode", "G28 Y0");
+            kernel.call_event("send_gcode_silent", "G28 Y0");
         });
         
         // Add a listener for the home z button
         $("#home_z").click(function(){
-            kernel.call_event("send_gcode", "G28 Z0");
+            kernel.call_event("send_gcode_silent", "G28 Z0");
         });
         
         // Add a listener for the jog x buttons
         $("#positive_x").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_x").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog y buttons
         $("#positive_y").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_y").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog z buttons
         $("#positive_z").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
         });
         $("#negative_z").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
         });
         
         // Add a listener for the send command button
         $("#send_command").click(function(){
-            kernel.call_event("send_gcode", $("#command_text").val());
+            console.log("send c")
+            var command = $("#command_text").val();
+            //var params = {command: command, send_response: true};
+            kernel.call_event("send_gcode", {command: command, send_response: true});
+            $("#command_response").empty();
+            //console.log(params);
         });
         
         // Add a listener for the motors off button
         $("#motors_off").click(function(){
-            kernel.call_event("send_gcode", "M18");
+            kernel.call_event("send_gcode_silent", "M18");
         });
         
         // Add a listener for the fans on button
         $("#fans_on").click(function(){
-            kernel.call_event("send_gcode", "M106");
+            kernel.call_event("send_gcode_silent", "M106");
         });
         
         // Add a listener for the fans off button
         $("#fans_off").click(function(){
-            kernel.call_event("send_gcode", "M107");
+            kernel.call_event("send_gcode_silent", "M107");
         });
         
         // Add a listener for the set extruder temperature button
         $("#set_extruder_temperature").click(function(){
-            kernel.call_event("send_gcode", "M104 S"+$("#extruder_temperature_input").val());
+            kernel.call_event("send_gcode_silent", "M104 S"+$("#extruder_temperature_input").val());
         });
         
         // Add a listener for the set bed temperature button
         $("#set_bed_temperature").click(function(){
-            kernel.call_event("send_gcode", "M140 S"+$("#bed_temperature_input").val());
+            kernel.call_event("send_gcode_silent", "M140 S"+$("#bed_temperature_input").val());
         });
         
         // Add a listener for the set extruder temperature button
         $("#extruder_heat_off").click(function(){
-            kernel.call_event("send_gcode", "M104 S0");
+            kernel.call_event("send_gcode_silent", "M104 S0");
         });
         
         // Add a listener for the set bed temperature button
         $("#bed_heat_off").click(function(){
-            kernel.call_event("send_gcode", "M140 S0");
+            kernel.call_event("send_gcode_silent", "M140 S0");
         });
         
         // Add a listener for the extrude button
         $("#extrude").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 E"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 E"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
         });
         
         // Add a listener for the retract button
         $("#retract").click(function(){
-            kernel.call_event("send_gcode", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
+            kernel.call_event("send_gcode_silent", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
         });
     },
 
@@ -222,18 +227,40 @@ var Controlscreen = Module.extend({
     send_gcode: function( command ){
       // get machine ip address
       this.ip = this.selected_machine.ip;
+      
+      console.log("\n\n\n\n\n\n");
+      console.log(command);
+      console.log("\n\n\n\n\n\n");
 
-      this.command = command + "\n";
+      this.command = command.command + "\n";
       
       console.log("sending: "+this.command);
       // send the command
-      $.ajax({ 
-          url: "http://" + this.ip + '/command',
-          caller: this,
-          type: "POST",
-          data: this.command,
-          async: true,
-      }).done(function(result){console.log("gcode successfully sent");}).fail( console.log("Failed to send gcode.") );
+      if(command.send_response){
+        $.ajax({ 
+            url: "http://" + this.ip + '/command',
+            caller: this,
+            type: "POST",
+            data: this.command,
+            async: true,
+        }).done(function(result){console.log("gcode successfully sent."); kernel.call_event("update_console", result);}).fail( console.log("Failed to send gcode.") );
+      }else {
+        $.ajax({ 
+            url: "http://" + this.ip + '/command',
+            caller: this,
+            type: "POST",
+            data: this.command,
+            async: true,
+        }).done(function(result){console.log("gcode successfully sent.");}).fail( console.log("Failed to send gcode.") );
+      }
+    },
+    
+    send_gcode_silent: function( command ){
+      this.send_gcode( {command: command, send_response: false} );
+    },
+    
+    update_console: function( response ){
+      $("#command_response").text( response );
     }
 
 });
