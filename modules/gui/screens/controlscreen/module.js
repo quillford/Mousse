@@ -86,7 +86,12 @@ var Controlscreen = Module.extend({
 
         // Display this machine's interface
         this.display_control_interface( machine );
+        
+        // Get the machine's temperature
         this.update_temperature();
+        
+        // Add a timer for updating temperature automatically
+        window.setInterval(this.auto_update, 1000); // run auto_update every second
 
         // Add a listener for the update temperature button
         $("#update_temperature").click(function(){
@@ -227,38 +232,44 @@ var Controlscreen = Module.extend({
     
     // send gcode to the machine
     send_gcode: function( command ){
-      // get machine ip address
-      this.ip = this.selected_machine.ip;
+        // get machine ip address
+        this.ip = this.selected_machine.ip;
 
-      this.command = command.command + "\n";
-      
-      console.log("sending: "+this.command);
-      // send the command
-      if(command.send_response){
-        $.ajax({ 
-            url: "http://" + this.ip + '/command',
-            caller: this,
-            type: "POST",
-            data: this.command,
-            async: true,
-        }).done(function(result){console.log("gcode successfully sent."); kernel.call_event("update_console", result);}).fail( console.log("Failed to send gcode.") );
-      }else {
-        $.ajax({ 
-            url: "http://" + this.ip + '/command',
-            caller: this,
-            type: "POST",
-            data: this.command,
-            async: true,
-        }).done(function(result){console.log("gcode successfully sent.");}).fail( console.log("Failed to send gcode.") );
-      }
+        this.command = command.command + "\n";
+
+        console.log("sending: "+this.command);
+        // send the command
+        if(command.send_response){
+            $.ajax({ 
+                url: "http://" + this.ip + '/command',
+                caller: this,
+                type: "POST",
+                data: this.command,
+                async: true,
+            }).done(function(result){console.log("gcode successfully sent."); kernel.call_event("update_console", result);}).fail( console.log("Failed to send gcode.") );
+        }else {
+            $.ajax({ 
+                url: "http://" + this.ip + '/command',
+                caller: this,
+                type: "POST",
+                data: this.command,
+                async: true,
+            }).done(function(result){console.log("gcode successfully sent.");}).fail( console.log("Failed to send gcode.") );
+        }
     },
     
     send_gcode_silent: function( command ){
-      this.send_gcode( {command: command, send_response: false} );
+        this.send_gcode( {command: command, send_response: false} );
     },
     
     update_console: function( response ){
-      $("#command_response").text( response );
+        $("#command_response").text( response );
+    },
+  
+    auto_update: function(){
+        if($("#auto_update_temperature").prop("checked")){
+          kernel.call_event("update_temperature");
+        }
     }
 
 });

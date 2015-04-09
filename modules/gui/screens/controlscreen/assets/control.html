@@ -21,7 +21,12 @@
             <div class="panel-heading">Temperatures</div>
             <div class="panel-body">
                 <p id="tempReport">temp</p>
-                <button type="button" class="btn btn-default" aria-expanded="false" id="update_temperature">Update</button>
+                
+                <div class="input-group">
+                     <span class="input-group-addon"><input type="checkbox" aria-label="..." id="auto_update_temperature"></span>
+                     <span class="input-group-addon">Auto Update</span>
+                     <span class="input-group-btn"><button type="button" class="btn btn-default" aria-expanded="false" id="update_temperature">Update</button></span>
+                </div>
             </div>
         </div>
 
@@ -121,10 +126,10 @@
             <div class="panel-heading">Extrusion</div>
             <div class="panel-body">
               <div class="input-group">
-                <input type="text" class="form-control" value="5" id="extrude_length">
-                <span class="input-group-addon" id="sizing-addon2">mm @</span>
-                <input type="text" class="form-control" value="100" id="e_velocity">
-                <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+                    <input type="text" class="form-control" value="5" id="extrude_length">
+                    <span class="input-group-addon" id="sizing-addon2">mm @</span>
+                    <input type="text" class="form-control" value="100" id="e_velocity">
+                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
               </div>
               <div class="btn-group" role="group" aria-label="...">
                   <button class="btn btn-default" id="extrude">Extrude</button>
