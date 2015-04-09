@@ -33061,12 +33061,9 @@ var Temperaturecontrol = Module.extend({
         
         // Add a listener for the send command button
         $("#send_command").click(function(){
-            console.log("send c")
             var command = $("#command_text").val();
-            //var params = {command: command, send_response: true};
             kernel.call_event("send_gcode", {command: command, send_response: true});
             $("#command_response").empty();
-            //console.log(params);
         });
         
         // Add a listener for the motors off button
@@ -33113,6 +33110,11 @@ var Temperaturecontrol = Module.extend({
         $("#retract").click(function(){
             kernel.call_event("send_gcode_silent", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
         });
+        
+        // Add a listener for the abort print button
+        $("#abort_print").click(function(){
+            kernel.call_event("send_gcode_silent", "abort");
+        });
     },
 
     // Display the full machine interface
@@ -33149,10 +33151,6 @@ var Temperaturecontrol = Module.extend({
     send_gcode: function( command ){
       // get machine ip address
       this.ip = this.selected_machine.ip;
-      
-      console.log("\n\n\n\n\n\n");
-      console.log(command);
-      console.log("\n\n\n\n\n\n");
 
       this.command = command.command + "\n";
       
@@ -42411,9 +42409,14 @@ filter: gray;
             </div>
         </div>
          
-        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
+        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Print Status</div>
+            <div class="panel-body">
+                <p id="print_progress"></p>
+                <button class="btn btn-danger" id="abort_print">Abort</button>
+            </div>
         </div>
+
 
         <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Extrusion</div>
@@ -43233,9 +43236,14 @@ filter: gray;
             </div>
         </div>
          
-        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
+        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Print Status</div>
+            <div class="panel-body">
+                <p id="print_progress"></p>
+                <button class="btn btn-danger" id="abort_print">Abort</button>
+            </div>
         </div>
+
 
         <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Extrusion</div>

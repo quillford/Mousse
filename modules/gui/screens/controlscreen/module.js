@@ -139,12 +139,9 @@ var Controlscreen = Module.extend({
         
         // Add a listener for the send command button
         $("#send_command").click(function(){
-            console.log("send c")
             var command = $("#command_text").val();
-            //var params = {command: command, send_response: true};
             kernel.call_event("send_gcode", {command: command, send_response: true});
             $("#command_response").empty();
-            //console.log(params);
         });
         
         // Add a listener for the motors off button
@@ -191,6 +188,11 @@ var Controlscreen = Module.extend({
         $("#retract").click(function(){
             kernel.call_event("send_gcode_silent", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
         });
+        
+        // Add a listener for the abort print button
+        $("#abort_print").click(function(){
+            kernel.call_event("send_gcode_silent", "abort");
+        });
     },
 
     // Display the full machine interface
@@ -227,10 +229,6 @@ var Controlscreen = Module.extend({
     send_gcode: function( command ){
       // get machine ip address
       this.ip = this.selected_machine.ip;
-      
-      console.log("\n\n\n\n\n\n");
-      console.log(command);
-      console.log("\n\n\n\n\n\n");
 
       this.command = command.command + "\n";
       
