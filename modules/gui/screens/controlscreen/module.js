@@ -201,6 +201,11 @@ var Controlscreen = Module.extend({
         $("#abort_print").click(function(){
             kernel.call_event("send_gcode_silent", "abort");
         });
+        
+        // Add a listener for the abort print button
+        $("#update_print_progress").click(function(){
+            kernel.call_event("update_print_progress");
+        });
     },
 
     // Display the full machine interface
@@ -232,6 +237,21 @@ var Controlscreen = Module.extend({
           data: "M105\n",
           async: true,
       }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail(function(){console.log("Failed to send gcode.");});
+    },
+    
+    // Update the print progress
+    update_print_progress: function(){
+        // Get the machine's IP address
+        this.ip = this.selected_machine.ip;
+        
+        // Send "progress" to get the machine's temperature
+        $.ajax({ 
+          url: "http://" + this.ip + '/command',
+          caller: this,
+          type: "POST",
+          data: "progress\n",
+          async: true,
+      }).done(function(result){console.log("success! : "+result);$("#print_progress").text(result);}).fail(function(){console.log("Failed to send gcode.");});
     },
     
     // Send gcode to the machine
