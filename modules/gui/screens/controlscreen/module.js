@@ -216,29 +216,31 @@ var Controlscreen = Module.extend({
         });
     },
     
-    // update the extruder and bed temperature
+    // Update the extruder and bed temperature
     update_temperature: function(){
-      // get machine ip address
-      this.ip = this.selected_machine.ip;
-      // send M105
-      $.ajax({ 
+        // Get the machine's IP address
+        this.ip = this.selected_machine.ip;
+        
+        // Send M105 to get temperature
+        $.ajax({ 
           url: "http://" + this.ip + '/command',
           caller: this,
           type: "POST",
           data: "M105\n",
           async: true,
-      }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
+        }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
     },
     
     // send gcode to the machine
     send_gcode: function( command ){
-        // get machine ip address
+        // Get the machine's IP address
         this.ip = this.selected_machine.ip;
 
+        // Add a new line to the command
         this.command = command.command + "\n";
 
         console.log("sending: "+this.command);
-        // send the command
+        // Send the command
         if(command.send_response){
             $.ajax({ 
                 url: "http://" + this.ip + '/command',
@@ -268,7 +270,7 @@ var Controlscreen = Module.extend({
   
     auto_update: function(){
         if($("#auto_update_temperature").prop("checked")){
-          kernel.call_event("update_temperature");
+            kernel.call_event("update_temperature");
         }
     }
 
