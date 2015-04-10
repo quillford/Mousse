@@ -199,10 +199,29 @@ var Controlscreen = Module.extend({
         
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
-            kernel.call_event("send_gcode_silent", "abort");
+            bootbox.dialog({
+                message: "Are you sure you want to abort your print?",
+                title: "Abort Print",
+                buttons: {
+                    main: {
+                        label: "No",
+                        className: "btn-default",
+                        callback: function() {
+                            return;
+                        }
+                    },
+                    danger: {
+                        label: "Abort",
+                        className: "btn-danger",
+                        callback: function() {
+                            kernel.call_event("send_gcode_silent", "abort");
+                        }
+                    }
+                }
+            });
         });
         
-        // Add a listener for the abort print button
+        // Add a listener for the update print progress button
         $("#update_print_progress").click(function(){
             kernel.call_event("update_print_progress");
         });
