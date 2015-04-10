@@ -263,14 +263,17 @@ var Controlscreen = Module.extend({
         }
     },
     
+    // Send gcode without displaying a response
     send_gcode_silent: function( command ){
         this.send_gcode( {command: command, send_response: false} );
     },
     
+    // Display the machine's response to the sent command
     update_console: function( response ){
         $("#command_response").text( response );
     },
   
+    // Retrieve user's auto update preferences
     get_update_defaults: function(){
         var auto_update_temperature = $.localStorage.getItem("auto_update_temperature");
         if(auto_update_temperature == "true"){
@@ -281,6 +284,8 @@ var Controlscreen = Module.extend({
         }
     },
   
+    // Update machine's temperature automatically
+    // Save auto update preferences so that they will appear on reload
     auto_update: function(){
         if($("#auto_update_temperature").prop("checked")){
             $.localStorage.setItem("auto_update_temperature", "true");
