@@ -234,12 +234,29 @@ var Controlscreen = Module.extend({
             widget_margins: [10, 10],
             widget_base_dimensions: [140, 140],
             widget_selector: "div",
+            
             draggable: {
                 handle: "div .panel-heading",
+                stop: function(event, ui) {    
+                 var positions = JSON.stringify(this.serialize());
+                 localStorage.setItem("widget_positions", positions);
+                 console.log("DRAGGED");
+                 }
             },
+            
             resize: {
                 enabled: true,
-            }
+            },
+            
+            serialize_params: function($w, wgd){
+                return {
+                    id: $($w).attr('id'),
+                    col: wgd.col,
+                    row: wgd.row,
+                    size_x: wgd.size_x,
+                    size_y: wgd.size_y,
+                };
+              }
         });
     },
     
