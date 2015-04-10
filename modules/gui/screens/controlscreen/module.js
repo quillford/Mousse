@@ -87,6 +87,9 @@ var Controlscreen = Module.extend({
         // Display this machine's interface
         this.display_control_interface( machine );
         
+        // Get the automatic update defaults
+        this.get_update_defaults();
+        
         // Get the machine's temperature
         this.update_temperature();
         
@@ -221,7 +224,7 @@ var Controlscreen = Module.extend({
         // Get the machine's IP address
         this.ip = this.selected_machine.ip;
         
-        // Send M105 to get temperature
+        // Send M105 to get the machine's temperature
         $.ajax({ 
           url: "http://" + this.ip + '/command',
           caller: this,
@@ -231,7 +234,7 @@ var Controlscreen = Module.extend({
         }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
     },
     
-    // send gcode to the machine
+    // Send gcode to the machine
     send_gcode: function( command ){
         // Get the machine's IP address
         this.ip = this.selected_machine.ip;
@@ -268,9 +271,22 @@ var Controlscreen = Module.extend({
         $("#command_response").text( response );
     },
   
+    get_update_defaults: function(){
+        var auto_update_temperature = $.localStorage.getItem("auto_update_temperature");
+        if(auto_update_temperature == "true"){
+            $("#auto_update_temperature").prop("checked", true);
+        }else {
+            $("#auto_update_temperature").prop("checked", false);
+            $.localStorage.setItem("auto_update_temp", "false");
+        }
+    },
+  
     auto_update: function(){
         if($("#auto_update_temperature").prop("checked")){
+            $.localStorage.setItem("auto_update_temperature", "true");
             kernel.call_event("update_temperature");
+        }else {
+            $.localStorage.setItem("auto_update_temperature", "false");
         }
     }
 
