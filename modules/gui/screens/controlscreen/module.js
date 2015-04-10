@@ -231,7 +231,7 @@ var Controlscreen = Module.extend({
           type: "POST",
           data: "M105\n",
           async: true,
-        }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
+      }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail(function(){console.log("Failed to send gcode.");});
     },
     
     // Send gcode to the machine
@@ -251,7 +251,7 @@ var Controlscreen = Module.extend({
                 type: "POST",
                 data: this.command,
                 async: true,
-            }).done(function(result){console.log("gcode successfully sent."); kernel.call_event("update_console", result);}).fail( console.log("Failed to send gcode.") );
+            }).done(function(result){console.log("gcode successfully sent."); kernel.call_event("update_console", result);}).fail(function(){console.log("Failed to send gcode.");});
         }else {
             $.ajax({ 
                 url: "http://" + this.ip + '/command',
@@ -259,7 +259,7 @@ var Controlscreen = Module.extend({
                 type: "POST",
                 data: this.command,
                 async: true,
-            }).done(function(result){console.log("gcode successfully sent.");}).fail( console.log("Failed to send gcode.") );
+            }).done(function(result){console.log("gcode successfully sent.");}).fail(function(){console.log("Failed to send gcode.");});
         }
     },
     

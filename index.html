@@ -33153,7 +33153,7 @@ var Temperaturecontrol = Module.extend({
           type: "POST",
           data: "M105\n",
           async: true,
-        }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail( console.log("Failed to get temperature.") );
+      }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail(function(){console.log("Failed to send gcode.");});
     },
     
     // Send gcode to the machine
@@ -33173,7 +33173,7 @@ var Temperaturecontrol = Module.extend({
                 type: "POST",
                 data: this.command,
                 async: true,
-            }).done(function(result){console.log("gcode successfully sent."); kernel.call_event("update_console", result);}).fail( console.log("Failed to send gcode.") );
+            }).done(function(result){console.log("gcode successfully sent."); kernel.call_event("update_console", result);}).fail(function(){console.log("Failed to send gcode.");});
         }else {
             $.ajax({ 
                 url: "http://" + this.ip + '/command',
@@ -33181,18 +33181,21 @@ var Temperaturecontrol = Module.extend({
                 type: "POST",
                 data: this.command,
                 async: true,
-            }).done(function(result){console.log("gcode successfully sent.");}).fail( console.log("Failed to send gcode.") );
+            }).done(function(result){console.log("gcode successfully sent.");}).fail(function(){console.log("Failed to send gcode.");});
         }
     },
     
+    // Send gcode without displaying a response
     send_gcode_silent: function( command ){
         this.send_gcode( {command: command, send_response: false} );
     },
     
+    // Display the machine's response to the sent command
     update_console: function( response ){
         $("#command_response").text( response );
     },
   
+    // Retrieve user's auto update preferences
     get_update_defaults: function(){
         var auto_update_temperature = $.localStorage.getItem("auto_update_temperature");
         if(auto_update_temperature == "true"){
@@ -33203,6 +33206,8 @@ var Temperaturecontrol = Module.extend({
         }
     },
   
+    // Update machine's temperature automatically
+    // Save auto update preferences so that they will appear on reload
     auto_update: function(){
         if($("#auto_update_temperature").prop("checked")){
             $.localStorage.setItem("auto_update_temperature", "true");
