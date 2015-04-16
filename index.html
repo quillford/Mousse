@@ -33801,28 +33801,7 @@ var Temperaturecontrol = Module.extend({
         
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
-            // bootbox.dialog({
-            //     message: "Are you sure you want to abort your print?",
-            //     title: "Abort Print",
-            //     buttons: {
-            //         main: {
-            //             label: "No",
-            //             className: "btn-default",
-            //             callback: function() {
-            //                 return;
-            //             }
-            //         },
-            //         danger: {
-            //             label: "Abort",
-            //             className: "btn-danger",
-            //             callback: function() {
-            //                 kernel.call_event("send_gcode_silent", "abort");
-            //             }
-            //         }
-            //     }
-            // });
-            
-            
+            // Ask the user if they really want to cancel the print
             bootbox.dialog("Abort the print?", [{
                 "label" : "Abort",
                 "class" : "btn-danger",
@@ -42980,9 +42959,7 @@ filter: gray;
             <button type="submit" class="btn btn-standard dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                 <li role="presentation"><a role="menuitem" id="scan_the_network" tabindex="-1" > <span class="glyphicon glyphicon-zoom-in"></span> Scan for new machines</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
                 <li role="presentation" class="divider"></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
                 <li role="presentation"><a role="menuitem" id="open_machine_configuration" tabindex="-1" > <span class="glyphicon glyphicon-cog"></span> Machine configuration</a></li>
             </ul>
         </div>
@@ -43851,9 +43828,7 @@ filter: gray;
             <button type="submit" class="btn btn-standard dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                 <li role="presentation"><a role="menuitem" id="scan_the_network" tabindex="-1" > <span class="glyphicon glyphicon-zoom-in"></span> Scan for new machines</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
                 <li role="presentation" class="divider"></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
                 <li role="presentation"><a role="menuitem" id="open_machine_configuration" tabindex="-1" > <span class="glyphicon glyphicon-cog"></span> Machine configuration</a></li>
             </ul>
         </div>
