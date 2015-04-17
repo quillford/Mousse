@@ -29212,11 +29212,11 @@ if (typeof jQuery === 'undefined') {
 </script> 
                 
                    <script type="text/javascript"> /**
- * bootbox.js v4.4.0
+ * bootbox.js v3.3.0
  *
  * http://bootboxjs.com/license.txt
  */
-!function(a,b){"use strict";"function"==typeof define&&define.amd?define(["jquery"],b):"object"==typeof exports?module.exports=b(require("jquery")):a.bootbox=b(a.jQuery)}(this,function a(b,c){"use strict";function d(a){var b=q[o.locale];return b?b[a]:q.en[a]}function e(a,c,d){a.stopPropagation(),a.preventDefault();var e=b.isFunction(d)&&d.call(c,a)===!1;e||c.modal("hide")}function f(a){var b,c=0;for(b in a)c++;return c}function g(a,c){var d=0;b.each(a,function(a,b){c(a,b,d++)})}function h(a){var c,d;if("object"!=typeof a)throw new Error("Please supply an object of options");if(!a.message)throw new Error("Please specify a message");return a=b.extend({},o,a),a.buttons||(a.buttons={}),c=a.buttons,d=f(c),g(c,function(a,e,f){if(b.isFunction(e)&&(e=c[a]={callback:e}),"object"!==b.type(e))throw new Error("button with key "+a+" must be an object");e.label||(e.label=a),e.className||(e.className=2>=d&&f===d-1?"btn-primary":"btn-default")}),a}function i(a,b){var c=a.length,d={};if(1>c||c>2)throw new Error("Invalid argument length");return 2===c||"string"==typeof a[0]?(d[b[0]]=a[0],d[b[1]]=a[1]):d=a[0],d}function j(a,c,d){return b.extend(!0,{},a,i(c,d))}function k(a,b,c,d){var e={className:"bootbox-"+a,buttons:l.apply(null,b)};return m(j(e,d,c),b)}function l(){for(var a={},b=0,c=arguments.length;c>b;b++){var e=arguments[b],f=e.toLowerCase(),g=e.toUpperCase();a[f]={label:d(g)}}return a}function m(a,b){var d={};return g(b,function(a,b){d[b]=!0}),g(a.buttons,function(a){if(d[a]===c)throw new Error("button key "+a+" is not allowed (options are "+b.join("\n")+")")}),a}var n={dialog:"<div class='bootbox modal' tabindex='-1' role='dialog'><div class='modal-dialog'><div class='modal-content'><div class='modal-body'><div class='bootbox-body'></div></div></div></div></div>",header:"<div class='modal-header'><h4 class='modal-title'></h4></div>",footer:"<div class='modal-footer'></div>",closeButton:"<button type='button' class='bootbox-close-button close' data-dismiss='modal' aria-hidden='true'>&times;</button>",form:"<form class='bootbox-form'></form>",inputs:{text:"<input class='bootbox-input bootbox-input-text form-control' autocomplete=off type=text />",textarea:"<textarea class='bootbox-input bootbox-input-textarea form-control'></textarea>",email:"<input class='bootbox-input bootbox-input-email form-control' autocomplete='off' type='email' />",select:"<select class='bootbox-input bootbox-input-select form-control'></select>",checkbox:"<div class='checkbox'><label><input class='bootbox-input bootbox-input-checkbox' type='checkbox' /></label></div>",date:"<input class='bootbox-input bootbox-input-date form-control' autocomplete=off type='date' />",time:"<input class='bootbox-input bootbox-input-time form-control' autocomplete=off type='time' />",number:"<input class='bootbox-input bootbox-input-number form-control' autocomplete=off type='number' />",password:"<input class='bootbox-input bootbox-input-password form-control' autocomplete='off' type='password' />"}},o={locale:"en",backdrop:"static",animate:!0,className:null,closeButton:!0,show:!0,container:"body"},p={};p.alert=function(){var a;if(a=k("alert",["ok"],["message","callback"],arguments),a.callback&&!b.isFunction(a.callback))throw new Error("alert requires callback property to be a function when provided");return a.buttons.ok.callback=a.onEscape=function(){return b.isFunction(a.callback)?a.callback.call(this):!0},p.dialog(a)},p.confirm=function(){var a;if(a=k("confirm",["cancel","confirm"],["message","callback"],arguments),a.buttons.cancel.callback=a.onEscape=function(){return a.callback.call(this,!1)},a.buttons.confirm.callback=function(){return a.callback.call(this,!0)},!b.isFunction(a.callback))throw new Error("confirm requires a callback");return p.dialog(a)},p.prompt=function(){var a,d,e,f,h,i,k;if(f=b(n.form),d={className:"bootbox-prompt",buttons:l("cancel","confirm"),value:"",inputType:"text"},a=m(j(d,arguments,["title","callback"]),["cancel","confirm"]),i=a.show===c?!0:a.show,a.message=f,a.buttons.cancel.callback=a.onEscape=function(){return a.callback.call(this,null)},a.buttons.confirm.callback=function(){var c;switch(a.inputType){case"text":case"textarea":case"email":case"select":case"date":case"time":case"number":case"password":c=h.val();break;case"checkbox":var d=h.find("input:checked");c=[],g(d,function(a,d){c.push(b(d).val())})}return a.callback.call(this,c)},a.show=!1,!a.title)throw new Error("prompt requires a title");if(!b.isFunction(a.callback))throw new Error("prompt requires a callback");if(!n.inputs[a.inputType])throw new Error("invalid prompt type");switch(h=b(n.inputs[a.inputType]),a.inputType){case"text":case"textarea":case"email":case"date":case"time":case"number":case"password":h.val(a.value);break;case"select":var o={};if(k=a.inputOptions||[],!b.isArray(k))throw new Error("Please pass an array of input options");if(!k.length)throw new Error("prompt with select requires options");g(k,function(a,d){var e=h;if(d.value===c||d.text===c)throw new Error("given options in wrong format");d.group&&(o[d.group]||(o[d.group]=b("<optgroup/>").attr("label",d.group)),e=o[d.group]),e.append("<option value='"+d.value+"'>"+d.text+"</option>")}),g(o,function(a,b){h.append(b)}),h.val(a.value);break;case"checkbox":var q=b.isArray(a.value)?a.value:[a.value];if(k=a.inputOptions||[],!k.length)throw new Error("prompt with checkbox requires options");if(!k[0].value||!k[0].text)throw new Error("given options in wrong format");h=b("<div/>"),g(k,function(c,d){var e=b(n.inputs[a.inputType]);e.find("input").attr("value",d.value),e.find("label").append(d.text),g(q,function(a,b){b===d.value&&e.find("input").prop("checked",!0)}),h.append(e)})}return a.placeholder&&h.attr("placeholder",a.placeholder),a.pattern&&h.attr("pattern",a.pattern),a.maxlength&&h.attr("maxlength",a.maxlength),f.append(h),f.on("submit",function(a){a.preventDefault(),a.stopPropagation(),e.find(".btn-primary").click()}),e=p.dialog(a),e.off("shown.bs.modal"),e.on("shown.bs.modal",function(){h.focus()}),i===!0&&e.modal("show"),e},p.dialog=function(a){a=h(a);var d=b(n.dialog),f=d.find(".modal-dialog"),i=d.find(".modal-body"),j=a.buttons,k="",l={onEscape:a.onEscape};if(b.fn.modal===c)throw new Error("$.fn.modal is not defined; please double check you have included the Bootstrap JavaScript library. See http://getbootstrap.com/javascript/ for more details.");if(g(j,function(a,b){k+="<button data-bb-handler='"+a+"' type='button' class='btn "+b.className+"'>"+b.label+"</button>",l[a]=b.callback}),i.find(".bootbox-body").html(a.message),a.animate===!0&&d.addClass("fade"),a.className&&d.addClass(a.className),"large"===a.size?f.addClass("modal-lg"):"small"===a.size&&f.addClass("modal-sm"),a.title&&i.before(n.header),a.closeButton){var m=b(n.closeButton);a.title?d.find(".modal-header").prepend(m):m.css("margin-top","-10px").prependTo(i)}return a.title&&d.find(".modal-title").html(a.title),k.length&&(i.after(n.footer),d.find(".modal-footer").html(k)),d.on("hidden.bs.modal",function(a){a.target===this&&d.remove()}),d.on("shown.bs.modal",function(){d.find(".btn-primary:first").focus()}),"static"!==a.backdrop&&d.on("click.dismiss.bs.modal",function(a){d.children(".modal-backdrop").length&&(a.currentTarget=d.children(".modal-backdrop").get(0)),a.target===a.currentTarget&&d.trigger("escape.close.bb")}),d.on("escape.close.bb",function(a){l.onEscape&&e(a,d,l.onEscape)}),d.on("click",".modal-footer button",function(a){var c=b(this).data("bb-handler");e(a,d,l[c])}),d.on("click",".bootbox-close-button",function(a){e(a,d,l.onEscape)}),d.on("keyup",function(a){27===a.which&&d.trigger("escape.close.bb")}),b(a.container).append(d),d.modal({backdrop:a.backdrop?"static":!1,keyboard:!1,show:!1}),a.show&&d.modal("show"),d},p.setDefaults=function(){var a={};2===arguments.length?a[arguments[0]]=arguments[1]:a=arguments[0],b.extend(o,a)},p.hideAll=function(){return b(".bootbox").modal("hide"),p};var q={bg_BG:{OK:"Ок",CANCEL:"Отказ",CONFIRM:"Потвърждавам"},br:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Sim"},cs:{OK:"OK",CANCEL:"Zrušit",CONFIRM:"Potvrdit"},da:{OK:"OK",CANCEL:"Annuller",CONFIRM:"Accepter"},de:{OK:"OK",CANCEL:"Abbrechen",CONFIRM:"Akzeptieren"},el:{OK:"Εντάξει",CANCEL:"Ακύρωση",CONFIRM:"Επιβεβαίωση"},en:{OK:"OK",CANCEL:"Cancel",CONFIRM:"OK"},es:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Aceptar"},et:{OK:"OK",CANCEL:"Katkesta",CONFIRM:"OK"},fa:{OK:"قبول",CANCEL:"لغو",CONFIRM:"تایید"},fi:{OK:"OK",CANCEL:"Peruuta",CONFIRM:"OK"},fr:{OK:"OK",CANCEL:"Annuler",CONFIRM:"D'accord"},he:{OK:"אישור",CANCEL:"ביטול",CONFIRM:"אישור"},hu:{OK:"OK",CANCEL:"Mégsem",CONFIRM:"Megerősít"},hr:{OK:"OK",CANCEL:"Odustani",CONFIRM:"Potvrdi"},id:{OK:"OK",CANCEL:"Batal",CONFIRM:"OK"},it:{OK:"OK",CANCEL:"Annulla",CONFIRM:"Conferma"},ja:{OK:"OK",CANCEL:"キャンセル",CONFIRM:"確認"},lt:{OK:"Gerai",CANCEL:"Atšaukti",CONFIRM:"Patvirtinti"},lv:{OK:"Labi",CANCEL:"Atcelt",CONFIRM:"Apstiprināt"},nl:{OK:"OK",CANCEL:"Annuleren",CONFIRM:"Accepteren"},no:{OK:"OK",CANCEL:"Avbryt",CONFIRM:"OK"},pl:{OK:"OK",CANCEL:"Anuluj",CONFIRM:"Potwierdź"},pt:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Confirmar"},ru:{OK:"OK",CANCEL:"Отмена",CONFIRM:"Применить"},sq:{OK:"OK",CANCEL:"Anulo",CONFIRM:"Prano"},sv:{OK:"OK",CANCEL:"Avbryt",CONFIRM:"OK"},th:{OK:"ตกลง",CANCEL:"ยกเลิก",CONFIRM:"ยืนยัน"},tr:{OK:"Tamam",CANCEL:"İptal",CONFIRM:"Onayla"},zh_CN:{OK:"OK",CANCEL:"取消",CONFIRM:"确认"},zh_TW:{OK:"OK",CANCEL:"取消",CONFIRM:"確認"}};return p.addLocale=function(a,c){return b.each(["OK","CANCEL","CONFIRM"],function(a,b){if(!c[b])throw new Error("Please supply a translation for '"+b+"'")}),q[a]={OK:c.OK,CANCEL:c.CANCEL,CONFIRM:c.CONFIRM},p},p.removeLocale=function(a){return delete q[a],p},p.setLocale=function(a){return p.setDefaults("locale",a)},p.init=function(c){return a(c||b)},p});</script> 
+var bootbox=window.bootbox||function(a,b){function c(a,b){return"undefined"==typeof b&&(b=d),"string"==typeof m[b][a]?m[b][a]:b!=e?c(a,e):a}var d="en",e="en",f=!0,g="static",h="javascript:;",i="",j={},k={},l={};l.setLocale=function(a){for(var b in m)if(b==a)return d=a,void 0;throw new Error("Invalid locale: "+a)},l.addLocale=function(a,b){"undefined"==typeof m[a]&&(m[a]={});for(var c in b)m[a][c]=b[c]},l.setIcons=function(a){k=a,("object"!=typeof k||null===k)&&(k={})},l.setBtnClasses=function(a){j=a,("object"!=typeof j||null===j)&&(j={})},l.alert=function(){var a="",b=c("OK"),d=null;switch(arguments.length){case 1:a=arguments[0];break;case 2:a=arguments[0],"function"==typeof arguments[1]?d=arguments[1]:b=arguments[1];break;case 3:a=arguments[0],b=arguments[1],d=arguments[2];break;default:throw new Error("Incorrect number of arguments: expected 1-3")}return l.dialog(a,{label:b,icon:k.OK,"class":j.OK,callback:d},{onEscape:d||!0})},l.confirm=function(){var a="",b=c("CANCEL"),d=c("CONFIRM"),e=null;switch(arguments.length){case 1:a=arguments[0];break;case 2:a=arguments[0],"function"==typeof arguments[1]?e=arguments[1]:b=arguments[1];break;case 3:a=arguments[0],b=arguments[1],"function"==typeof arguments[2]?e=arguments[2]:d=arguments[2];break;case 4:a=arguments[0],b=arguments[1],d=arguments[2],e=arguments[3];break;default:throw new Error("Incorrect number of arguments: expected 1-4")}var f=function(){return"function"==typeof e?e(!1):void 0},g=function(){return"function"==typeof e?e(!0):void 0};return l.dialog(a,[{label:b,icon:k.CANCEL,"class":j.CANCEL,callback:f},{label:d,icon:k.CONFIRM,"class":j.CONFIRM,callback:g}],{onEscape:f})},l.prompt=function(){var a="",d=c("CANCEL"),e=c("CONFIRM"),f=null,g="";switch(arguments.length){case 1:a=arguments[0];break;case 2:a=arguments[0],"function"==typeof arguments[1]?f=arguments[1]:d=arguments[1];break;case 3:a=arguments[0],d=arguments[1],"function"==typeof arguments[2]?f=arguments[2]:e=arguments[2];break;case 4:a=arguments[0],d=arguments[1],e=arguments[2],f=arguments[3];break;case 5:a=arguments[0],d=arguments[1],e=arguments[2],f=arguments[3],g=arguments[4];break;default:throw new Error("Incorrect number of arguments: expected 1-5")}var h=a,i=b("<form></form>");i.append("<input class='input-block-level' autocomplete=off type=text value='"+g+"' />");var m=function(){return"function"==typeof f?f(null):void 0},n=function(){return"function"==typeof f?f(i.find("input[type=text]").val()):void 0},o=l.dialog(i,[{label:d,icon:k.CANCEL,"class":j.CANCEL,callback:m},{label:e,icon:k.CONFIRM,"class":j.CONFIRM,callback:n}],{header:h,show:!1,onEscape:m});return o.on("shown",function(){i.find("input[type=text]").focus(),i.on("submit",function(a){a.preventDefault(),o.find(".btn-primary").click()})}),o.modal("show"),o},l.dialog=function(c,d,e){function j(){var a=null;"function"==typeof e.onEscape&&(a=e.onEscape()),a!==!1&&x.modal("hide")}var k="",l=[];e||(e={}),"undefined"==typeof d?d=[]:"undefined"==typeof d.length&&(d=[d]);for(var m=d.length;m--;){var n=null,o=null,p=null,q="",r=null;if("undefined"==typeof d[m].label&&"undefined"==typeof d[m]["class"]&&"undefined"==typeof d[m].callback){var s=0,t=null;for(var u in d[m])if(t=u,++s>1)break;1==s&&"function"==typeof d[m][u]&&(d[m].label=t,d[m].callback=d[m][u])}"function"==typeof d[m].callback&&(r=d[m].callback),d[m]["class"]?p=d[m]["class"]:m==d.length-1&&d.length<=2&&(p="btn-primary"),d[m].link!==!0&&(p="btn "+p),n=d[m].label?d[m].label:"Option "+(m+1),d[m].icon&&(q="<i class='"+d[m].icon+"'></i> "),o=d[m].href?d[m].href:h,k="<a data-handler='"+m+"' class='"+p+"' href='"+o+"'>"+q+n+"</a>"+k,l[m]=r}var v=["<div class='bootbox modal' tabindex='-1' style='overflow:hidden;'>"];if(e.header){var w="";("undefined"==typeof e.headerCloseButton||e.headerCloseButton)&&(w="<a href='"+h+"' class='close'>&times;</a>"),v.push("<div class='modal-header'>"+w+"<h3>"+e.header+"</h3></div>")}v.push("<div class='modal-body'></div>"),k&&v.push("<div class='modal-footer'>"+k+"</div>"),v.push("</div>");var x=b(v.join("\n")),y="undefined"==typeof e.animate?f:e.animate;y&&x.addClass("fade");var z="undefined"==typeof e.classes?i:e.classes;return z&&x.addClass(z),x.find(".modal-body").html(c),x.on("keyup.dismiss.modal",function(a){27===a.which&&e.onEscape&&j("escape")}),x.on("click","a.close",function(a){a.preventDefault(),j("close")}),x.on("shown",function(){x.find("a.btn-primary:first").focus()}),x.on("hidden",function(a){a.target===this&&x.remove()}),x.on("click",".modal-footer a",function(a){var c=b(this).data("handler"),e=l[c],f=null;("undefined"==typeof c||"undefined"==typeof d[c].href)&&(a.preventDefault(),"function"==typeof e&&(f=e(a)),f!==!1&&x.modal("hide"))}),b("body").append(x),x.modal({backdrop:"undefined"==typeof e.backdrop?g:e.backdrop,keyboard:!1,show:!1}),x.on("show",function(){b(a).off("focusin.modal")}),("undefined"==typeof e.show||e.show===!0)&&x.modal("show"),x},l.modal=function(){var a,c,d,e={onEscape:null,keyboard:!0,backdrop:g};switch(arguments.length){case 1:a=arguments[0];break;case 2:a=arguments[0],"object"==typeof arguments[1]?d=arguments[1]:c=arguments[1];break;case 3:a=arguments[0],c=arguments[1],d=arguments[2];break;default:throw new Error("Incorrect number of arguments: expected 1-3")}return e.header=c,d="object"==typeof d?b.extend(e,d):e,l.dialog(a,[],d)},l.hideAll=function(){b(".bootbox").modal("hide")},l.animate=function(a){f=a},l.backdrop=function(a){g=a},l.classes=function(a){i=a};var m={br:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Sim"},da:{OK:"OK",CANCEL:"Annuller",CONFIRM:"Accepter"},de:{OK:"OK",CANCEL:"Abbrechen",CONFIRM:"Akzeptieren"},en:{OK:"OK",CANCEL:"Cancel",CONFIRM:"OK"},es:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Aceptar"},fr:{OK:"OK",CANCEL:"Annuler",CONFIRM:"D'accord"},it:{OK:"OK",CANCEL:"Annulla",CONFIRM:"Conferma"},nl:{OK:"OK",CANCEL:"Annuleren",CONFIRM:"Accepteren"},pl:{OK:"OK",CANCEL:"Anuluj",CONFIRM:"Potwierdź"},ru:{OK:"OK",CANCEL:"Отмена",CONFIRM:"Применить"},zh_CN:{OK:"OK",CANCEL:"取消",CONFIRM:"确认"},zh_TW:{OK:"OK",CANCEL:"取消",CONFIRM:"確認"}};return l}(document,window.jQuery);window.bootbox=bootbox;</script> 
                 
                    <script type="text/javascript"> var Gui = Module.extend({
 
@@ -33801,26 +33801,17 @@ var Temperaturecontrol = Module.extend({
         
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
-            bootbox.dialog({
-                message: "Are you sure you want to abort your print?",
-                title: "Abort Print",
-                buttons: {
-                    main: {
-                        label: "No",
-                        className: "btn-default",
-                        callback: function() {
-                            return;
-                        }
-                    },
-                    danger: {
-                        label: "Abort",
-                        className: "btn-danger",
-                        callback: function() {
-                            kernel.call_event("send_gcode_silent", "abort");
-                        }
-                    }
+            // Ask the user if they really want to cancel the print
+            bootbox.dialog("Abort the print?", [{
+                "label" : "Abort",
+                "class" : "btn-danger",
+                "callback": function() {
+                    kernel.call_event("send_gcode_silent", "abort");
                 }
-            });
+            },{
+                "class" : "btn-default",
+                "label" : "No"
+            }]);
         });
         
         // Add a listener for the update print progress button
@@ -42968,9 +42959,7 @@ filter: gray;
             <button type="submit" class="btn btn-standard dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                 <li role="presentation"><a role="menuitem" id="scan_the_network" tabindex="-1" > <span class="glyphicon glyphicon-zoom-in"></span> Scan for new machines</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
                 <li role="presentation" class="divider"></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
                 <li role="presentation"><a role="menuitem" id="open_machine_configuration" tabindex="-1" > <span class="glyphicon glyphicon-cog"></span> Machine configuration</a></li>
             </ul>
         </div>
@@ -42980,6 +42969,537 @@ filter: gray;
   </div><!-- /.container-fluid -->
 
 </nav>
+
+                         
+                    </div>
+                
+                    <div id="gui-modal" class="wholescreen">
+                        
+                            <!-- Modal -->
+<div class="modal fade" id="dropboxconnectmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Connect to Dropbox</h4>
+      </div>
+      <div class="modal-body">
+          <p> 
+            <img src="http://upload.wikimedia.org/wikipedia/commons/4/47/Dropbox_logo_%28September_2013%29.svg" style="width:100%">   
+          </p>
+          <p> <a href="http://dropbox.com/">Dropbox</a> is an online file sharing service that allows you to store your files on the cloud and to synchronize them across several computers and devices. </p>
+          <p> If you currently have a Dropbox account, here you can connect this interface to Dropbox. This will allow you to access files stored there directly from this interface, for retrieval, modification and fabrication. </p>
+          <p> Please click on the botton bellow to connect this interface to Dropbox. You will be taken to the Dropbox website, which will ask you if this interface is allowed to access your accont. After you confirm this, you will be taken back to this interface. </p>
+
+          <p>
+          <div class="bs-callout bs-callout-warning">
+              <h4>Popups and security</h4>
+              Your browser may prevent this page from opening a window to Dropbox. If that's the case, make sure you follow the correct procedure to allow popups opening for this page, then click on the button again.
+          </div>
+          </p>
+
+          <p>
+            <button id="go_to_dropbox_for_auth" type="button" class="btn btn-primary" style="width:100%" >Go to Dropbox now</button>
+          </p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+</div>
+
+
+
+                         
+                    </div>
+                
+                    <div id="gui-modal" class="wholescreen">
+                        
+                            <!-- Modal -->
+<div class="modal fade" id="networkdetectmodal" tabindex="-1" role="dialog" style="display:none;">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Searching for machines</h4>
+      </div>
+      <div class="modal-body">
+
+          <div id="currently_scanning"> 
+              Searching for machines on the local network<br/><br/>
+              <div id="scanning_ips" class="well" style="display: inline-block; width:100%; min-height:100px"> </div>  
+          </div>
+          <div id="ips_found">
+              Machines found<br/><br/>
+              <ul class="list-group" id="ips_found_list">
+
+              </ul>
+          </div>
+          <br/>
+          <div>
+            <div class="input-group" style="margin-bottom:5px">
+                <span class="input-group-addon">
+                    <input type="checkbox" id="hide_scan_modal">
+                </span>
+                <span class="form-control"> Hide this window on future startups </span>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <input type="checkbox" id="scan_on_startup">
+                </span>
+                <span class="form-control"> Scan for new machines on future startups </span>
+            </div>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <ul class="nav nav-tabs" role="tablist" id="control_machine_list">
+</ul>
+
+<div id="control_interface" class="wholescreen">
+
+    <div class="gridster" style="margin: 0">
+
+        <div class='panel panel-primary' data-row="1" data-col="1" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="2" data-col="1" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="3" data-col="1" data-sizex="1" data-sizey="1">
+            <div class="panel-heading">Panel</div>
+        </div>
+
+        <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Temperatures</div>
+            <div class="panel-body">
+                <p id="tempReport">temp</p>
+                
+                <div class="input-group">
+                     <span class="input-group-addon"><input type="checkbox" aria-label="..." id="auto_update_temperature"></span>
+                     <span class="input-group-addon">Auto Update</span>
+                     <span class="input-group-btn"><button type="button" class="btn btn-default" aria-expanded="false" id="update_temperature">Update</button></span>
+                </div>
+            </div>
+        </div>
+
+        <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
+            <div class="panel-heading"><span class="glyphicon glyphicon-move" aria-hidden="true"></span>Jogging Control</div>
+            <div class="panel-body">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_x">-X</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_x">+X</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_y">-Y</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_y">+Y</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_z">-Z</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_z">+Z</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="sizing-addon2">Increment</span>
+                        <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
+                        <span class="input-group-addon" id="sizing-addon2">mm</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon2">XY</span>
+                    <input type="text" class="form-control" value="3000" aria-describedby="sizing-addon2" id="xy_velocity">
+                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon2">Z</span>
+                    <input type="text" class="form-control" value="200" aria-describedby="sizing-addon2" id="z_velocity">
+                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+                </div>
+            </div>
+        </div>
+
+        <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Fan Control</div>
+            <div class="panel-body">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
+                    <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
+                </div>
+            </div>
+        </div>
+
+        <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="2">
+            <div class="panel-heading"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Commands</div>
+                <div class="panel-body">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Send Command..." id="command_text">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" id="send_command">Send</button>
+                        </span>
+                    </div>
+                <p id="command_response"></p>
+            </div>
+        </div>
+
+        <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Temperature Control</div>
+            <div class="panel-body">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+                    <input type="text" class="form-control" id="extruder_temperature_input">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" id="set_extruder_temperature">Set</button>
+                        <button class="btn btn-default" id="extruder_heat_off">Off</button>
+                    </span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon2">Bed</span>
+                    <input type="text" class="form-control" id="bed_temperature_input">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" id="set_bed_temperature">Set</button>
+                        <button class="btn btn-default" id="bed_heat_off">Off</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+         
+        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Print Status</div>
+            <div class="panel-body">
+                <p id="print_progress"></p>
+                <button class="btn btn-default" id="update_print_progress">Update Progress</button>
+                <button class="btn btn-danger" id="abort_print">Abort</button>
+            </div>
+        </div>
+
+
+        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="2" data-sizey="1">
+            <div class="panel-heading">Extrusion</div>
+            <div class="panel-body">
+                <div class="input-group">
+                    <input type="text" class="form-control" value="5" id="extrude_length">
+                    <span class="input-group-addon" id="sizing-addon2">mm @</span>
+                    <input type="text" class="form-control" value="100" id="e_velocity">
+                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+              </div>
+              <div class="btn-group" role="group" aria-label="...">
+                  <button class="btn btn-default" id="extrude">Extrude</button>
+                  <button class="btn btn-default" id="retract">Retract</button>
+              </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="no_machines">
+    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
+        <p> There is currently no machine connected to this interface </p>
+        <p> If there is a machine on your network, you should start a network scan to find it </p>
+        <p> 
+            <button id="control_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
+        </p>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-explore" class="wholescreen">
+                        
+                            <div style="height:50px; width:300px;margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+
+    <h2> Find things </h2>
+
+<div class="search input-group" role="search" id="search_things">
+  <input type="search" class="form-control" placeholder="Search"/>
+  <span class="input-group-btn">
+    <button class="btn btn-default" type="button">
+      <span class="glyphicon glyphicon-search"></span>
+      <span class="sr-only">Search</span>
+    </button>
+  </span>
+</div>
+
+
+
+</div>
+
+
+                         
+                    </div>
+                
+                    <div id="gui-thumbnail" class="wholescreen">
+                        
+                            <div class="col-sm-3 col-md-2" >
+    <a href="#">
+        <div class="thumbnail" style="height:300px;">
+          <img>
+          <div class="caption" style="text-align:center">
+            <h4></h4>
+          </div>
+        </div>
+    </a>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-files" class="wholescreen">
+                        
+                            <div class="row">
+    <div class="col-md-2">
+        <table class="wholescreen">
+            <tr>
+                <td>
+                    <div id="file_tree"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="margin-top: 50px"> <button id="connect_to_dropbox" type="button" class="btn btn-primary" style="width:100%" >Connect to dropbox</button> </div> 
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-10">
+        <ol class="breadcrumb" id="file_navigation_breadcrumb"></ol> 
+        <table class="table table-hover" id="file_list"></table>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-basic_panel" class="wholescreen">
+                        
+                            <h3> Basics </h3> 
+
+<div class="panel panel-default">
+    <div class="panel-heading">Machine information</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
+            </div>    
+            <div class="col-md-6">
+                <p> IP Address <pre id="ip_address"></pre> </p>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Machine name</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-warning" id="no_machine_name">
+            <h4> No machine name </h4>
+            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
+            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
+        </div>
+        <br/>
+        <p>
+            <form class="form-horizontal" role="form" data-toggle="validator">
+              <div class="form-group">
+                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
+                <div class="col-sm-10">
+                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                        <div class="placard-popup"></div>
+                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
+                        <div class="placard-footer">
+                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
+                        </div>
+                    </div> 
+                    <div class="help-block">
+                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
+                      <p> It is recommended that you set one even if you only have one machine </p>
+                    </div>  
+                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
+                </div>
+              </div>
+            </form>
+        </p>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="gui-main" class="wholescreen">
+                        
+                            <div id="configuration_interface">
+    <div class="col-md-2">
+        <div id="machine_list">
+            <h3> Machines </h3>
+            <p> Select a machine to configure </p>
+            <p> 
+                <ul id="configuration_machine_list" class="list-group">
+                </ul>
+            </p>
+        </div>
+
+        <h3><a href="#" id="basic_panel"> Basics </a></h3>
+        
+        <h3><a href="#" id="motion_panel"> Motion </a></h3>
+
+    </div>
+    <div class="col-md-10">
+        <div class="container">
+            <div class="row" id="configuration_panel">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="no_machines">
+    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
+        <p> There is currently no machine connected to this interface </p>
+        <p> If there is a machine on your network, you should start a network scan to find it </p>
+        <p> 
+            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
+        </p>
+    </div>
+</div>
+
+
+
+
+
+                         
+                    </div>
+                
+                    <div id="gui-motion_panel" class="wholescreen">
+                        
+                            <h3> Motion </h3> 
+
+<p> This panel allows you to configure the basic parameters of motion control. </p>
+<p> The most important is probably the steps per millimeter paramaters, which allows your machine to move the exact distance you request in each axis </p>
+
+<br/>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Steps per millimeter</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-info">
+            <h4> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About </h4>
+            <p> When you control your machine, you ( or your control software ) gives it instructions to move to given positions, in millimeters </p>
+            <p> However, when your board actually controls a given axis, it does so by sending «steps» </p>
+            <p> You need to know, or calculate, the ratio of steps per millimeter, so that your machine will be capable of moving the correct distance </p>
+            <p> This calculation depends on your motors, drivers, and drive system ( you can watch <a href="https://www.youtube.com/watch?v=VIHgDiCCY0Y"> this guide on youtube </a> to learn more ) </p>
+        </div>
+        <h4> Manual settings </h4>
+        <p> If you already know your values, you can set them manually here </p>
+
+        <table class="table table-hover">
+            <tr>
+                <th> Linear actuator </th>
+                <th> </th>
+                <th class="cartesian_display"> Axis </th>
+                <th class="cartesian_display"> Direction </th>
+                <th class="linear_delta_display"> Tower </th>
+                <th> Option name </th>
+                <th> Value </th>
+            </tr>
+            <tr>
+                <td> Alpha </td>
+                <td> &alpha; </td>
+                <td class="cartesian_display"> X </td>
+                <td class="cartesian_display"> Left and right </td>
+                <th class="linear_delta_display"> Front left </th>
+                <td> <kbd> alpha_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="alpha_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="alpha_steps_per_mm" placeholder="Alpha steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_alpha_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+            </tr>
+             <tr>
+                <td> Beta </td>
+                <td> &beta; </td>
+                <td class="cartesian_display"> Y </td>
+                <td class="cartesian_display"> Forward and backward </td>
+                <th class="linear_delta_display"> Front right </th>
+                <td> <kbd> beta_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="beta_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="beta_steps_per_mm" placeholder="Beta steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_beta_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+            </tr>
+              <tr>
+                <td> Gamma </td>
+                <td> &gamma; </td>
+                <td class="cartesian_display"> Z </td>
+                <td class="cartesian_display"> Up and down </td>
+                <th class="linear_delta_display"> Back </th>
+                <td> <kbd> gamma_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="gamma_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="gamma_steps_per_mm" placeholder="Gamma steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_gamma_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+           </tr>
+       </table>
+
+        <hr/>
+        <h4> Wizards </h4> 
+        <p> These wizards help you figure out the correct values if you don't know them </p>
+        <p> If you know the properties of your mechanical system ( pitches, microstepping, reductions etc ), you can input those to find the right value :</p>
+        <p> <button type="button" class="btn btn-primary" id="start_calculator_wizard"> <span class="glyphicon glyphicon-plus" aria-hidden="true"> </span> &nbsp; Start the calculator wizard </button> </p>
+        <p> If you do not know some of the properties of your mechanical system, you can also figure the values out by measuring the current movement distances, then from them the wizard will deduce the right value : </p>
+        <p> <button type="button" class="btn btn-primary" id="start_proportional_wizard"><span class="glyphicon glyphicon-random" aria-hidden="true"> </span> &nbsp;  Start the proportional wizard </button></p>
+        <p>
+            <div class="bs-callout bs-callout-warning">
+                <h4> Accuracy </h4>
+                <p> Finding the values by measuring ( with the proportional wizard ) will only be as accurate as your measurements </p>
+                <p> It is very likely that the values you will find will not be perfectly correct, but just a good approximation </p>
+                <p> Only calculating the values, either by using the calculator wizard, or manually, will give you the exact right values </p>
+            </div> 
+        </p>
+    </div>
+</div>
 
                          
                     </div>
@@ -43283,535 +43803,6 @@ filter: gray;
 
                          
                     </div>
-                
-                    <div id="gui-basic_panel" class="wholescreen">
-                        
-                            <h3> Basics </h3> 
-
-<div class="panel panel-default">
-    <div class="panel-heading">Machine information</div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
-            </div>    
-            <div class="col-md-6">
-                <p> IP Address <pre id="ip_address"></pre> </p>
-            </div>    
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">Machine name</div>
-    <div class="panel-body">
-        <div class="bs-callout bs-callout-warning" id="no_machine_name">
-            <h4> No machine name </h4>
-            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
-            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
-        </div>
-        <br/>
-        <p>
-            <form class="form-horizontal" role="form" data-toggle="validator">
-              <div class="form-group">
-                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
-                <div class="col-sm-10">
-                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                        <div class="placard-popup"></div>
-                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
-                        <div class="placard-footer">
-                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
-                        </div>
-                    </div> 
-                    <div class="help-block">
-                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
-                      <p> It is recommended that you set one even if you only have one machine </p>
-                    </div>  
-                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
-                </div>
-              </div>
-            </form>
-        </p>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-motion_panel" class="wholescreen">
-                        
-                            <h3> Motion </h3> 
-
-<p> This panel allows you to configure the basic parameters of motion control. </p>
-<p> The most important is probably the steps per millimeter paramaters, which allows your machine to move the exact distance you request in each axis </p>
-
-<br/>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">Steps per millimeter</div>
-    <div class="panel-body">
-        <div class="bs-callout bs-callout-info">
-            <h4> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About </h4>
-            <p> When you control your machine, you ( or your control software ) gives it instructions to move to given positions, in millimeters </p>
-            <p> However, when your board actually controls a given axis, it does so by sending «steps» </p>
-            <p> You need to know, or calculate, the ratio of steps per millimeter, so that your machine will be capable of moving the correct distance </p>
-            <p> This calculation depends on your motors, drivers, and drive system ( you can watch <a href="https://www.youtube.com/watch?v=VIHgDiCCY0Y"> this guide on youtube </a> to learn more ) </p>
-        </div>
-        <h4> Manual settings </h4>
-        <p> If you already know your values, you can set them manually here </p>
-
-        <table class="table table-hover">
-            <tr>
-                <th> Linear actuator </th>
-                <th> </th>
-                <th class="cartesian_display"> Axis </th>
-                <th class="cartesian_display"> Direction </th>
-                <th class="linear_delta_display"> Tower </th>
-                <th> Option name </th>
-                <th> Value </th>
-            </tr>
-            <tr>
-                <td> Alpha </td>
-                <td> &alpha; </td>
-                <td class="cartesian_display"> X </td>
-                <td class="cartesian_display"> Left and right </td>
-                <th class="linear_delta_display"> Front left </th>
-                <td> <kbd> alpha_steps_per_mm </kbd> </td>
-                <td>
-                    <form class="form-horizontal" role="form" data-toggle="validator">
-                        <div class="form-group">
-                            <div class="placard" data-initialize="placard" id="alpha_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                                <div class="placard-popup"></div>
-                                <input type="text" class="form-control placard-field" title="Only numerical values" id="alpha_steps_per_mm" placeholder="Alpha steps per millimeter" pattern="^([_\.0-9]){1,}$">
-                                <div class="placard-footer">
-                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_alpha_steps_per_mm">Save</button>
-                                </div>
-                            </div> 
-                        </div>
-                    </form>
-                </td>
-            </tr>
-             <tr>
-                <td> Beta </td>
-                <td> &beta; </td>
-                <td class="cartesian_display"> Y </td>
-                <td class="cartesian_display"> Forward and backward </td>
-                <th class="linear_delta_display"> Front right </th>
-                <td> <kbd> beta_steps_per_mm </kbd> </td>
-                <td>
-                    <form class="form-horizontal" role="form" data-toggle="validator">
-                        <div class="form-group">
-                            <div class="placard" data-initialize="placard" id="beta_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                                <div class="placard-popup"></div>
-                                <input type="text" class="form-control placard-field" title="Only numerical values" id="beta_steps_per_mm" placeholder="Beta steps per millimeter" pattern="^([_\.0-9]){1,}$">
-                                <div class="placard-footer">
-                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_beta_steps_per_mm">Save</button>
-                                </div>
-                            </div> 
-                        </div>
-                    </form>
-                </td>
-            </tr>
-              <tr>
-                <td> Gamma </td>
-                <td> &gamma; </td>
-                <td class="cartesian_display"> Z </td>
-                <td class="cartesian_display"> Up and down </td>
-                <th class="linear_delta_display"> Back </th>
-                <td> <kbd> gamma_steps_per_mm </kbd> </td>
-                <td>
-                    <form class="form-horizontal" role="form" data-toggle="validator">
-                        <div class="form-group">
-                            <div class="placard" data-initialize="placard" id="gamma_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                                <div class="placard-popup"></div>
-                                <input type="text" class="form-control placard-field" title="Only numerical values" id="gamma_steps_per_mm" placeholder="Gamma steps per millimeter" pattern="^([_\.0-9]){1,}$">
-                                <div class="placard-footer">
-                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_gamma_steps_per_mm">Save</button>
-                                </div>
-                            </div> 
-                        </div>
-                    </form>
-                </td>
-           </tr>
-       </table>
-
-        <hr/>
-        <h4> Wizards </h4> 
-        <p> These wizards help you figure out the correct values if you don't know them </p>
-        <p> If you know the properties of your mechanical system ( pitches, microstepping, reductions etc ), you can input those to find the right value :</p>
-        <p> <button type="button" class="btn btn-primary" id="start_calculator_wizard"> <span class="glyphicon glyphicon-plus" aria-hidden="true"> </span> &nbsp; Start the calculator wizard </button> </p>
-        <p> If you do not know some of the properties of your mechanical system, you can also figure the values out by measuring the current movement distances, then from them the wizard will deduce the right value : </p>
-        <p> <button type="button" class="btn btn-primary" id="start_proportional_wizard"><span class="glyphicon glyphicon-random" aria-hidden="true"> </span> &nbsp;  Start the proportional wizard </button></p>
-        <p>
-            <div class="bs-callout bs-callout-warning">
-                <h4> Accuracy </h4>
-                <p> Finding the values by measuring ( with the proportional wizard ) will only be as accurate as your measurements </p>
-                <p> It is very likely that the values you will find will not be perfectly correct, but just a good approximation </p>
-                <p> Only calculating the values, either by using the calculator wizard, or manually, will give you the exact right values </p>
-            </div> 
-        </p>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-main" class="wholescreen">
-                        
-                            <div id="configuration_interface">
-    <div class="col-md-2">
-        <div id="machine_list">
-            <h3> Machines </h3>
-            <p> Select a machine to configure </p>
-            <p> 
-                <ul id="configuration_machine_list" class="list-group">
-                </ul>
-            </p>
-        </div>
-
-        <h3><a href="#" id="basic_panel"> Basics </a></h3>
-        
-        <h3><a href="#" id="motion_panel"> Motion </a></h3>
-
-    </div>
-    <div class="col-md-10">
-        <div class="container">
-            <div class="row" id="configuration_panel">
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="no_machines">
-    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
-        <p> There is currently no machine connected to this interface </p>
-        <p> If there is a machine on your network, you should start a network scan to find it </p>
-        <p> 
-            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
-        </p>
-    </div>
-</div>
-
-
-
-
-
-                         
-                    </div>
-                
-                    <div id="gui-files" class="wholescreen">
-                        
-                            <div class="row">
-    <div class="col-md-2">
-        <table class="wholescreen">
-            <tr>
-                <td>
-                    <div id="file_tree"></div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="margin-top: 50px"> <button id="connect_to_dropbox" type="button" class="btn btn-primary" style="width:100%" >Connect to dropbox</button> </div> 
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="col-md-10">
-        <ol class="breadcrumb" id="file_navigation_breadcrumb"></ol> 
-        <table class="table table-hover" id="file_list"></table>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-thumbnail" class="wholescreen">
-                        
-                            <div class="col-sm-3 col-md-2" >
-    <a href="#">
-        <div class="thumbnail" style="height:300px;">
-          <img>
-          <div class="caption" style="text-align:center">
-            <h4></h4>
-          </div>
-        </div>
-    </a>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-explore" class="wholescreen">
-                        
-                            <div style="height:50px; width:300px;margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-
-    <h2> Find things </h2>
-
-<div class="search input-group" role="search" id="search_things">
-  <input type="search" class="form-control" placeholder="Search"/>
-  <span class="input-group-btn">
-    <button class="btn btn-default" type="button">
-      <span class="glyphicon glyphicon-search"></span>
-      <span class="sr-only">Search</span>
-    </button>
-  </span>
-</div>
-
-
-
-</div>
-
-
-                         
-                    </div>
-                
-                    <div id="gui-control" class="wholescreen">
-                        
-                            <ul class="nav nav-tabs" role="tablist" id="control_machine_list">
-</ul>
-
-<div id="control_interface" class="wholescreen">
-
-    <div class="gridster" style="margin: 0">
-
-        <div class='panel panel-primary' data-row="1" data-col="1" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="2" data-col="1" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="3" data-col="1" data-sizex="1" data-sizey="1">
-            <div class="panel-heading">Panel</div>
-        </div>
-
-        <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Temperatures</div>
-            <div class="panel-body">
-                <p id="tempReport">temp</p>
-                
-                <div class="input-group">
-                     <span class="input-group-addon"><input type="checkbox" aria-label="..." id="auto_update_temperature"></span>
-                     <span class="input-group-addon">Auto Update</span>
-                     <span class="input-group-btn"><button type="button" class="btn btn-default" aria-expanded="false" id="update_temperature">Update</button></span>
-                </div>
-            </div>
-        </div>
-
-        <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
-            <div class="panel-heading"><span class="glyphicon glyphicon-move" aria-hidden="true"></span>Jogging Control</div>
-            <div class="panel-body">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_x">-X</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_x">+X</button>
-                </div>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_y">-Y</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_y">+Y</button>
-                </div>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_z">-Z</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_z">+Z</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="sizing-addon2">Increment</span>
-                        <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
-                        <span class="input-group-addon" id="sizing-addon2">mm</span>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">XY</span>
-                    <input type="text" class="form-control" value="3000" aria-describedby="sizing-addon2" id="xy_velocity">
-                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Z</span>
-                    <input type="text" class="form-control" value="200" aria-describedby="sizing-addon2" id="z_velocity">
-                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
-                </div>
-            </div>
-        </div>
-
-        <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Shortcuts</div>
-            <div class="panel-body">
-                <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
-                    <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
-                </div>
-            </div>
-        </div>
-
-        <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="2">
-            <div class="panel-heading"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Commands</div>
-                <div class="panel-body">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Send Command..." id="command_text">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" id="send_command">Send</button>
-                        </span>
-                    </div>
-                <p id="command_response"></p>
-            </div>
-        </div>
-
-        <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Temperature Control</div>
-            <div class="panel-body">
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Extruder</span>
-                    <input type="text" class="form-control" id="extruder_temperature_input">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="set_extruder_temperature">Set</button>
-                        <button class="btn btn-default" id="extruder_heat_off">Off</button>
-                    </span>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Bed</span>
-                    <input type="text" class="form-control" id="bed_temperature_input">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="set_bed_temperature">Set</button>
-                        <button class="btn btn-default" id="bed_heat_off">Off</button>
-                    </span>
-                </div>
-            </div>
-        </div>
-         
-        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Print Status</div>
-            <div class="panel-body">
-                <p id="print_progress"></p>
-                <button class="btn btn-default" id="update_print_progress">Update Progress</button>
-                <button class="btn btn-danger" id="abort_print">Abort</button>
-            </div>
-        </div>
-
-
-        <div class='panel panel-primary' data-row="2" data-col="6" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Extrusion</div>
-            <div class="panel-body">
-                <div class="input-group">
-                    <input type="text" class="form-control" value="5" id="extrude_length">
-                    <span class="input-group-addon" id="sizing-addon2">mm @</span>
-                    <input type="text" class="form-control" value="100" id="e_velocity">
-                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
-              </div>
-              <div class="btn-group" role="group" aria-label="...">
-                  <button class="btn btn-default" id="extrude">Extrude</button>
-                  <button class="btn btn-default" id="retract">Retract</button>
-              </div>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-<div id="no_machines">
-    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
-        <p> There is currently no machine connected to this interface </p>
-        <p> If there is a machine on your network, you should start a network scan to find it </p>
-        <p> 
-            <button id="control_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
-        </p>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-modal" class="wholescreen">
-                        
-                            <!-- Modal -->
-<div class="modal fade" id="networkdetectmodal" tabindex="-1" role="dialog" style="display:none;">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Searching for machines</h4>
-      </div>
-      <div class="modal-body">
-
-          <div id="currently_scanning"> 
-              Searching for machines on the local network<br/><br/>
-              <div id="scanning_ips" class="well" style="display: inline-block; width:100%; min-height:100px"> </div>  
-          </div>
-          <div id="ips_found">
-              Machines found<br/><br/>
-              <ul class="list-group" id="ips_found_list">
-
-              </ul>
-          </div>
-          <br/>
-          <div>
-            <div class="input-group" style="margin-bottom:5px">
-                <span class="input-group-addon">
-                    <input type="checkbox" id="hide_scan_modal">
-                </span>
-                <span class="form-control"> Hide this window on future startups </span>
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <input type="checkbox" id="scan_on_startup">
-                </span>
-                <span class="form-control"> Scan for new machines on future startups </span>
-            </div>
-          </div>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="gui-modal" class="wholescreen">
-                        
-                            <!-- Modal -->
-<div class="modal fade" id="dropboxconnectmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Connect to Dropbox</h4>
-      </div>
-      <div class="modal-body">
-          <p> 
-            <img src="http://upload.wikimedia.org/wikipedia/commons/4/47/Dropbox_logo_%28September_2013%29.svg" style="width:100%">   
-          </p>
-          <p> <a href="http://dropbox.com/">Dropbox</a> is an online file sharing service that allows you to store your files on the cloud and to synchronize them across several computers and devices. </p>
-          <p> If you currently have a Dropbox account, here you can connect this interface to Dropbox. This will allow you to access files stored there directly from this interface, for retrieval, modification and fabrication. </p>
-          <p> Please click on the botton bellow to connect this interface to Dropbox. You will be taken to the Dropbox website, which will ask you if this interface is allowed to access your accont. After you confirm this, you will be taken back to this interface. </p>
-
-          <p>
-          <div class="bs-callout bs-callout-warning">
-              <h4>Popups and security</h4>
-              Your browser may prevent this page from opening a window to Dropbox. If that's the case, make sure you follow the correct procedure to allow popups opening for this page, then click on the button again.
-          </div>
-          </p>
-
-          <p>
-            <button id="go_to_dropbox_for_auth" type="button" class="btn btn-primary" style="width:100%" >Go to Dropbox now</button>
-          </p>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-</div>
-
-
-
-                         
-                    </div>
                  
             
                 
@@ -43837,9 +43828,7 @@ filter: gray;
             <button type="submit" class="btn btn-standard dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                 <li role="presentation"><a role="menuitem" id="scan_the_network" tabindex="-1" > <span class="glyphicon glyphicon-zoom-in"></span> Scan for new machines</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
                 <li role="presentation" class="divider"></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
                 <li role="presentation"><a role="menuitem" id="open_machine_configuration" tabindex="-1" > <span class="glyphicon glyphicon-cog"></span> Machine configuration</a></li>
             </ul>
         </div>
@@ -43958,6 +43947,9 @@ filter: gray;
                 </div>
                 <div>
                     <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
+                    <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
+                </div>
+                <div>
                     <div class="input-group">
                         <span class="input-group-addon" id="sizing-addon2">Increment</span>
                         <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
@@ -43978,9 +43970,8 @@ filter: gray;
         </div>
 
         <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Shortcuts</div>
+            <div class="panel-heading">Fan Control</div>
             <div class="panel-body">
-                <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
                     <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
@@ -44069,22 +44060,6 @@ filter: gray;
                  
             
                 
-                    <div id="explorescreen-thumbnail" class="wholescreen">
-                        
-                            <div class="col-sm-3 col-md-2" >
-    <a href="#">
-        <div class="thumbnail" style="height:300px;">
-          <img>
-          <div class="caption" style="text-align:center">
-            <h4></h4>
-          </div>
-        </div>
-    </a>
-</div>
-
-                         
-                    </div>
-                
                     <div id="explorescreen-explore" class="wholescreen">
                         
                             <div style="height:50px; width:300px;margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
@@ -44105,6 +44080,22 @@ filter: gray;
 
 </div>
 
+
+                         
+                    </div>
+                
+                    <div id="explorescreen-thumbnail" class="wholescreen">
+                        
+                            <div class="col-sm-3 col-md-2" >
+    <a href="#">
+        <div class="thumbnail" style="height:300px;">
+          <img>
+          <div class="caption" style="text-align:center">
+            <h4></h4>
+          </div>
+        </div>
+    </a>
+</div>
 
                          
                     </div>
@@ -44138,6 +44129,223 @@ filter: gray;
                     </div>
                  
             
+                
+                    <div id="machineconfigurationscreen-basic_panel" class="wholescreen">
+                        
+                            <h3> Basics </h3> 
+
+<div class="panel panel-default">
+    <div class="panel-heading">Machine information</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
+            </div>    
+            <div class="col-md-6">
+                <p> IP Address <pre id="ip_address"></pre> </p>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Machine name</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-warning" id="no_machine_name">
+            <h4> No machine name </h4>
+            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
+            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
+        </div>
+        <br/>
+        <p>
+            <form class="form-horizontal" role="form" data-toggle="validator">
+              <div class="form-group">
+                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
+                <div class="col-sm-10">
+                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                        <div class="placard-popup"></div>
+                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
+                        <div class="placard-footer">
+                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
+                        </div>
+                    </div> 
+                    <div class="help-block">
+                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
+                      <p> It is recommended that you set one even if you only have one machine </p>
+                    </div>  
+                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
+                </div>
+              </div>
+            </form>
+        </p>
+    </div>
+</div>
+
+                         
+                    </div>
+                
+                    <div id="machineconfigurationscreen-main" class="wholescreen">
+                        
+                            <div id="configuration_interface">
+    <div class="col-md-2">
+        <div id="machine_list">
+            <h3> Machines </h3>
+            <p> Select a machine to configure </p>
+            <p> 
+                <ul id="configuration_machine_list" class="list-group">
+                </ul>
+            </p>
+        </div>
+
+        <h3><a href="#" id="basic_panel"> Basics </a></h3>
+        
+        <h3><a href="#" id="motion_panel"> Motion </a></h3>
+
+    </div>
+    <div class="col-md-10">
+        <div class="container">
+            <div class="row" id="configuration_panel">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="no_machines">
+    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
+        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
+        <p> There is currently no machine connected to this interface </p>
+        <p> If there is a machine on your network, you should start a network scan to find it </p>
+        <p> 
+            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
+        </p>
+    </div>
+</div>
+
+
+
+
+
+                         
+                    </div>
+                
+                    <div id="machineconfigurationscreen-motion_panel" class="wholescreen">
+                        
+                            <h3> Motion </h3> 
+
+<p> This panel allows you to configure the basic parameters of motion control. </p>
+<p> The most important is probably the steps per millimeter paramaters, which allows your machine to move the exact distance you request in each axis </p>
+
+<br/>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Steps per millimeter</div>
+    <div class="panel-body">
+        <div class="bs-callout bs-callout-info">
+            <h4> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About </h4>
+            <p> When you control your machine, you ( or your control software ) gives it instructions to move to given positions, in millimeters </p>
+            <p> However, when your board actually controls a given axis, it does so by sending «steps» </p>
+            <p> You need to know, or calculate, the ratio of steps per millimeter, so that your machine will be capable of moving the correct distance </p>
+            <p> This calculation depends on your motors, drivers, and drive system ( you can watch <a href="https://www.youtube.com/watch?v=VIHgDiCCY0Y"> this guide on youtube </a> to learn more ) </p>
+        </div>
+        <h4> Manual settings </h4>
+        <p> If you already know your values, you can set them manually here </p>
+
+        <table class="table table-hover">
+            <tr>
+                <th> Linear actuator </th>
+                <th> </th>
+                <th class="cartesian_display"> Axis </th>
+                <th class="cartesian_display"> Direction </th>
+                <th class="linear_delta_display"> Tower </th>
+                <th> Option name </th>
+                <th> Value </th>
+            </tr>
+            <tr>
+                <td> Alpha </td>
+                <td> &alpha; </td>
+                <td class="cartesian_display"> X </td>
+                <td class="cartesian_display"> Left and right </td>
+                <th class="linear_delta_display"> Front left </th>
+                <td> <kbd> alpha_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="alpha_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="alpha_steps_per_mm" placeholder="Alpha steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_alpha_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+            </tr>
+             <tr>
+                <td> Beta </td>
+                <td> &beta; </td>
+                <td class="cartesian_display"> Y </td>
+                <td class="cartesian_display"> Forward and backward </td>
+                <th class="linear_delta_display"> Front right </th>
+                <td> <kbd> beta_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="beta_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="beta_steps_per_mm" placeholder="Beta steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_beta_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+            </tr>
+              <tr>
+                <td> Gamma </td>
+                <td> &gamma; </td>
+                <td class="cartesian_display"> Z </td>
+                <td class="cartesian_display"> Up and down </td>
+                <th class="linear_delta_display"> Back </th>
+                <td> <kbd> gamma_steps_per_mm </kbd> </td>
+                <td>
+                    <form class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="form-group">
+                            <div class="placard" data-initialize="placard" id="gamma_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
+                                <div class="placard-popup"></div>
+                                <input type="text" class="form-control placard-field" title="Only numerical values" id="gamma_steps_per_mm" placeholder="Gamma steps per millimeter" pattern="^([_\.0-9]){1,}$">
+                                <div class="placard-footer">
+                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_gamma_steps_per_mm">Save</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+                </td>
+           </tr>
+       </table>
+
+        <hr/>
+        <h4> Wizards </h4> 
+        <p> These wizards help you figure out the correct values if you don't know them </p>
+        <p> If you know the properties of your mechanical system ( pitches, microstepping, reductions etc ), you can input those to find the right value :</p>
+        <p> <button type="button" class="btn btn-primary" id="start_calculator_wizard"> <span class="glyphicon glyphicon-plus" aria-hidden="true"> </span> &nbsp; Start the calculator wizard </button> </p>
+        <p> If you do not know some of the properties of your mechanical system, you can also figure the values out by measuring the current movement distances, then from them the wizard will deduce the right value : </p>
+        <p> <button type="button" class="btn btn-primary" id="start_proportional_wizard"><span class="glyphicon glyphicon-random" aria-hidden="true"> </span> &nbsp;  Start the proportional wizard </button></p>
+        <p>
+            <div class="bs-callout bs-callout-warning">
+                <h4> Accuracy </h4>
+                <p> Finding the values by measuring ( with the proportional wizard ) will only be as accurate as your measurements </p>
+                <p> It is very likely that the values you will find will not be perfectly correct, but just a good approximation </p>
+                <p> Only calculating the values, either by using the calculator wizard, or manually, will give you the exact right values </p>
+            </div> 
+        </p>
+    </div>
+</div>
+
+                         
+                    </div>
                 
                     <div id="machineconfigurationscreen-wizard_calculator" class="wholescreen">
                         
@@ -44433,223 +44641,6 @@ filter: gray;
         </div>
     </div>
 </div>
-
-
-
-                         
-                    </div>
-                
-                    <div id="machineconfigurationscreen-basic_panel" class="wholescreen">
-                        
-                            <h3> Basics </h3> 
-
-<div class="panel panel-default">
-    <div class="panel-heading">Machine information</div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p> Firmware version <pre id="firmware_version" style="white-space:pre-wrap;"></pre> </p>
-            </div>    
-            <div class="col-md-6">
-                <p> IP Address <pre id="ip_address"></pre> </p>
-            </div>    
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">Machine name</div>
-    <div class="panel-body">
-        <div class="bs-callout bs-callout-warning" id="no_machine_name">
-            <h4> No machine name </h4>
-            <p> This machine does not have a name. It is usually a good idea to name your machine, it helps this interface in keeping track of it, and helps you discerning machines if you have several of them. </p>
-            <p> If you do not give this machine a name, it will be identified by it's IP address in this interface </p>
-        </div>
-        <br/>
-        <p>
-            <form class="form-horizontal" role="form" data-toggle="validator">
-              <div class="form-group">
-                <label for="machine_name" class="col-sm-2 control-label">Set a machine name</label>
-                <div class="col-sm-10">
-                    <div class="placard" data-initialize="placard" id="machine_name_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                        <div class="placard-popup"></div>
-                        <input type="text" class="form-control placard-field" title="Only alphanumerical characters and the underscore character ( this also means no space )" id="machine_name" placeholder="Enter machine name" pattern="^([_A-z0-9]){3,}$">
-                        <div class="placard-footer">
-                            <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_machine_name">Save</button>
-                        </div>
-                    </div> 
-                    <div class="help-block">
-                      <p> The machine name is used to recognize machines in networks where multiple machines are present </p>
-                      <p> It is recommended that you set one even if you only have one machine </p>
-                    </div>  
-                    <div class="help-block with-errors"> Only letters and numbers and the underscore character are valid in machine names </div>
-                </div>
-              </div>
-            </form>
-        </p>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="machineconfigurationscreen-motion_panel" class="wholescreen">
-                        
-                            <h3> Motion </h3> 
-
-<p> This panel allows you to configure the basic parameters of motion control. </p>
-<p> The most important is probably the steps per millimeter paramaters, which allows your machine to move the exact distance you request in each axis </p>
-
-<br/>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">Steps per millimeter</div>
-    <div class="panel-body">
-        <div class="bs-callout bs-callout-info">
-            <h4> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About </h4>
-            <p> When you control your machine, you ( or your control software ) gives it instructions to move to given positions, in millimeters </p>
-            <p> However, when your board actually controls a given axis, it does so by sending «steps» </p>
-            <p> You need to know, or calculate, the ratio of steps per millimeter, so that your machine will be capable of moving the correct distance </p>
-            <p> This calculation depends on your motors, drivers, and drive system ( you can watch <a href="https://www.youtube.com/watch?v=VIHgDiCCY0Y"> this guide on youtube </a> to learn more ) </p>
-        </div>
-        <h4> Manual settings </h4>
-        <p> If you already know your values, you can set them manually here </p>
-
-        <table class="table table-hover">
-            <tr>
-                <th> Linear actuator </th>
-                <th> </th>
-                <th class="cartesian_display"> Axis </th>
-                <th class="cartesian_display"> Direction </th>
-                <th class="linear_delta_display"> Tower </th>
-                <th> Option name </th>
-                <th> Value </th>
-            </tr>
-            <tr>
-                <td> Alpha </td>
-                <td> &alpha; </td>
-                <td class="cartesian_display"> X </td>
-                <td class="cartesian_display"> Left and right </td>
-                <th class="linear_delta_display"> Front left </th>
-                <td> <kbd> alpha_steps_per_mm </kbd> </td>
-                <td>
-                    <form class="form-horizontal" role="form" data-toggle="validator">
-                        <div class="form-group">
-                            <div class="placard" data-initialize="placard" id="alpha_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                                <div class="placard-popup"></div>
-                                <input type="text" class="form-control placard-field" title="Only numerical values" id="alpha_steps_per_mm" placeholder="Alpha steps per millimeter" pattern="^([_\.0-9]){1,}$">
-                                <div class="placard-footer">
-                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_alpha_steps_per_mm">Save</button>
-                                </div>
-                            </div> 
-                        </div>
-                    </form>
-                </td>
-            </tr>
-             <tr>
-                <td> Beta </td>
-                <td> &beta; </td>
-                <td class="cartesian_display"> Y </td>
-                <td class="cartesian_display"> Forward and backward </td>
-                <th class="linear_delta_display"> Front right </th>
-                <td> <kbd> beta_steps_per_mm </kbd> </td>
-                <td>
-                    <form class="form-horizontal" role="form" data-toggle="validator">
-                        <div class="form-group">
-                            <div class="placard" data-initialize="placard" id="beta_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                                <div class="placard-popup"></div>
-                                <input type="text" class="form-control placard-field" title="Only numerical values" id="beta_steps_per_mm" placeholder="Beta steps per millimeter" pattern="^([_\.0-9]){1,}$">
-                                <div class="placard-footer">
-                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_beta_steps_per_mm">Save</button>
-                                </div>
-                            </div> 
-                        </div>
-                    </form>
-                </td>
-            </tr>
-              <tr>
-                <td> Gamma </td>
-                <td> &gamma; </td>
-                <td class="cartesian_display"> Z </td>
-                <td class="cartesian_display"> Up and down </td>
-                <th class="linear_delta_display"> Back </th>
-                <td> <kbd> gamma_steps_per_mm </kbd> </td>
-                <td>
-                    <form class="form-horizontal" role="form" data-toggle="validator">
-                        <div class="form-group">
-                            <div class="placard" data-initialize="placard" id="gamma_steps_per_mm_placard" data-toggle="tooltip" data-trigger="manual" title="Saved">
-                                <div class="placard-popup"></div>
-                                <input type="text" class="form-control placard-field" title="Only numerical values" id="gamma_steps_per_mm" placeholder="Gamma steps per millimeter" pattern="^([_\.0-9]){1,}$">
-                                <div class="placard-footer">
-                                    <button class="btn btn-primary btn-xs placard-accept" type="button" id="save_gamma_steps_per_mm">Save</button>
-                                </div>
-                            </div> 
-                        </div>
-                    </form>
-                </td>
-           </tr>
-       </table>
-
-        <hr/>
-        <h4> Wizards </h4> 
-        <p> These wizards help you figure out the correct values if you don't know them </p>
-        <p> If you know the properties of your mechanical system ( pitches, microstepping, reductions etc ), you can input those to find the right value :</p>
-        <p> <button type="button" class="btn btn-primary" id="start_calculator_wizard"> <span class="glyphicon glyphicon-plus" aria-hidden="true"> </span> &nbsp; Start the calculator wizard </button> </p>
-        <p> If you do not know some of the properties of your mechanical system, you can also figure the values out by measuring the current movement distances, then from them the wizard will deduce the right value : </p>
-        <p> <button type="button" class="btn btn-primary" id="start_proportional_wizard"><span class="glyphicon glyphicon-random" aria-hidden="true"> </span> &nbsp;  Start the proportional wizard </button></p>
-        <p>
-            <div class="bs-callout bs-callout-warning">
-                <h4> Accuracy </h4>
-                <p> Finding the values by measuring ( with the proportional wizard ) will only be as accurate as your measurements </p>
-                <p> It is very likely that the values you will find will not be perfectly correct, but just a good approximation </p>
-                <p> Only calculating the values, either by using the calculator wizard, or manually, will give you the exact right values </p>
-            </div> 
-        </p>
-    </div>
-</div>
-
-                         
-                    </div>
-                
-                    <div id="machineconfigurationscreen-main" class="wholescreen">
-                        
-                            <div id="configuration_interface">
-    <div class="col-md-2">
-        <div id="machine_list">
-            <h3> Machines </h3>
-            <p> Select a machine to configure </p>
-            <p> 
-                <ul id="configuration_machine_list" class="list-group">
-                </ul>
-            </p>
-        </div>
-
-        <h3><a href="#" id="basic_panel"> Basics </a></h3>
-        
-        <h3><a href="#" id="motion_panel"> Motion </a></h3>
-
-    </div>
-    <div class="col-md-10">
-        <div class="container">
-            <div class="row" id="configuration_panel">
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="no_machines">
-    <div class="bs-callout bs-callout-warning" style="height:180px; width:600px; margin: auto;position: absolute;top: 0; left: 0; bottom: 0; right: 0; ">
-        <h4> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No machine </h4>
-        <p> There is currently no machine connected to this interface </p>
-        <p> If there is a machine on your network, you should start a network scan to find it </p>
-        <p> 
-            <button id="configuration_start_network_scan" type="button" class="btn btn-primary">Start network scan</button>
-        </p>
-    </div>
-</div>
-
-
 
 
 
