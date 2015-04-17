@@ -87,20 +87,6 @@ var Controlscreen = Module.extend({
         // Display this machine's interface
         this.display_control_interface( machine );
         
-        // Get the automatic update defaults
-        this.get_update_defaults();
-        
-        // Get the machine's temperature
-        this.update_temperature();
-        
-        // Add a timer for updating temperature automatically
-        window.setInterval(this.auto_update, 1000); // run auto_update every second
-
-        // Add a listener for the update temperature button
-        $("#update_temperature").click(function(){
-            kernel.call_event("update_temperature");
-        });
-        
         // Add a listener for the home all axes button
         $("#home_all").click(function(){
             kernel.call_event("send_gcode_silent", "G28");
@@ -251,21 +237,6 @@ var Controlscreen = Module.extend({
         });
     },
     
-    // Update the extruder and bed temperature
-    update_temperature: function(){
-        // Get the machine's IP address
-        this.ip = this.selected_machine.ip;
-        
-        // Send M105 to get the machine's temperature
-        $.ajax({ 
-          url: "http://" + this.ip + '/command',
-          caller: this,
-          type: "POST",
-          data: "M105\n",
-          async: true,
-      }).done(function(result){console.log("success! : "+result);$("#tempReport").text(result);}).fail(function(){console.log("Failed to send gcode.");});
-    },
-    
     // Update the print progress
     update_print_progress: function(){
         // Get the machine's IP address
@@ -319,27 +290,12 @@ var Controlscreen = Module.extend({
     update_console: function( response ){
         $("#command_response").text( response );
     },
-  
-    // Retrieve user's auto update preferences
-    get_update_defaults: function(){
-        var auto_update_temperature = $.localStorage.getItem("auto_update_temperature");
-        if(auto_update_temperature == "true"){
-            $("#auto_update_temperature").prop("checked", true);
-        }else {
-            $("#auto_update_temperature").prop("checked", false);
-            $.localStorage.setItem("auto_update_temp", "false");
-        }
-    },
-  
-    // Update machine's temperature automatically
-    // Save auto update preferences so that they will appear on reload
-    auto_update: function(){
-        if($("#auto_update_temperature").prop("checked")){
-            $.localStorage.setItem("auto_update_temperature", "true");
-            kernel.call_event("update_temperature");
-        }else {
-            $.localStorage.setItem("auto_update_temperature", "false");
-        }
+    
+    on_value_update: function(result){
+        console.log(result);
+
+        // Set the Temperature
+        $("#tempReport").text(result.temperature.T.temperature+"°C");
     }
 
 });
