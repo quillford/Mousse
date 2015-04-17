@@ -197,11 +197,6 @@ var Controlscreen = Module.extend({
                 "label" : "No"
             }]);
         });
-        
-        // Add a listener for the update print progress button
-        $("#update_print_progress").click(function(){
-            kernel.call_event("update_print_progress");
-        });
     },
 
     // Display the full machine interface
@@ -235,21 +230,6 @@ var Controlscreen = Module.extend({
                 };
               }
         });
-    },
-    
-    // Update the print progress
-    update_print_progress: function(){
-        // Get the machine's IP address
-        this.ip = this.selected_machine.ip;
-        
-        // Send "progress" to get the machine's temperature
-        $.ajax({ 
-          url: "http://" + this.ip + '/command',
-          caller: this,
-          type: "POST",
-          data: "progress\n",
-          async: true,
-      }).done(function(result){console.log("success! : "+result);$("#print_progress").text(result);}).fail(function(){console.log("Failed to send gcode.");});
     },
     
     // Send gcode to the machine
@@ -291,11 +271,20 @@ var Controlscreen = Module.extend({
         $("#command_response").text( response );
     },
     
+    // Update values such as temperature and progress
     on_value_update: function(result){
         console.log(result);
 
         // Set the Temperature
         $("#tempReport").text(result.temperature.T.temperature+"°C");
+        
+        // Set print_progress
+        if (result.progress.playing){
+            $("#print_progress").text(result.progress.string);
+        }else {
+            $("#print_progress").text("No print in progress");
+        }
+        
     }
 
 });
