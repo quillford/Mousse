@@ -194,7 +194,7 @@ var Controlscreen = Module.extend({
                 }
             },{
                 "class" : "btn-default",
-                "label" : "No"
+                "label" : "Cancel"
             }]);
         });
     },
