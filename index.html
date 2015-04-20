@@ -10430,6 +10430,31 @@ var Machinefilesystem = new Class({
             
                 
                 
+                   <script type="text/javascript"> // Creates new consolecontrol objects and attaches them to the machine
+var Consolewidget = Module.extend({
+
+    on_config_parsed: function( machine ){
+        // This object retrieves, stores and allows access to configuration for a specific machine
+        this.parent_machine = machine;
+    },
+
+    on_populate_control_screen: function(){
+        this.asset("console").find(".panel").appendTo("#widget_interface");
+        
+        // Get the command the user requested we send
+        var command_text = $("#command_text").val();
+        // Add a listener for the send_command button
+        $("#send_command").click(function(command_text){ kernel.call_event("on_send_command", $("#command_text").val()); });
+    }
+    
+});
+
+
+
+ </script> 
+            
+                
+                
                    <script type="text/javascript"> var Dropboxclient = Module.extend({
    
     on_module_loaded: function(){
@@ -29488,6 +29513,37 @@ var Temperaturecontrol = Module.extend({
  </script> 
             
                 
+                
+                   <script type="text/javascript"> // Creates new consolecontrol objects and attaches them to the machine
+var Console_widget = Module.extend({
+
+    // The configuration was read from the machine
+    on_config_parsed: function( machine ){
+        // We do not do anything before the configuration is parsed
+        this.parent_machine = machine;
+    },
+
+    on_send_command: function( command ){
+        console.log("sending: " + command);
+        
+        this.parent_machine.interface.send_command({
+            command: command + "\n",
+            caller: this,
+            done: this.on_received_response,
+        });
+    },
+    
+    on_received_response: function( request, answer ){
+        $("#command_response").text(answer);
+    }
+    
+});
+
+
+
+ </script> 
+            
+                
                    <style> /*! gridster.js - v0.5.6 - 2014-09-25
 * http://gridster.net/
 * Copyright (c) 2014 ducksboard; Licensed MIT */
@@ -33733,12 +33789,12 @@ var Temperaturecontrol = Module.extend({
             kernel.call_event("send_gcode_silent", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
         });
         
-        // Add a listener for the send command button
-        $("#send_command").click(function(){
-            var command = $("#command_text").val();
-            kernel.call_event("send_gcode", {command: command, send_response: true});
-            $("#command_response").empty();
-        });
+        // // Add a listener for the send command button
+        // $("#send_command").click(function(){
+        //     var command = $("#command_text").val();
+        //     kernel.call_event("send_gcode", {command: command, send_response: true});
+        //     $("#command_response").empty();
+        // });
         
         // Add a listener for the motors off button
         $("#motors_off").click(function(){
@@ -33804,6 +33860,10 @@ var Temperaturecontrol = Module.extend({
     // Display the full machine interface
     display_control_interface: function( machine ){
         console.log("test");
+        
+        // Call the event to get widgets for controlling the machine
+        kernel.call_event("on_populate_control_screen");
+        
         $(".gridster").gridster({
             widget_margins: [10, 10],
             widget_base_dimensions: [140, 140],
@@ -33814,7 +33874,7 @@ var Temperaturecontrol = Module.extend({
                 stop: function(event, ui) {    
                  var positions = JSON.stringify(this.serialize());
                  localStorage.setItem("widget_positions", positions);
-                 console.log("DRAGGED");
+                 console.log("Dragged");
                  }
             },
             
@@ -42714,6 +42774,11 @@ filter: gray;
             
                 
                 
+                var consolewidget = new Consolewidget();
+                kernel.add_module( "consolewidget", consolewidget );
+            
+                
+                
                 var dropboxclient = new Dropboxclient();
                 kernel.add_module( "dropboxclient", dropboxclient );
             
@@ -42736,6 +42801,11 @@ filter: gray;
                 
                 var temperaturecontrol = new Temperaturecontrol();
                 kernel.add_module( "temperaturecontrol", temperaturecontrol );
+            
+                
+                
+                var console_widget = new Console_widget();
+                kernel.add_module( "console_widget", console_widget );
             
                 
                 
@@ -42860,6 +42930,25 @@ filter: gray;
             
                  
             
+                 
+            
+                
+                    <div id="consolewidget-console" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-sizex="2" data-sizey="2">
+    <div class="panel-heading"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Commands</div>
+        <div class="panel-body">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Send Command..." id="command_text">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" id="send_command">Send</button>
+                </span>
+            </div>
+        <p id="command_response"></p>
+    </div>
+</div>
+                         
+                    </div>
                  
             
                  
@@ -43508,7 +43597,7 @@ filter: gray;
 
 <div id="control_interface" class="wholescreen">
 
-    <div class="gridster" style="margin: 0">
+    <div class="gridster" style="margin: 0" id="widget_interface">
 
         <div class='panel panel-primary' data-row="1" data-col="1" data-sizex="1" data-sizey="1">
             <div class="panel-heading">Panel</div>
@@ -43581,19 +43670,6 @@ filter: gray;
             </div>
         </div>
 
-        <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="2">
-            <div class="panel-heading"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Commands</div>
-                <div class="panel-body">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Send Command..." id="command_text">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" id="send_command">Send</button>
-                        </span>
-                    </div>
-                <p id="command_response"></p>
-            </div>
-        </div>
-
         <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Temperature Control</div>
             <div class="panel-body">
@@ -43656,6 +43732,23 @@ filter: gray;
     </div>
 </div>
 
+                         
+                    </div>
+                
+                    <div id="gui-console" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-sizex="2" data-sizey="2">
+    <div class="panel-heading"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Commands</div>
+        <div class="panel-body">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Send Command..." id="command_text">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" id="send_command">Send</button>
+                </span>
+            </div>
+        <p id="command_response"></p>
+    </div>
+</div>
                          
                     </div>
                 
@@ -43830,6 +43923,8 @@ filter: gray;
             
                  
             
+                 
+            
                 
                     <div id="controlscreen-control" class="wholescreen">
                         
@@ -43838,7 +43933,7 @@ filter: gray;
 
 <div id="control_interface" class="wholescreen">
 
-    <div class="gridster" style="margin: 0">
+    <div class="gridster" style="margin: 0" id="widget_interface">
 
         <div class='panel panel-primary' data-row="1" data-col="1" data-sizex="1" data-sizey="1">
             <div class="panel-heading">Panel</div>
@@ -43911,19 +44006,6 @@ filter: gray;
             </div>
         </div>
 
-        <div class='panel panel-primary' data-row="2" data-col="4" data-sizex="2" data-sizey="2">
-            <div class="panel-heading"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Commands</div>
-                <div class="panel-body">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Send Command..." id="command_text">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" id="send_command">Send</button>
-                        </span>
-                    </div>
-                <p id="command_response"></p>
-            </div>
-        </div>
-
         <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Temperature Control</div>
             <div class="panel-body">
@@ -43986,6 +44068,23 @@ filter: gray;
     </div>
 </div>
 
+                         
+                    </div>
+                
+                    <div id="controlscreen-console" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-sizex="2" data-sizey="2">
+    <div class="panel-heading"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Commands</div>
+        <div class="panel-body">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Send Command..." id="command_text">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" id="send_command">Send</button>
+                </span>
+            </div>
+        <p id="command_response"></p>
+    </div>
+</div>
                          
                     </div>
                  

@@ -131,12 +131,12 @@ var Controlscreen = Module.extend({
             kernel.call_event("send_gcode_silent", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
         });
         
-        // Add a listener for the send command button
-        $("#send_command").click(function(){
-            var command = $("#command_text").val();
-            kernel.call_event("send_gcode", {command: command, send_response: true});
-            $("#command_response").empty();
-        });
+        // // Add a listener for the send command button
+        // $("#send_command").click(function(){
+        //     var command = $("#command_text").val();
+        //     kernel.call_event("send_gcode", {command: command, send_response: true});
+        //     $("#command_response").empty();
+        // });
         
         // Add a listener for the motors off button
         $("#motors_off").click(function(){
@@ -202,6 +202,10 @@ var Controlscreen = Module.extend({
     // Display the full machine interface
     display_control_interface: function( machine ){
         console.log("test");
+        
+        // Call the event to get widgets for controlling the machine
+        kernel.call_event("on_populate_control_screen");
+        
         $(".gridster").gridster({
             widget_margins: [10, 10],
             widget_base_dimensions: [140, 140],
@@ -212,7 +216,7 @@ var Controlscreen = Module.extend({
                 stop: function(event, ui) {    
                  var positions = JSON.stringify(this.serialize());
                  localStorage.setItem("widget_positions", positions);
-                 console.log("DRAGGED");
+                 console.log("Dragged");
                  }
             },
             
