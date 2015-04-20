@@ -10444,7 +10444,21 @@ var Consolewidget = Module.extend({
         // Get the command the user requested we send
         var command_text = $("#command_text").val();
         // Add a listener for the send_command button
-        $("#send_command").click(function(command_text){ kernel.call_event("on_send_command", $("#command_text").val()); });
+        $("#send_command").click(function(command_text){ kernel.call_event("on_send_console_command", $("#command_text").val()); });
+    },
+    
+    on_send_console_command: function( command ){
+        console.log("sending: " + command);
+        
+        this.parent_machine.interface.send_command({
+            command: command + "\n",
+            caller: this,
+            done: this.on_received_response,
+        });
+    },
+    
+    on_received_response: function( request, answer ){
+        $("#command_response").text(answer);
     }
     
 });
@@ -29513,37 +29527,6 @@ var Temperaturecontrol = Module.extend({
  </script> 
             
                 
-                
-                   <script type="text/javascript"> // Creates new consolecontrol objects and attaches them to the machine
-var Console_widget = Module.extend({
-
-    // The configuration was read from the machine
-    on_config_parsed: function( machine ){
-        // We do not do anything before the configuration is parsed
-        this.parent_machine = machine;
-    },
-
-    on_send_command: function( command ){
-        console.log("sending: " + command);
-        
-        this.parent_machine.interface.send_command({
-            command: command + "\n",
-            caller: this,
-            done: this.on_received_response,
-        });
-    },
-    
-    on_received_response: function( request, answer ){
-        $("#command_response").text(answer);
-    }
-    
-});
-
-
-
- </script> 
-            
-                
                    <style> /*! gridster.js - v0.5.6 - 2014-09-25
 * http://gridster.net/
 * Copyright (c) 2014 ducksboard; Licensed MIT */
@@ -42804,11 +42787,6 @@ filter: gray;
             
                 
                 
-                var console_widget = new Console_widget();
-                kernel.add_module( "console_widget", console_widget );
-            
-                
-                
                 var controlscreen = new Controlscreen();
                 kernel.add_module( "controlscreen", controlscreen );
             
@@ -43919,8 +43897,6 @@ filter: gray;
 
                          
                     </div>
-                 
-            
                  
             
                  

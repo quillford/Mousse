@@ -12,7 +12,21 @@ var Consolewidget = Module.extend({
         // Get the command the user requested we send
         var command_text = $("#command_text").val();
         // Add a listener for the send_command button
-        $("#send_command").click(function(command_text){ kernel.call_event("on_send_command", $("#command_text").val()); });
+        $("#send_command").click(function(command_text){ kernel.call_event("on_send_console_command", $("#command_text").val()); });
+    },
+    
+    on_send_console_command: function( command ){
+        console.log("sending: " + command);
+        
+        this.parent_machine.interface.send_command({
+            command: command + "\n",
+            caller: this,
+            done: this.on_received_response,
+        });
+    },
+    
+    on_received_response: function( request, answer ){
+        $("#command_response").text(answer);
     }
     
 });
