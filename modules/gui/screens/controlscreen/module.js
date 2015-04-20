@@ -10,6 +10,9 @@ var Controlscreen = Module.extend({
         // Append the asset to the main frame
         this.asset("control").appendTo("#main");
 
+        // Call the event to get widgets for controlling the machine
+        kernel.call_event("on_populate_control_screen");
+
         // Configure machine tabs
         this.add_machine_tabs();
     },
@@ -131,13 +134,6 @@ var Controlscreen = Module.extend({
             kernel.call_event("send_gcode_silent", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
         });
         
-        // // Add a listener for the send command button
-        // $("#send_command").click(function(){
-        //     var command = $("#command_text").val();
-        //     kernel.call_event("send_gcode", {command: command, send_response: true});
-        //     $("#command_response").empty();
-        // });
-        
         // Add a listener for the motors off button
         $("#motors_off").click(function(){
             kernel.call_event("send_gcode_silent", "M18");
@@ -202,9 +198,6 @@ var Controlscreen = Module.extend({
     // Display the full machine interface
     display_control_interface: function( machine ){
         console.log("test");
-        
-        // Call the event to get widgets for controlling the machine
-        kernel.call_event("on_populate_control_screen");
         
         $(".gridster").gridster({
             widget_margins: [10, 10],
