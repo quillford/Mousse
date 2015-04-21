@@ -12,12 +12,12 @@ var Fancontrolwidget = Module.extend({
         
         // Add a listener for the fans on button
         $("#fans_on").click(function(){
-            kernel.call_event("send_gcode_silent", "M106");
+            kernel.call_event("on_send_command", "M106");
         });
         
         // Add a listener for the fans off button
         $("#fans_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M107");
+            kernel.call_event("on_send_command", "M107");
         });
     }
     

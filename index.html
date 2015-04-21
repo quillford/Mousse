@@ -10326,7 +10326,7 @@ var Printstatuswidget = Module.extend({
                 "label" : "Abort",
                 "class" : "btn-danger",
                 "callback": function() {
-                    kernel.call_event("send_gcode_silent", "abort");
+                    kernel.call_event("on_send_command", "abort");
                 }
             },{
                 "class" : "btn-default",
@@ -10335,7 +10335,7 @@ var Printstatuswidget = Module.extend({
         });
     },
     
-    // Update values such as temperature and progress
+    // Update the print progress when we are told
     on_value_update: function(result){
         // Set print_progress
         if (result.progress.playing){
@@ -10383,22 +10383,22 @@ var Temperaturecontrolwidget = Module.extend({
         
         // Add a listener for the set extruder temperature button
         $("#set_extruder_temperature").click(function(){
-            kernel.call_event("send_gcode_silent", "M104 S"+$("#extruder_temperature_input").val());
+            kernel.call_event("on_send_command", "M104 S"+$("#extruder_temperature_input").val());
         });
         
         // Add a listener for the set bed temperature button
         $("#set_bed_temperature").click(function(){
-            kernel.call_event("send_gcode_silent", "M140 S"+$("#bed_temperature_input").val());
+            kernel.call_event("on_send_command", "M140 S"+$("#bed_temperature_input").val());
         });
         
         // Add a listener for the set extruder temperature button
         $("#extruder_heat_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M104 S0");
+            kernel.call_event("on_send_command", "M104 S0");
         });
         
         // Add a listener for the set bed temperature button
         $("#bed_heat_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M140 S0");
+            kernel.call_event("on_send_command", "M140 S0");
         });
     }
     
@@ -10811,12 +10811,12 @@ var Fancontrolwidget = Module.extend({
         
         // Add a listener for the fans on button
         $("#fans_on").click(function(){
-            kernel.call_event("send_gcode_silent", "M106");
+            kernel.call_event("on_send_command", "M106");
         });
         
         // Add a listener for the fans off button
         $("#fans_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M107");
+            kernel.call_event("on_send_command", "M107");
         });
     }
     

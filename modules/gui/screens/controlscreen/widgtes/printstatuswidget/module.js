@@ -17,7 +17,7 @@ var Printstatuswidget = Module.extend({
                 "label" : "Abort",
                 "class" : "btn-danger",
                 "callback": function() {
-                    kernel.call_event("send_gcode_silent", "abort");
+                    kernel.call_event("on_send_command", "abort");
                 }
             },{
                 "class" : "btn-default",
@@ -26,7 +26,7 @@ var Printstatuswidget = Module.extend({
         });
     },
     
-    // Update values such as temperature and progress
+    // Update the print progress when we are told
     on_value_update: function(result){
         // Set print_progress
         if (result.progress.playing){
