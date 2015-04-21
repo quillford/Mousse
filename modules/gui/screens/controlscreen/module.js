@@ -100,26 +100,6 @@ var Controlscreen = Module.extend({
             kernel.call_event("send_gcode_silent", "M107");
         });
         
-        // Add a listener for the set extruder temperature button
-        $("#set_extruder_temperature").click(function(){
-            kernel.call_event("send_gcode_silent", "M104 S"+$("#extruder_temperature_input").val());
-        });
-        
-        // Add a listener for the set bed temperature button
-        $("#set_bed_temperature").click(function(){
-            kernel.call_event("send_gcode_silent", "M140 S"+$("#bed_temperature_input").val());
-        });
-        
-        // Add a listener for the set extruder temperature button
-        $("#extruder_heat_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M104 S0");
-        });
-        
-        // Add a listener for the set bed temperature button
-        $("#bed_heat_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M140 S0");
-        });
-        
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
             // Ask the user if they really want to cancel the print
