@@ -89,21 +89,6 @@ var Controlscreen = Module.extend({
 
         // Display this machine's interface
         this.display_control_interface( machine );
-        
-        // Add a listener for the abort print button
-        $("#abort_print").click(function(){
-            // Ask the user if they really want to cancel the print
-            bootbox.dialog("Abort the print?", [{
-                "label" : "Abort",
-                "class" : "btn-danger",
-                "callback": function() {
-                    kernel.call_event("send_gcode_silent", "abort");
-                }
-            },{
-                "class" : "btn-default",
-                "label" : "Cancel"
-            }]);
-        });
     },
 
     // Display the full machine interface

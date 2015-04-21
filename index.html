@@ -10307,6 +10307,53 @@ var Machinefilesystem = new Class({
             
                 
                 
+                   <script type="text/javascript"> // Creates new printstatuswidget objects and attaches them to the controlscreen
+var Printstatuswidget = Module.extend({
+
+    on_config_parsed: function( machine ){
+        // This object retrieves, stores and allows access to configuration for a specific machine
+        this.parent_machine = machine;
+    },
+
+    on_populate_control_screen: function(){
+        // We were asked to add the widget to the control screen
+        this.asset("status").find(".panel").appendTo("#widget_interface");
+        
+        // Add a listener for the abort print button
+        $("#abort_print").click(function(){
+            // Ask the user if they really want to cancel the print
+            bootbox.dialog("Abort the print?", [{
+                "label" : "Abort",
+                "class" : "btn-danger",
+                "callback": function() {
+                    kernel.call_event("send_gcode_silent", "abort");
+                }
+            },{
+                "class" : "btn-default",
+                "label" : "Cancel"
+            }]);
+        });
+    },
+    
+    // Update values such as temperature and progress
+    on_value_update: function(result){
+        // Set print_progress
+        if (result.progress.playing){
+            $("#print_progress").text(result.progress.string);
+        }else {
+            $("#print_progress").text("No print in progress");
+        }
+        
+    }
+    
+});
+
+
+
+ </script> 
+            
+                
+                
                    <script type="text/javascript"> var Robot = Module.extend({
 
     on_config_parsed: function( machine ){
@@ -33934,21 +33981,6 @@ var Temperaturecontrol = Module.extend({
 
         // Display this machine's interface
         this.display_control_interface( machine );
-        
-        // Add a listener for the abort print button
-        $("#abort_print").click(function(){
-            // Ask the user if they really want to cancel the print
-            bootbox.dialog("Abort the print?", [{
-                "label" : "Abort",
-                "class" : "btn-danger",
-                "callback": function() {
-                    kernel.call_event("send_gcode_silent", "abort");
-                }
-            },{
-                "class" : "btn-default",
-                "label" : "Cancel"
-            }]);
-        });
     },
 
     // Display the full machine interface
@@ -42853,6 +42885,11 @@ filter: gray;
             
                 
                 
+                var printstatuswidget = new Printstatuswidget();
+                kernel.add_module( "printstatuswidget", printstatuswidget );
+            
+                
+                
                 var robot = new Robot();
                 kernel.add_module( "robot", robot );
             
@@ -43035,6 +43072,20 @@ filter: gray;
             
                  
             
+                 
+            
+                
+                    <div id="printstatuswidget-status" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Print Status</div>
+    <div class="panel-body">
+        <p id="print_progress"></p>
+        <button class="btn btn-danger" id="abort_print">Abort</button>
+    </div>
+</div>
+                         
+                    </div>
                  
             
                  
@@ -43782,14 +43833,6 @@ filter: gray;
                 <p id="tempReport">temp</p>
             </div>
         </div>
-         
-        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Print Status</div>
-            <div class="panel-body">
-                <p id="print_progress"></p>
-                <button class="btn btn-danger" id="abort_print">Abort</button>
-            </div>
-        </div>
 
     </div>
 
@@ -43806,6 +43849,18 @@ filter: gray;
     </div>
 </div>
 
+                         
+                    </div>
+                
+                    <div id="gui-status" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Print Status</div>
+    <div class="panel-body">
+        <p id="print_progress"></p>
+        <button class="btn btn-danger" id="abort_print">Abort</button>
+    </div>
+</div>
                          
                     </div>
                 
@@ -44167,14 +44222,6 @@ filter: gray;
                 <p id="tempReport">temp</p>
             </div>
         </div>
-         
-        <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Print Status</div>
-            <div class="panel-body">
-                <p id="print_progress"></p>
-                <button class="btn btn-danger" id="abort_print">Abort</button>
-            </div>
-        </div>
 
     </div>
 
@@ -44191,6 +44238,18 @@ filter: gray;
     </div>
 </div>
 
+                         
+                    </div>
+                
+                    <div id="controlscreen-status" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Print Status</div>
+    <div class="panel-body">
+        <p id="print_progress"></p>
+        <button class="btn btn-danger" id="abort_print">Abort</button>
+    </div>
+</div>
                          
                     </div>
                 

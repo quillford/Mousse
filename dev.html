@@ -57,6 +57,10 @@
             
                 
                 
+                   <script src="./modules/gui/screens/controlscreen/widgtes/printstatuswidget/module.js"></script> 
+            
+                
+                
                    <script src="./modules/machines/robot/module.js"></script> 
             
                 
@@ -188,6 +192,11 @@
                 
                 var machines = new Machines();
                 kernel.add_module( "machines", machines );
+            
+                
+                
+                var printstatuswidget = new Printstatuswidget();
+                kernel.add_module( "printstatuswidget", printstatuswidget );
             
                 
                 
@@ -375,6 +384,17 @@
             
                  
             
+                
+                    <div id="printstatuswidget-status" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#printstatuswidget-status").load( "./modules/gui/screens/controlscreen/widgtes/printstatuswidget/assets/status.html" );
+                            </script> 
+                           printstatuswidget-status
+                         
+                    </div>
+                 
+            
                  
             
                 
@@ -518,6 +538,15 @@
                          
                     </div>
                 
+                    <div id="gui-status" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#gui-status").load( "./modules/gui/screens/controlscreen/widgtes/printstatuswidget/assets/status.html" );
+                            </script> 
+                           gui-status
+                         
+                    </div>
+                
                     <div id="gui-control" class="wholescreen">
                         
                             <script type="text/javascript">
@@ -624,6 +653,15 @@
                                 $("#controlscreen-control").load( "./modules/gui/screens/controlscreen/assets/control.html" );
                             </script> 
                            controlscreen-control
+                         
+                    </div>
+                
+                    <div id="controlscreen-status" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#controlscreen-status").load( "./modules/gui/screens/controlscreen/widgtes/printstatuswidget/assets/status.html" );
+                            </script> 
+                           controlscreen-status
                          
                     </div>
                 
