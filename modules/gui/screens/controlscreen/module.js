@@ -169,16 +169,6 @@ var Controlscreen = Module.extend({
             kernel.call_event("send_gcode_silent", "M140 S0");
         });
         
-        // Add a listener for the extrude button
-        $("#extrude").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 E"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
-        });
-        
-        // Add a listener for the retract button
-        $("#retract").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
-        });
-        
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
             // Ask the user if they really want to cancel the print

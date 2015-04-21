@@ -1,4 +1,4 @@
-// Creates new consolecontrol objects and attaches them to the machine
+// Creates new consolecontrol objects and attaches them to the controlscreen
 var Consolewidget = Module.extend({
 
     on_config_parsed: function( machine ){

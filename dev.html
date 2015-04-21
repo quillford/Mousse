@@ -67,11 +67,19 @@
             
                 
                 
+                   <script src="./modules/gui/screens/controlscreen/widgtes/widgetcontroller/module.js"></script> 
+            
+                
+                
                    <script src="./modules/gui/screens/controlscreen/widgtes/consolewidget/module.js"></script> 
             
                 
                 
                    <script src="./modules/communication/dropboxclient/module.js"></script> 
+            
+                
+                
+                   <script src="./modules/gui/screens/controlscreen/widgtes/extrusionwidget/module.js"></script> 
             
                 
                    <link rel="stylesheet" href="./modules/gui/libs/bootstrap/css/bootstrap.css">
@@ -181,6 +189,11 @@
             
                 
                 
+                var widgetcontroller = new Widgetcontroller();
+                kernel.add_module( "widgetcontroller", widgetcontroller );
+            
+                
+                
                 var consolewidget = new Consolewidget();
                 kernel.add_module( "consolewidget", consolewidget );
             
@@ -188,6 +201,11 @@
                 
                 var dropboxclient = new Dropboxclient();
                 kernel.add_module( "dropboxclient", dropboxclient );
+            
+                
+                
+                var extrusionwidget = new Extrusionwidget();
+                kernel.add_module( "extrusionwidget", extrusionwidget );
             
                 
                 
@@ -334,6 +352,8 @@
             
                  
             
+                 
+            
                 
                     <div id="consolewidget-console" class="wholescreen">
                         
@@ -345,6 +365,17 @@
                     </div>
                  
             
+                 
+            
+                
+                    <div id="extrusionwidget-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#extrusionwidget-control").load( "./modules/gui/screens/controlscreen/widgtes/extrusionwidget/assets/control.html" );
+                            </script> 
+                           extrusionwidget-control
+                         
+                    </div>
                  
             
                 
@@ -447,6 +478,15 @@
                          
                     </div>
                 
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#gui-control").load( "./modules/gui/screens/controlscreen/widgtes/extrusionwidget/assets/control.html" );
+                            </script> 
+                           gui-control
+                         
+                    </div>
+                
                     <div id="gui-modal" class="wholescreen">
                         
                             <script type="text/javascript">
@@ -506,6 +546,15 @@
                                 $("#controlscreen-console").load( "./modules/gui/screens/controlscreen/widgtes/consolewidget/assets/console.html" );
                             </script> 
                            controlscreen-console
+                         
+                    </div>
+                
+                    <div id="controlscreen-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#controlscreen-control").load( "./modules/gui/screens/controlscreen/widgtes/extrusionwidget/assets/control.html" );
+                            </script> 
+                           controlscreen-control
                          
                     </div>
                  
