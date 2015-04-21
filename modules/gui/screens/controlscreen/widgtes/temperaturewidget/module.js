@@ -14,7 +14,7 @@ var Temperaturewidget = Module.extend({
     // Update values such as temperature and progress
     on_value_update: function(result){
         // Set the Temperature
-        $("#tempReport").text(result.temperature.T.temperature+"°C");
+        $("#tempReport").text("Extruder: "+result.temperature.T.temperature+"°C");
     }
     
 });
