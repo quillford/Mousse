@@ -69,6 +69,10 @@
             
                 
                 
+                   <script src="./modules/gui/screens/controlscreen/widgtes/temperaturewidget/module.js"></script> 
+            
+                
+                
                    <script src="./modules/machines/updater/updater.js"></script> 
                 
                    <script src="./modules/machines/updater/module.js"></script> 
@@ -207,6 +211,11 @@
                 
                 var temperaturecontrolwidget = new Temperaturecontrolwidget();
                 kernel.add_module( "temperaturecontrolwidget", temperaturecontrolwidget );
+            
+                
+                
+                var temperaturewidget = new Temperaturewidget();
+                kernel.add_module( "temperaturewidget", temperaturewidget );
             
                 
                 
@@ -408,6 +417,17 @@
                     </div>
                  
             
+                
+                    <div id="temperaturewidget-temperature" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#temperaturewidget-temperature").load( "./modules/gui/screens/controlscreen/widgtes/temperaturewidget/assets/temperature.html" );
+                            </script> 
+                           temperaturewidget-temperature
+                         
+                    </div>
+                 
+            
                  
             
                  
@@ -574,6 +594,15 @@
                          
                     </div>
                 
+                    <div id="gui-temperature" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#gui-temperature").load( "./modules/gui/screens/controlscreen/widgtes/temperaturewidget/assets/temperature.html" );
+                            </script> 
+                           gui-temperature
+                         
+                    </div>
+                
                     <div id="gui-control" class="wholescreen">
                         
                             <script type="text/javascript">
@@ -689,6 +718,15 @@
                                 $("#controlscreen-control").load( "./modules/gui/screens/controlscreen/widgtes/fancontrolwidget/assets/control.html" );
                             </script> 
                            controlscreen-control
+                         
+                    </div>
+                
+                    <div id="controlscreen-temperature" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#controlscreen-temperature").load( "./modules/gui/screens/controlscreen/widgtes/temperaturewidget/assets/temperature.html" );
+                            </script> 
+                           controlscreen-temperature
                          
                     </div>
                 

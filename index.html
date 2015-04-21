@@ -10410,6 +10410,33 @@ var Temperaturecontrolwidget = Module.extend({
             
                 
                 
+                   <script type="text/javascript"> // Creates new temperaturewidget objects and attaches them to the controlscreen
+var Temperaturewidget = Module.extend({
+
+    on_config_parsed: function( machine ){
+        // This object retrieves, stores and allows access to configuration for a specific machine
+        this.parent_machine = machine;
+    },
+
+    on_populate_control_screen: function(){
+        // We were asked to add the widget to the control screen
+        this.asset("temperature").find(".panel").appendTo("#widget_interface");
+    },
+    
+    // Update values such as temperature and progress
+    on_value_update: function(result){
+        // Set the Temperature
+        $("#tempReport").text(result.temperature.T.temperature+"°C");
+    }
+    
+});
+
+
+
+ </script> 
+            
+                
+                
                    <script type="text/javascript"> var Machineupdater = new Class({
 
     create: function(machine){
@@ -42900,6 +42927,11 @@ filter: gray;
             
                 
                 
+                var temperaturewidget = new Temperaturewidget();
+                kernel.add_module( "temperaturewidget", temperaturewidget );
+            
+                
+                
                 var updater = new Updater();
                 kernel.add_module( "updater", updater );
             
@@ -43112,6 +43144,19 @@ filter: gray;
                 <button class="btn btn-default" id="bed_heat_off">Off</button>
             </span>
         </div>
+    </div>
+</div>
+                         
+                    </div>
+                 
+            
+                
+                    <div id="temperaturewidget-temperature" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Temperatures</div>
+    <div class="panel-body">
+        <p id="tempReport">temp</p>
     </div>
 </div>
                          
@@ -43825,16 +43870,7 @@ filter: gray;
 
 <div id="control_interface" class="wholescreen">
 
-    <div class="gridster" style="margin: 0" id="widget_interface">
-
-        <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Temperatures</div>
-            <div class="panel-body">
-                <p id="tempReport">temp</p>
-            </div>
-        </div>
-
-    </div>
+    <div class="gridster" style="margin: 0" id="widget_interface"></div>
 
 </div>
 
@@ -43936,6 +43972,17 @@ filter: gray;
             <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
             <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
         </div>
+    </div>
+</div>
+                         
+                    </div>
+                
+                    <div id="gui-temperature" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Temperatures</div>
+    <div class="panel-body">
+        <p id="tempReport">temp</p>
     </div>
 </div>
                          
@@ -44214,16 +44261,7 @@ filter: gray;
 
 <div id="control_interface" class="wholescreen">
 
-    <div class="gridster" style="margin: 0" id="widget_interface">
-
-        <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Temperatures</div>
-            <div class="panel-body">
-                <p id="tempReport">temp</p>
-            </div>
-        </div>
-
-    </div>
+    <div class="gridster" style="margin: 0" id="widget_interface"></div>
 
 </div>
 
@@ -44325,6 +44363,17 @@ filter: gray;
             <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
             <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
         </div>
+    </div>
+</div>
+                         
+                    </div>
+                
+                    <div id="controlscreen-temperature" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Temperatures</div>
+    <div class="panel-body">
+        <p id="tempReport">temp</p>
     </div>
 </div>
                          
