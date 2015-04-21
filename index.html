@@ -29342,6 +29342,76 @@ var bootbox=window.bootbox||function(a,b){function c(a,b){return"undefined"==typ
             
                 
                 
+                   <script type="text/javascript"> // Creates new joggingwidget objects and attaches them to the controlscreen
+var Joggingwidget = Module.extend({
+
+    on_config_parsed: function( machine ){
+        // This object retrieves, stores and allows access to configuration for a specific machine
+        this.parent_machine = machine;
+    },
+
+    on_populate_control_screen: function(){
+        // We were asked to add the widget to the control screen
+        this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Add a listener for the home all axes button
+        $("#home_all").click(function(){
+            kernel.call_event("on_send_command", "G28");
+        });
+        
+        // Add a listener for the home x button
+        $("#home_x").click(function(){
+            kernel.call_event("on_send_command", "G28 X0");
+        });
+        
+        // Add a listener for the home y button
+        $("#home_y").click(function(){
+            kernel.call_event("on_send_command", "G28 Y0");
+        });
+        
+        // Add a listener for the home z button
+        $("#home_z").click(function(){
+            kernel.call_event("on_send_command", "G28 Z0");
+        });
+        
+        // Add a listener for the jog x buttons
+        $("#positive_x").click(function(){
+            kernel.call_event("on_send_command", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+        });
+        $("#negative_x").click(function(){
+            kernel.call_event("on_send_command", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+        });
+        
+        // Add a listener for the jog y buttons
+        $("#positive_y").click(function(){
+            kernel.call_event("on_send_command", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+        });
+        $("#negative_y").click(function(){
+            kernel.call_event("on_send_command", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+        });
+        
+        // Add a listener for the jog z buttons
+        $("#positive_z").click(function(){
+            kernel.call_event("on_send_command", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+        });
+        $("#negative_z").click(function(){
+            kernel.call_event("on_send_command", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+        });
+        
+        // Add a listener for the motors off button
+        $("#motors_off").click(function(){
+            kernel.call_event("on_send_command", "M18");
+        });
+    }
+    
+});
+
+
+
+ </script> 
+            
+                
+                
                    <script type="text/javascript"> var Navigation = Module.extend({
 
     // The main GUI container was loaded
@@ -33772,6 +33842,8 @@ var Temperaturecontrol = Module.extend({
         for( var index in kernel.machines ){
             var current = kernel.machines[index]; 
 
+            console.log(current);
+
             // Create a new tab
             var tab = $("<li><a href='#'>" + current.ip + "</a></li>");
 
@@ -33792,55 +33864,6 @@ var Temperaturecontrol = Module.extend({
 
         // Display this machine's interface
         this.display_control_interface( machine );
-        
-        // Add a listener for the home all axes button
-        $("#home_all").click(function(){
-            kernel.call_event("send_gcode_silent", "G28");
-        });
-        
-        // Add a listener for the home x button
-        $("#home_x").click(function(){
-            kernel.call_event("send_gcode_silent", "G28 X0");
-        });
-        
-        // Add a listener for the home y button
-        $("#home_y").click(function(){
-            kernel.call_event("send_gcode_silent", "G28 Y0");
-        });
-        
-        // Add a listener for the home z button
-        $("#home_z").click(function(){
-            kernel.call_event("send_gcode_silent", "G28 Z0");
-        });
-        
-        // Add a listener for the jog x buttons
-        $("#positive_x").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        $("#negative_x").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        
-        // Add a listener for the jog y buttons
-        $("#positive_y").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        $("#negative_y").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        
-        // Add a listener for the jog z buttons
-        $("#positive_z").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
-        });
-        $("#negative_z").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
-        });
-        
-        // Add a listener for the motors off button
-        $("#motors_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M18");
-        });
         
         // Add a listener for the fans on button
         $("#fans_on").click(function(){
@@ -33963,8 +33986,6 @@ var Temperaturecontrol = Module.extend({
     
     // Update values such as temperature and progress
     on_value_update: function(result){
-        console.log(result);
-
         // Set the Temperature
         $("#tempReport").text(result.temperature.T.temperature+"°C");
         
@@ -42827,6 +42848,11 @@ filter: gray;
             
                 
                 
+                var joggingwidget = new Joggingwidget();
+                kernel.add_module( "joggingwidget", joggingwidget );
+            
+                
+                
                 var navigation = new Navigation();
                 kernel.add_module( "navigation", navigation );
             
@@ -43663,48 +43689,6 @@ filter: gray;
             </div>
         </div>
 
-        <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
-            <div class="panel-heading"><span class="glyphicon glyphicon-move" aria-hidden="true"></span>Jogging Control</div>
-            <div class="panel-body">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_x">-X</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_x">+X</button>
-                </div>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_y">-Y</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_y">+Y</button>
-                </div>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_z">-Z</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_z">+Z</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
-                </div>
-                <div>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="sizing-addon2">Increment</span>
-                        <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
-                        <span class="input-group-addon" id="sizing-addon2">mm</span>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">XY</span>
-                    <input type="text" class="form-control" value="3000" aria-describedby="sizing-addon2" id="xy_velocity">
-                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Z</span>
-                    <input type="text" class="form-control" value="200" aria-describedby="sizing-addon2" id="z_velocity">
-                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
-                </div>
-            </div>
-        </div>
-
         <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Fan Control</div>
             <div class="panel-body">
@@ -43760,6 +43744,52 @@ filter: gray;
     </div>
 </div>
 
+                         
+                    </div>
+                
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
+    <div class="panel-heading"><span class="glyphicon glyphicon-move" aria-hidden="true"></span>Jogging Control</div>
+    <div class="panel-body">
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_x">-X</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_x">+X</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_y">-Y</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_y">+Y</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_z">-Z</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_z">+Z</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
+        </div>
+        <div>
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Increment</span>
+                <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
+                <span class="input-group-addon" id="sizing-addon2">mm</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">XY</span>
+            <input type="text" class="form-control" value="3000" aria-describedby="sizing-addon2" id="xy_velocity">
+            <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Z</span>
+            <input type="text" class="form-control" value="200" aria-describedby="sizing-addon2" id="z_velocity">
+            <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+        </div>
+    </div>
+</div>
                          
                     </div>
                 
@@ -43885,6 +43915,54 @@ filter: gray;
                  
             
                 
+                    <div id="joggingwidget-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
+    <div class="panel-heading"><span class="glyphicon glyphicon-move" aria-hidden="true"></span>Jogging Control</div>
+    <div class="panel-body">
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_x">-X</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_x">+X</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_y">-Y</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_y">+Y</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_z">-Z</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_z">+Z</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
+        </div>
+        <div>
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Increment</span>
+                <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
+                <span class="input-group-addon" id="sizing-addon2">mm</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">XY</span>
+            <input type="text" class="form-control" value="3000" aria-describedby="sizing-addon2" id="xy_velocity">
+            <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Z</span>
+            <input type="text" class="form-control" value="200" aria-describedby="sizing-addon2" id="z_velocity">
+            <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+        </div>
+    </div>
+</div>
+                         
+                    </div>
+                 
+            
+                
                     <div id="navigation-navigation" class="wholescreen">
                         
                             <nav class="navbar navbar-default" role="navigation">
@@ -43988,48 +44066,6 @@ filter: gray;
             </div>
         </div>
 
-        <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
-            <div class="panel-heading"><span class="glyphicon glyphicon-move" aria-hidden="true"></span>Jogging Control</div>
-            <div class="panel-body">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_x">-X</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_x">+X</button>
-                </div>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_y">-Y</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_y">+Y</button>
-                </div>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="negative_z">-Z</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="positive_z">+Z</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
-                    <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
-                </div>
-                <div>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="sizing-addon2">Increment</span>
-                        <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
-                        <span class="input-group-addon" id="sizing-addon2">mm</span>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">XY</span>
-                    <input type="text" class="form-control" value="3000" aria-describedby="sizing-addon2" id="xy_velocity">
-                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Z</span>
-                    <input type="text" class="form-control" value="200" aria-describedby="sizing-addon2" id="z_velocity">
-                    <span class="input-group-addon" id="sizing-addon2">mm/min</span>
-                </div>
-            </div>
-        </div>
-
         <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Fan Control</div>
             <div class="panel-body">
@@ -44085,6 +44121,52 @@ filter: gray;
     </div>
 </div>
 
+                         
+                    </div>
+                
+                    <div id="controlscreen-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="2" data-col="2" data-sizex="2" data-sizey="2">
+    <div class="panel-heading"><span class="glyphicon glyphicon-move" aria-hidden="true"></span>Jogging Control</div>
+    <div class="panel-body">
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_x">-X</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_x">Home X</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_x">+X</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_y">-Y</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_y">Home Y</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_y">+Y</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" aria-expanded="false" id="negative_z">-Z</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_z">Home Z</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="positive_z">+Z</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
+            <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
+        </div>
+        <div>
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Increment</span>
+                <input type="text" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
+                <span class="input-group-addon" id="sizing-addon2">mm</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">XY</span>
+            <input type="text" class="form-control" value="3000" aria-describedby="sizing-addon2" id="xy_velocity">
+            <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Z</span>
+            <input type="text" class="form-control" value="200" aria-describedby="sizing-addon2" id="z_velocity">
+            <span class="input-group-addon" id="sizing-addon2">mm/min</span>
+        </div>
+    </div>
+</div>
                          
                     </div>
                 

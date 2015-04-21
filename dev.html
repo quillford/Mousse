@@ -109,6 +109,10 @@
             
                 
                 
+                   <script src="./modules/gui/screens/controlscreen/widgtes/joggingwidget/module.js"></script> 
+            
+                
+                
                    <script src="./modules/gui/core/navigation/module.js"></script> 
             
                 
@@ -211,6 +215,11 @@
                 
                 var gui = new Gui();
                 kernel.add_module( "gui", gui );
+            
+                
+                
+                var joggingwidget = new Joggingwidget();
+                kernel.add_module( "joggingwidget", joggingwidget );
             
                 
                 
@@ -469,6 +478,15 @@
                          
                     </div>
                 
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#gui-control").load( "./modules/gui/screens/controlscreen/widgtes/joggingwidget/assets/control.html" );
+                            </script> 
+                           gui-control
+                         
+                    </div>
+                
                     <div id="gui-console" class="wholescreen">
                         
                             <script type="text/javascript">
@@ -507,6 +525,17 @@
                  
             
                 
+                    <div id="joggingwidget-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#joggingwidget-control").load( "./modules/gui/screens/controlscreen/widgtes/joggingwidget/assets/control.html" );
+                            </script> 
+                           joggingwidget-control
+                         
+                    </div>
+                 
+            
+                
                     <div id="navigation-navigation" class="wholescreen">
                         
                             <script type="text/javascript">
@@ -535,6 +564,15 @@
                         
                             <script type="text/javascript">
                                 $("#controlscreen-control").load( "./modules/gui/screens/controlscreen/assets/control.html" );
+                            </script> 
+                           controlscreen-control
+                         
+                    </div>
+                
+                    <div id="controlscreen-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#controlscreen-control").load( "./modules/gui/screens/controlscreen/widgtes/joggingwidget/assets/control.html" );
                             </script> 
                            controlscreen-control
                          

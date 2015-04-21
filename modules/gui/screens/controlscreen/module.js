@@ -90,55 +90,6 @@ var Controlscreen = Module.extend({
         // Display this machine's interface
         this.display_control_interface( machine );
         
-        // Add a listener for the home all axes button
-        $("#home_all").click(function(){
-            kernel.call_event("send_gcode_silent", "G28");
-        });
-        
-        // Add a listener for the home x button
-        $("#home_x").click(function(){
-            kernel.call_event("send_gcode_silent", "G28 X0");
-        });
-        
-        // Add a listener for the home y button
-        $("#home_y").click(function(){
-            kernel.call_event("send_gcode_silent", "G28 Y0");
-        });
-        
-        // Add a listener for the home z button
-        $("#home_z").click(function(){
-            kernel.call_event("send_gcode_silent", "G28 Z0");
-        });
-        
-        // Add a listener for the jog x buttons
-        $("#positive_x").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        $("#negative_x").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        
-        // Add a listener for the jog y buttons
-        $("#positive_y").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        $("#negative_y").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
-        });
-        
-        // Add a listener for the jog z buttons
-        $("#positive_z").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
-        });
-        $("#negative_z").click(function(){
-            kernel.call_event("send_gcode_silent", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
-        });
-        
-        // Add a listener for the motors off button
-        $("#motors_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M18");
-        });
-        
         // Add a listener for the fans on button
         $("#fans_on").click(function(){
             kernel.call_event("send_gcode_silent", "M106");
@@ -260,8 +211,6 @@ var Controlscreen = Module.extend({
     
     // Update values such as temperature and progress
     on_value_update: function(result){
-        console.log(result);
-
         // Set the Temperature
         $("#tempReport").text(result.temperature.T.temperature+"°C");
         
