@@ -11,10 +11,17 @@ var Temperaturewidget = Module.extend({
         this.asset("temperature").find(".panel").appendTo("#widget_interface");
     },
     
-    // Update values such as temperature and progress
+    // Update extruder and bed temperature
     on_value_update: function(result){
-        // Set the Temperature
-        $("#tempReport").text("Extruder: "+result.temperature.T.temperature+"°C");
+        // Display the extruder's temperature
+        $("#extruder_temp").text("Extruder: "+result.temperature.T.temperature+"°C");
+        
+        // If the machine has a heated bed, display its temperature
+        if(this.parent_machine.configuration.temperature_control.bed.enable == "true"){
+            $("#bed_temp").text("Bed: "+result.temperature.B.temperature+"°C");
+        }else {
+            $("#bed_temp").text("");
+        }
     }
     
 });

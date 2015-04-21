@@ -10423,10 +10423,17 @@ var Temperaturewidget = Module.extend({
         this.asset("temperature").find(".panel").appendTo("#widget_interface");
     },
     
-    // Update values such as temperature and progress
+    // Update extruder and bed temperature
     on_value_update: function(result){
-        // Set the Temperature
-        $("#tempReport").text("Extruder: "+result.temperature.T.temperature+"°C");
+        // Display the extruder's temperature
+        $("#extruder_temp").text("Extruder: "+result.temperature.T.temperature+"°C");
+        
+        // If the machine has a heated bed, display its temperature
+        if(this.parent_machine.configuration.temperature_control.bed.enable == "false"){
+            $("#bed_temp").text("");
+        }else {
+            $("#bed_temp").text("Bed: "+result.temperature.B.temperature+"°C");
+        }
     }
     
 });
@@ -43106,7 +43113,8 @@ filter: gray;
                             <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
     <div class="panel-heading">Temperatures</div>
     <div class="panel-body">
-        <p id="tempReport">temp</p>
+        <p id="extruder_temp">Extruder</p>
+        <p id="bed_temp">Bed</p>
     </div>
 </div>
                          
@@ -43478,7 +43486,8 @@ filter: gray;
                             <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
     <div class="panel-heading">Temperatures</div>
     <div class="panel-body">
-        <p id="tempReport">temp</p>
+        <p id="extruder_temp">Extruder</p>
+        <p id="bed_temp">Bed</p>
     </div>
 </div>
                          
@@ -44369,7 +44378,8 @@ filter: gray;
                             <div class='panel panel-primary' data-row="1" data-col="2" data-sizex="2" data-sizey="1">
     <div class="panel-heading">Temperatures</div>
     <div class="panel-body">
-        <p id="tempReport">temp</p>
+        <p id="extruder_temp">Extruder</p>
+        <p id="bed_temp">Bed</p>
     </div>
 </div>
                          
