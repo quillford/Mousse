@@ -1,5 +1,5 @@
 // Creates new extrusionwidget objects and attaches them to the controlscreen
-var Extrusionwidget = Module.extend({
+var Temperaturecontrolwidget = Module.extend({
 
     on_config_parsed: function( machine ){
         // This object retrieves, stores and allows access to configuration for a specific machine

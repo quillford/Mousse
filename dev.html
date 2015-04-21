@@ -61,6 +61,10 @@
             
                 
                 
+                   <script src="./modules/gui/screens/controlscreen/widgtes/temperaturecontrolwidget/module.js"></script> 
+            
+                
+                
                    <script src="./modules/machines/updater/updater.js"></script> 
                 
                    <script src="./modules/machines/updater/module.js"></script> 
@@ -80,6 +84,10 @@
                 
                 
                    <script src="./modules/gui/screens/controlscreen/widgtes/extrusionwidget/module.js"></script> 
+            
+                
+                
+                   <script src="./modules/gui/screens/controlscreen/widgtes/fancontrolwidget/module.js"></script> 
             
                 
                    <link rel="stylesheet" href="./modules/gui/libs/bootstrap/css/bootstrap.css">
@@ -188,6 +196,11 @@
             
                 
                 
+                var temperaturecontrolwidget = new Temperaturecontrolwidget();
+                kernel.add_module( "temperaturecontrolwidget", temperaturecontrolwidget );
+            
+                
+                
                 var updater = new Updater();
                 kernel.add_module( "updater", updater );
             
@@ -210,6 +223,11 @@
                 
                 var extrusionwidget = new Extrusionwidget();
                 kernel.add_module( "extrusionwidget", extrusionwidget );
+            
+                
+                
+                var fancontrolwidget = new Fancontrolwidget();
+                kernel.add_module( "fancontrolwidget", fancontrolwidget );
             
                 
                 
@@ -359,6 +377,17 @@
             
                  
             
+                
+                    <div id="temperaturecontrolwidget-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#temperaturecontrolwidget-control").load( "./modules/gui/screens/controlscreen/widgtes/temperaturecontrolwidget/assets/control.html" );
+                            </script> 
+                           temperaturecontrolwidget-control
+                         
+                    </div>
+                 
+            
                  
             
                  
@@ -383,6 +412,17 @@
                                 $("#extrusionwidget-control").load( "./modules/gui/screens/controlscreen/widgtes/extrusionwidget/assets/control.html" );
                             </script> 
                            extrusionwidget-control
+                         
+                    </div>
+                 
+            
+                
+                    <div id="fancontrolwidget-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#fancontrolwidget-control").load( "./modules/gui/screens/controlscreen/widgtes/fancontrolwidget/assets/control.html" );
+                            </script> 
+                           fancontrolwidget-control
                          
                     </div>
                  
@@ -499,6 +539,24 @@
                     <div id="gui-control" class="wholescreen">
                         
                             <script type="text/javascript">
+                                $("#gui-control").load( "./modules/gui/screens/controlscreen/widgtes/fancontrolwidget/assets/control.html" );
+                            </script> 
+                           gui-control
+                         
+                    </div>
+                
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#gui-control").load( "./modules/gui/screens/controlscreen/widgtes/temperaturecontrolwidget/assets/control.html" );
+                            </script> 
+                           gui-control
+                         
+                    </div>
+                
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
                                 $("#gui-control").load( "./modules/gui/screens/controlscreen/widgtes/extrusionwidget/assets/control.html" );
                             </script> 
                            gui-control
@@ -584,6 +642,24 @@
                                 $("#controlscreen-console").load( "./modules/gui/screens/controlscreen/widgtes/consolewidget/assets/console.html" );
                             </script> 
                            controlscreen-console
+                         
+                    </div>
+                
+                    <div id="controlscreen-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#controlscreen-control").load( "./modules/gui/screens/controlscreen/widgtes/fancontrolwidget/assets/control.html" );
+                            </script> 
+                           controlscreen-control
+                         
+                    </div>
+                
+                    <div id="controlscreen-control" class="wholescreen">
+                        
+                            <script type="text/javascript">
+                                $("#controlscreen-control").load( "./modules/gui/screens/controlscreen/widgtes/temperaturecontrolwidget/assets/control.html" );
+                            </script> 
+                           controlscreen-control
                          
                     </div>
                 

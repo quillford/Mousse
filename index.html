@@ -10322,6 +10322,47 @@ var Machinefilesystem = new Class({
             
                 
                 
+                   <script type="text/javascript"> // Creates new extrusionwidget objects and attaches them to the controlscreen
+var Temperaturecontrolwidget = Module.extend({
+
+    on_config_parsed: function( machine ){
+        // This object retrieves, stores and allows access to configuration for a specific machine
+        this.parent_machine = machine;
+    },
+
+    on_populate_control_screen: function(){
+        // We were asked to add the widget to the control screen
+        this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Add a listener for the set extruder temperature button
+        $("#set_extruder_temperature").click(function(){
+            kernel.call_event("send_gcode_silent", "M104 S"+$("#extruder_temperature_input").val());
+        });
+        
+        // Add a listener for the set bed temperature button
+        $("#set_bed_temperature").click(function(){
+            kernel.call_event("send_gcode_silent", "M140 S"+$("#bed_temperature_input").val());
+        });
+        
+        // Add a listener for the set extruder temperature button
+        $("#extruder_heat_off").click(function(){
+            kernel.call_event("send_gcode_silent", "M104 S0");
+        });
+        
+        // Add a listener for the set bed temperature button
+        $("#bed_heat_off").click(function(){
+            kernel.call_event("send_gcode_silent", "M140 S0");
+        });
+    }
+    
+});
+
+
+
+ </script> 
+            
+                
+                
                    <script type="text/javascript"> var Machineupdater = new Class({
 
     create: function(machine){
@@ -10698,6 +10739,37 @@ var Extrusionwidget = Module.extend({
         // Add a listener for the retract button
         $("#retract").click(function(){
             kernel.call_event("on_send_command", "G91 G0 E-"+$("#extrude_length").val()+" F"+$("#e_velocity").val()+" G90");
+        });
+    }
+    
+});
+
+
+
+ </script> 
+            
+                
+                
+                   <script type="text/javascript"> // Creates new fancontrolwidget objects and attaches them to the controlscreen
+var Fancontrolwidget = Module.extend({
+
+    on_config_parsed: function( machine ){
+        // This object retrieves, stores and allows access to configuration for a specific machine
+        this.parent_machine = machine;
+    },
+
+    on_populate_control_screen: function(){
+        // We were asked to add the widget to the control screen
+        this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Add a listener for the fans on button
+        $("#fans_on").click(function(){
+            kernel.call_event("send_gcode_silent", "M106");
+        });
+        
+        // Add a listener for the fans off button
+        $("#fans_off").click(function(){
+            kernel.call_event("send_gcode_silent", "M107");
         });
     }
     
@@ -33842,8 +33914,6 @@ var Temperaturecontrol = Module.extend({
         for( var index in kernel.machines ){
             var current = kernel.machines[index]; 
 
-            console.log(current);
-
             // Create a new tab
             var tab = $("<li><a href='#'>" + current.ip + "</a></li>");
 
@@ -33864,36 +33934,6 @@ var Temperaturecontrol = Module.extend({
 
         // Display this machine's interface
         this.display_control_interface( machine );
-        
-        // Add a listener for the fans on button
-        $("#fans_on").click(function(){
-            kernel.call_event("send_gcode_silent", "M106");
-        });
-        
-        // Add a listener for the fans off button
-        $("#fans_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M107");
-        });
-        
-        // Add a listener for the set extruder temperature button
-        $("#set_extruder_temperature").click(function(){
-            kernel.call_event("send_gcode_silent", "M104 S"+$("#extruder_temperature_input").val());
-        });
-        
-        // Add a listener for the set bed temperature button
-        $("#set_bed_temperature").click(function(){
-            kernel.call_event("send_gcode_silent", "M140 S"+$("#bed_temperature_input").val());
-        });
-        
-        // Add a listener for the set extruder temperature button
-        $("#extruder_heat_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M104 S0");
-        });
-        
-        // Add a listener for the set bed temperature button
-        $("#bed_heat_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M140 S0");
-        });
         
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
@@ -42818,6 +42858,11 @@ filter: gray;
             
                 
                 
+                var temperaturecontrolwidget = new Temperaturecontrolwidget();
+                kernel.add_module( "temperaturecontrolwidget", temperaturecontrolwidget );
+            
+                
+                
                 var updater = new Updater();
                 kernel.add_module( "updater", updater );
             
@@ -42840,6 +42885,11 @@ filter: gray;
                 
                 var extrusionwidget = new Extrusionwidget();
                 kernel.add_module( "extrusionwidget", extrusionwidget );
+            
+                
+                
+                var fancontrolwidget = new Fancontrolwidget();
+                kernel.add_module( "fancontrolwidget", fancontrolwidget );
             
                 
                 
@@ -42989,6 +43039,34 @@ filter: gray;
             
                  
             
+                
+                    <div id="temperaturecontrolwidget-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Temperature Control</div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+            <input type="text" class="form-control" id="extruder_temperature_input">
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="set_extruder_temperature">Set</button>
+                <button class="btn btn-default" id="extruder_heat_off">Off</button>
+            </span>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Bed</span>
+            <input type="text" class="form-control" id="bed_temperature_input">
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="set_bed_temperature">Set</button>
+                <button class="btn btn-default" id="bed_heat_off">Off</button>
+            </span>
+        </div>
+    </div>
+</div>
+                         
+                    </div>
+                 
+            
                  
             
                  
@@ -43030,6 +43108,22 @@ filter: gray;
           <button class="btn btn-default" id="extrude">Extrude</button>
           <button class="btn btn-default" id="retract">Retract</button>
       </div>
+    </div>
+</div>
+                         
+                    </div>
+                 
+            
+                
+                    <div id="fancontrolwidget-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Fan Control</div>
+    <div class="panel-body">
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
+            <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
+        </div>
     </div>
 </div>
                          
@@ -43688,38 +43782,6 @@ filter: gray;
                 <p id="tempReport">temp</p>
             </div>
         </div>
-
-        <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Fan Control</div>
-            <div class="panel-body">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
-                    <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
-                </div>
-            </div>
-        </div>
-
-        <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Temperature Control</div>
-            <div class="panel-body">
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Extruder</span>
-                    <input type="text" class="form-control" id="extruder_temperature_input">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="set_extruder_temperature">Set</button>
-                        <button class="btn btn-default" id="extruder_heat_off">Off</button>
-                    </span>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Bed</span>
-                    <input type="text" class="form-control" id="bed_temperature_input">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="set_bed_temperature">Set</button>
-                        <button class="btn btn-default" id="bed_heat_off">Off</button>
-                    </span>
-                </div>
-            </div>
-        </div>
          
         <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Print Status</div>
@@ -43805,6 +43867,46 @@ filter: gray;
                 </span>
             </div>
         <p id="command_response"></p>
+    </div>
+</div>
+                         
+                    </div>
+                
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Fan Control</div>
+    <div class="panel-body">
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
+            <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
+        </div>
+    </div>
+</div>
+                         
+                    </div>
+                
+                    <div id="gui-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Temperature Control</div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+            <input type="text" class="form-control" id="extruder_temperature_input">
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="set_extruder_temperature">Set</button>
+                <button class="btn btn-default" id="extruder_heat_off">Off</button>
+            </span>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Bed</span>
+            <input type="text" class="form-control" id="bed_temperature_input">
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="set_bed_temperature">Set</button>
+                <button class="btn btn-default" id="bed_heat_off">Off</button>
+            </span>
+        </div>
     </div>
 </div>
                          
@@ -44065,38 +44167,6 @@ filter: gray;
                 <p id="tempReport">temp</p>
             </div>
         </div>
-
-        <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Fan Control</div>
-            <div class="panel-body">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
-                    <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
-                </div>
-            </div>
-        </div>
-
-        <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
-            <div class="panel-heading">Temperature Control</div>
-            <div class="panel-body">
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Extruder</span>
-                    <input type="text" class="form-control" id="extruder_temperature_input">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="set_extruder_temperature">Set</button>
-                        <button class="btn btn-default" id="extruder_heat_off">Off</button>
-                    </span>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon2">Bed</span>
-                    <input type="text" class="form-control" id="bed_temperature_input">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="set_bed_temperature">Set</button>
-                        <button class="btn btn-default" id="bed_heat_off">Off</button>
-                    </span>
-                </div>
-            </div>
-        </div>
          
         <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
             <div class="panel-heading">Print Status</div>
@@ -44182,6 +44252,46 @@ filter: gray;
                 </span>
             </div>
         <p id="command_response"></p>
+    </div>
+</div>
+                         
+                    </div>
+                
+                    <div id="controlscreen-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="1" data-col="4" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Fan Control</div>
+    <div class="panel-body">
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-success" aria-expanded="false" id="fans_on">Fans on</button>
+            <button type="button" class="btn btn-danger" aria-expanded="false" id="fans_off">Fans off</button>
+        </div>
+    </div>
+</div>
+                         
+                    </div>
+                
+                    <div id="controlscreen-control" class="wholescreen">
+                        
+                            <div class='panel panel-primary' data-row="3" data-col="6" data-sizex="2" data-sizey="1">
+    <div class="panel-heading">Temperature Control</div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+            <input type="text" class="form-control" id="extruder_temperature_input">
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="set_extruder_temperature">Set</button>
+                <button class="btn btn-default" id="extruder_heat_off">Off</button>
+            </span>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="sizing-addon2">Bed</span>
+            <input type="text" class="form-control" id="bed_temperature_input">
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="set_bed_temperature">Set</button>
+                <button class="btn btn-default" id="bed_heat_off">Off</button>
+            </span>
+        </div>
     </div>
 </div>
                          

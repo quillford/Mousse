@@ -90,16 +90,6 @@ var Controlscreen = Module.extend({
         // Display this machine's interface
         this.display_control_interface( machine );
         
-        // Add a listener for the fans on button
-        $("#fans_on").click(function(){
-            kernel.call_event("send_gcode_silent", "M106");
-        });
-        
-        // Add a listener for the fans off button
-        $("#fans_off").click(function(){
-            kernel.call_event("send_gcode_silent", "M107");
-        });
-        
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
             // Ask the user if they really want to cancel the print
