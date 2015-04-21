@@ -33987,9 +33987,13 @@ var Temperaturecontrol = Module.extend({
         // For each machine
         for( var index in kernel.machines ){
             var current = kernel.machines[index]; 
-
+            console.log(current);
             // Create a new tab
-            var tab = $("<li><a href='#'>" + current.ip + "</a></li>");
+            if(typeof current.configuration.machine_name !== "undefined"){
+                var tab = $("<li><a href='#'>" + current.configuration.machine_name + "</a></li>");
+            }else {
+                var tab = $("<li><a href='#'>" + current.ip + "</a></li>");
+            }
 
             // Display selected and unselected differently
             if( current === this.selected_machine ){ tab.addClass('active'); }
