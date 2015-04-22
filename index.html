@@ -10375,6 +10375,11 @@ var Temperaturecontrolwidget = Module.extend({
     on_config_parsed: function( machine ){
         // This object retrieves, stores and allows access to configuration for a specific machine
         this.parent_machine = machine;
+        
+        // Check if the machine has a heated bed
+        if(this.parent_machine.configuration.temperature_control.bed.enable == "false"){
+            $("#bed_temp_input").hide();
+        }
     },
 
     on_populate_control_screen: function(){
@@ -10384,22 +10389,37 @@ var Temperaturecontrolwidget = Module.extend({
         // Add a listener for the set extruder temperature button
         $("#set_extruder_temperature").click(function(){
             kernel.call_event("on_send_command", "M104 S"+$("#extruder_temperature_input").val());
+            $("#extruder_temperature_input").val("");
         });
         
         // Add a listener for the set bed temperature button
         $("#set_bed_temperature").click(function(){
             kernel.call_event("on_send_command", "M140 S"+$("#bed_temperature_input").val());
+            $("#bed_temperature_input").val("");
         });
         
         // Add a listener for the set extruder temperature button
         $("#extruder_heat_off").click(function(){
             kernel.call_event("on_send_command", "M104 S0");
+            $("#extruder_temperature_input").val("");
         });
         
         // Add a listener for the set bed temperature button
         $("#bed_heat_off").click(function(){
             kernel.call_event("on_send_command", "M140 S0");
+            $("#bed_temperature_input").val("");
         });
+    },
+    
+    // Update the display for the extruder and bed temperature target
+    on_value_update: function(result){
+        // Display the extruder's target temperature
+        $("#extruder_temperature_input").attr("placeholder", result.temperature.T.target);
+        
+        // If the machine has a heated bed, display its temperature target
+        if(this.parent_machine.configuration.temperature_control.bed.enable == "true"){
+            $("#bed_temperature_input").attr("placeholder", result.temperature.B.target);
+        }
     }
     
 });
@@ -10429,10 +10449,10 @@ var Temperaturewidget = Module.extend({
         $("#extruder_temp").text("Extruder: "+result.temperature.T.temperature+"°C");
         
         // If the machine has a heated bed, display its temperature
-        if(this.parent_machine.configuration.temperature_control.bed.enable == "false"){
-            $("#bed_temp").text("");
-        }else {
+        if(this.parent_machine.configuration.temperature_control.bed.enable == "true"){
             $("#bed_temp").text("Bed: "+result.temperature.B.temperature+"°C");
+        }else {
+            $("#bed_temp").text("");
         }
     }
     
@@ -43086,20 +43106,41 @@ filter: gray;
     <div class="panel-heading">Temperature Control</div>
     <div class="panel-body">
         <div class="input-group">
-            <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+            <span class="input-group-addon" id="sizing-addon2">Hotend</span>
             <input type="number" class="form-control" id="extruder_temperature_input">
-            <span class="input-group-btn">
-                <button class="btn btn-default" id="set_extruder_temperature">Set</button>
-                <button class="btn btn-default" id="extruder_heat_off">Off</button>
-            </span>
+            <span class="input-group-addon" id="sizing-addon2">°C</span>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" id="set_extruder_temperature">Set</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- <li><a>190°C (PLA)</a></li>
+                    <li><a>230°C (ABS)</a></li>
+                    <li class="divider"></li> -->
+                    <li><a id="extruder_heat_off">Off</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="input-group">
+        <div class="input-group" id="bed_temp_input">
             <span class="input-group-addon" id="sizing-addon2">Bed</span>
             <input type="number" class="form-control" id="bed_temperature_input">
-            <span class="input-group-btn">
-                <button class="btn btn-default" id="set_bed_temperature">Set</button>
-                <button class="btn btn-default" id="bed_heat_off">Off</button>
-            </span>
+            <span class="input-group-addon" id="sizing-addon2">°C</span>
+            
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" id="set_bed_temperature">Set</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- <li><a>45°C (PLA)</a></li>
+                    <li><a>100°C (ABS)</a></li>
+                    <li class="divider"></li> -->
+                    <li><a id="bed_heat_off">Off</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -43461,20 +43502,41 @@ filter: gray;
     <div class="panel-heading">Temperature Control</div>
     <div class="panel-body">
         <div class="input-group">
-            <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+            <span class="input-group-addon" id="sizing-addon2">Hotend</span>
             <input type="number" class="form-control" id="extruder_temperature_input">
-            <span class="input-group-btn">
-                <button class="btn btn-default" id="set_extruder_temperature">Set</button>
-                <button class="btn btn-default" id="extruder_heat_off">Off</button>
-            </span>
+            <span class="input-group-addon" id="sizing-addon2">°C</span>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" id="set_extruder_temperature">Set</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- <li><a>190°C (PLA)</a></li>
+                    <li><a>230°C (ABS)</a></li>
+                    <li class="divider"></li> -->
+                    <li><a id="extruder_heat_off">Off</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="input-group">
+        <div class="input-group" id="bed_temp_input">
             <span class="input-group-addon" id="sizing-addon2">Bed</span>
             <input type="number" class="form-control" id="bed_temperature_input">
-            <span class="input-group-btn">
-                <button class="btn btn-default" id="set_bed_temperature">Set</button>
-                <button class="btn btn-default" id="bed_heat_off">Off</button>
-            </span>
+            <span class="input-group-addon" id="sizing-addon2">°C</span>
+            
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" id="set_bed_temperature">Set</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- <li><a>45°C (PLA)</a></li>
+                    <li><a>100°C (ABS)</a></li>
+                    <li class="divider"></li> -->
+                    <li><a id="bed_heat_off">Off</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -44353,20 +44415,41 @@ filter: gray;
     <div class="panel-heading">Temperature Control</div>
     <div class="panel-body">
         <div class="input-group">
-            <span class="input-group-addon" id="sizing-addon2">Extruder</span>
+            <span class="input-group-addon" id="sizing-addon2">Hotend</span>
             <input type="number" class="form-control" id="extruder_temperature_input">
-            <span class="input-group-btn">
-                <button class="btn btn-default" id="set_extruder_temperature">Set</button>
-                <button class="btn btn-default" id="extruder_heat_off">Off</button>
-            </span>
+            <span class="input-group-addon" id="sizing-addon2">°C</span>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" id="set_extruder_temperature">Set</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- <li><a>190°C (PLA)</a></li>
+                    <li><a>230°C (ABS)</a></li>
+                    <li class="divider"></li> -->
+                    <li><a id="extruder_heat_off">Off</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="input-group">
+        <div class="input-group" id="bed_temp_input">
             <span class="input-group-addon" id="sizing-addon2">Bed</span>
             <input type="number" class="form-control" id="bed_temperature_input">
-            <span class="input-group-btn">
-                <button class="btn btn-default" id="set_bed_temperature">Set</button>
-                <button class="btn btn-default" id="bed_heat_off">Off</button>
-            </span>
+            <span class="input-group-addon" id="sizing-addon2">°C</span>
+            
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" id="set_bed_temperature">Set</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- <li><a>45°C (PLA)</a></li>
+                    <li><a>100°C (ABS)</a></li>
+                    <li class="divider"></li> -->
+                    <li><a id="bed_heat_off">Off</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
