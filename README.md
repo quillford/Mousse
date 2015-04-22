@@ -5,7 +5,7 @@ Mousse is a project for a Web-based control interface for CNC machines ( 3D prin
 
 This is initially intended to be used with Smoothieboard using it's on-board Ethernet connector. However, future plans include support for other boards, and an executable serving the interface.
 
-*NOTE* : THIS IS PRE-ALPHA AT THE MOMENT, we are only building the framework this will be built upon, do not expect it to be functional 
+*NOTE* : THIS IS PRE-ALPHA AT THE MOMENT, we are only building the framework this will be built upon, do not expect it to be functional
 
 ## Project goals
 
