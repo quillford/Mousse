@@ -10,9 +10,6 @@ var Controlscreen = Module.extend({
         // Append the asset to the main frame
         this.asset("control").appendTo("#main");
 
-        // Call the event to get widgets for controlling the machine
-        kernel.call_event("on_populate_control_screen");
-
         // Configure machine tabs
         this.add_machine_tabs();
     },
@@ -90,6 +87,9 @@ var Controlscreen = Module.extend({
             tab.appendTo("#control_machine_list");
 
         } 
+
+        // Call the event to get widgets for controlling the machine
+        kernel.call_event("on_populate_control_screen", machine);
 
         // Display this machine's interface
         this.display_control_interface( machine );

@@ -10309,15 +10309,12 @@ var Machinefilesystem = new Class({
                 
                    <script type="text/javascript"> // Creates new printstatuswidget objects and attaches them to the controlscreen
 var Printstatuswidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("status").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
@@ -10371,20 +10368,12 @@ var Printstatuswidget = Module.extend({
                 
                    <script type="text/javascript"> // Creates new extrusionwidget objects and attaches them to the controlscreen
 var Temperaturecontrolwidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-        
-        // Check if the machine has a heated bed
-        if(this.parent_machine.configuration.temperature_control.bed.enable == "false"){
-            $("#bed_temp_input").hide();
-        }
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the set extruder temperature button
         $("#set_extruder_temperature").click(function(){
@@ -10432,15 +10421,12 @@ var Temperaturecontrolwidget = Module.extend({
                 
                    <script type="text/javascript"> // Creates new temperaturewidget objects and attaches them to the controlscreen
 var Temperaturewidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("temperature").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
     },
     
     // Update extruder and bed temperature
@@ -10574,9 +10560,8 @@ var Temperaturewidget = Module.extend({
                 
                    <script type="text/javascript"> // Creates new widgetcontroller objects
 var Widgetcontroller = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
+    on_populate_control_screen: function(machine){
+        // Save the machine and its config
         this.parent_machine = machine;
     },
 
@@ -10606,15 +10591,12 @@ var Widgetcontroller = Module.extend({
                 
                    <script type="text/javascript"> // Creates new consolecontrol objects and attaches them to the controlscreen
 var Consolewidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("console").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the send_command button
         $("#send_command").click(function(command_text){ kernel.call_event("on_send_console_command", $("#command_text").val()); });
@@ -10822,15 +10804,12 @@ var Consolewidget = Module.extend({
                 
                    <script type="text/javascript"> // Creates new extrusionwidget objects and attaches them to the controlscreen
 var Extrusionwidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the extrude button
         $("#extrude").click(function(){
@@ -10853,15 +10832,12 @@ var Extrusionwidget = Module.extend({
                 
                    <script type="text/javascript"> // Creates new fancontrolwidget objects and attaches them to the controlscreen
 var Fancontrolwidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the fans on button
         $("#fans_on").click(function(){
@@ -29517,15 +29493,12 @@ var bootbox=window.bootbox||function(a,b){function c(a,b){return"undefined"==typ
                 
                    <script type="text/javascript"> // Creates new joggingwidget objects and attaches them to the controlscreen
 var Joggingwidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the home all axes button
         $("#home_all").click(function(){
@@ -33956,9 +33929,6 @@ var Temperaturecontrol = Module.extend({
         // Append the asset to the main frame
         this.asset("control").appendTo("#main");
 
-        // Call the event to get widgets for controlling the machine
-        kernel.call_event("on_populate_control_screen");
-
         // Configure machine tabs
         this.add_machine_tabs();
     },
@@ -34036,6 +34006,9 @@ var Temperaturecontrol = Module.extend({
             tab.appendTo("#control_machine_list");
 
         } 
+
+        // Call the event to get widgets for controlling the machine
+        kernel.call_event("on_populate_control_screen", machine);
 
         // Display this machine's interface
         this.display_control_interface( machine );
@@ -42126,6 +42099,26 @@ filter: gray;
 	}
 }(jQuery));
 }));</script> 
+                
+                   <script type="text/javascript"> var Filemanager = new Class({
+    // We were asked to play a file
+    on_play_file: function(machine, filepath){
+        this.machine = machine;
+    },
+    
+    // We were asked to remove a file
+    on_remove_file: function(machine, filepath){
+        this.machine = machine;
+    },
+    
+    on_response_received: function(fileinfo){
+        if(fileinfo.action == "play"){
+            console.log("Playing " + fileinfo.filename);
+        }else {
+            console.log("Deleted " + fileinfo.filename);
+        }
+    }
+});</script> 
                 
                    <script type="text/javascript"> var Filesscreen = Module.extend({
 

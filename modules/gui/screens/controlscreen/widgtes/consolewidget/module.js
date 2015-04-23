@@ -1,14 +1,11 @@
 // Creates new consolecontrol objects and attaches them to the controlscreen
 var Consolewidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("console").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the send_command button
         $("#send_command").click(function(command_text){ kernel.call_event("on_send_console_command", $("#command_text").val()); });
