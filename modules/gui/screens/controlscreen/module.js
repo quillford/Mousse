@@ -10,9 +10,6 @@ var Controlscreen = Module.extend({
         // Append the asset to the main frame
         this.asset("control").appendTo("#main");
 
-        // Call the event to get widgets for controlling the machine
-        kernel.call_event("on_populate_control_screen");
-
         // Configure machine tabs
         this.add_machine_tabs();
     },
@@ -68,12 +65,13 @@ var Controlscreen = Module.extend({
         // For each machine
         for( var index in kernel.machines ){
             var current = kernel.machines[index]; 
-            console.log(current);
+            
             // Create a new tab
+            // Check if the machine has a name to be used in place of its IP address
             if(typeof current.configuration.machine_name !== "undefined"){
-                var tab = $("<li><a href='#'>" + current.configuration.machine_name + "</a></li>");
+                var tab = $("<li><a href='#' id='machineindex_" + index.toString() + "'>" + current.configuration.machine_name + "</a></li>");
             }else {
-                var tab = $("<li><a href='#'>" + current.ip + "</a></li>");
+                var tab = $("<li><a href='#' id='machineindex_" + index.toString() + "'>" + current.ip + "</a></li>");
             }
 
             // Display selected and unselected differently
@@ -82,7 +80,10 @@ var Controlscreen = Module.extend({
             // We open the folder if the link is clicked 
             tab.click(function(machine, screen){
                 return function(){
-                    screen.select_new_machine_tab( machine ); 
+                    $(this).tab("show");
+                    $("#widget_interface").empty();
+                    var machine_index = parseInt($(this).find("a").attr("id").split("_")[1]);
+                    kernel.call_event("display_control_interface", kernel.machines[machine_index]);
                 }; 
             }(machine, this));
             
@@ -98,6 +99,8 @@ var Controlscreen = Module.extend({
     // Display the full machine interface
     display_control_interface: function( machine ){
         console.log("test");
+        $("#widget_interface").empty();
+        kernel.call_event("on_populate_control_screen", machine);
         
         $(".gridster").gridster({
             widget_margins: [10, 10],
