@@ -92,6 +92,9 @@ var Controlscreen = Module.extend({
 
         } 
 
+        // Call the event to get widgets for controlling the machine
+        kernel.call_event("on_populate_control_screen", machine);
+
         // Display this machine's interface
         this.display_control_interface( machine );
     },

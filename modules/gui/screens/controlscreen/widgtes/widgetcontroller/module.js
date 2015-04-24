@@ -1,8 +1,7 @@
 // Creates new widgetcontroller objects
 var Widgetcontroller = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
+    on_populate_control_screen: function(machine){
+        // Save the machine and its config
         this.parent_machine = machine;
     },
 

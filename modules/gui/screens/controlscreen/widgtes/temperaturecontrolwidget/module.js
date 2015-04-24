@@ -1,19 +1,11 @@
 // Creates new extrusionwidget objects and attaches them to the controlscreen
 var Temperaturecontrolwidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-        
-        // Check if the machine has a heated bed
-        if(this.parent_machine.configuration.temperature_control.bed.enable == "false"){
-            $("#bed_temp_input").hide();
-        }
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         this.asset("control").find(".panel").appendTo("#widget_interface");
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the set extruder temperature button
         $("#set_extruder_temperature").click(function(){
