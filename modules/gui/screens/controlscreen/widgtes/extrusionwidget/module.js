@@ -2,7 +2,7 @@
 var Extrusionwidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("control").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});
         
         // Save the machine and its config
         this.parent_machine = machine;

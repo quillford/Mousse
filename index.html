@@ -10073,6 +10073,9 @@ var Kernel = Class({
                    <script type="text/javascript"> // This object retrieves a list of files from a machine, and stores it
 var Machinefilesystem = new Class({
 
+    // TODO
+    // replace ip address with machine name if available
+
     create: function( machine ){
         this.parent_machine = machine;
     },
@@ -10311,7 +10314,7 @@ var Machinefilesystem = new Class({
 var Printstatuswidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("status").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("status"), sizex: 2, sizey: 1});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -10370,7 +10373,7 @@ var Printstatuswidget = Module.extend({
 var Temperaturecontrolwidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("control").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -10406,8 +10409,10 @@ var Temperaturecontrolwidget = Module.extend({
         $("#extruder_temperature_input").attr("placeholder", result.temperature.T.target);
         
         // If the machine has a heated bed, display its temperature target
-        if(this.parent_machine.configuration.temperature_control.bed.enable == "true"){
+        if(typeof this.parent_machine !== "undefined" && this.parent_machine.configuration.temperature_control.bed.enable && typeof result.temperature.B !== "undefined"){
             $("#bed_temperature_input").attr("placeholder", result.temperature.B.target);
+        }else {
+            $("#bed_temp_input").hide();
         }
     }
     
@@ -10423,7 +10428,7 @@ var Temperaturecontrolwidget = Module.extend({
 var Temperaturewidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("temperature").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("temperature"), sizex: 2, sizey: 1});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -10434,8 +10439,7 @@ var Temperaturewidget = Module.extend({
         // Display the extruder's temperature
         $("#extruder_temp").text("Extruder: "+result.temperature.T.temperature+"°C");
         
-        // If the machine has a heated bed, display its temperature
-        if(this.parent_machine.configuration.temperature_control.bed.enable == "true"){
+        if(typeof this.parent_machine !== "undefined" && this.parent_machine.configuration.temperature_control.bed.enable && typeof result.temperature.B !== "undefined"){
             $("#bed_temp").text("Bed: "+result.temperature.B.temperature+"°C");
         }else {
             $("#bed_temp").text("");
@@ -10592,8 +10596,8 @@ var Widgetcontroller = Module.extend({
                    <script type="text/javascript"> // Creates new consolecontrol objects and attaches them to the controlscreen
 var Consolewidget = Module.extend({
     on_populate_control_screen: function(machine){
-        // We were asked to add the widget to the control screen
-        this.asset("console").find(".panel").appendTo("#widget_interface");
+        // Give the controlscreen the information it needs to add this
+        kernel.call_event("add_widget", {html: this.asset("console"), sizex: 2, sizey: 2});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -10806,7 +10810,7 @@ var Consolewidget = Module.extend({
 var Extrusionwidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("control").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -10834,7 +10838,7 @@ var Extrusionwidget = Module.extend({
 var Fancontrolwidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("control").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -29495,7 +29499,7 @@ var bootbox=window.bootbox||function(a,b){function c(a,b){return"undefined"==typ
 var Joggingwidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("control").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 2});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -34000,9 +34004,8 @@ var Temperaturecontrol = Module.extend({
             tab.click(function(machine, screen){
                 return function(){
                     $(this).tab("show");
-                    $("#widget_interface").empty();
                     var machine_index = parseInt($(this).find("a").attr("id").split("_")[1]);
-                    kernel.call_event("display_control_interface", kernel.machines[machine_index]);
+                    controlscreen.select_new_machine_tab(kernel.machines[machine_index]);
                 }; 
             }(machine, this));
             
@@ -34010,48 +34013,41 @@ var Temperaturecontrol = Module.extend({
             tab.appendTo("#control_machine_list");
 
         } 
-
-        // Call the event to get widgets for controlling the machine
-        kernel.call_event("on_populate_control_screen", machine);
-
         // Display this machine's interface
         this.display_control_interface( machine );
     },
 
     // Display the full machine interface
     display_control_interface: function( machine ){
-        console.log("test");
+        // Initialize the grid for thr configurable the interface
+        this.gridster = $(".gridster").gridster({
+                        widget_margins: [10, 10],
+                        widget_base_dimensions: [140, 140],
+                        widget_selector: "div",
+                        
+                        draggable: {
+                            handle: "div .panel-heading",
+                            stop: function(event, ui) {    
+                             var positions = JSON.stringify(this.serialize());
+                             localStorage.setItem("widget_positions", positions);
+                             console.log("Dragged");
+                             }
+                        },
+                        
+                        resize: {
+                            enabled: true,
+                        }
+                    }).data("gridster");
+        // Empty all elements and widgets from the view
+        this.gridster.remove_all_widgets();
         $("#widget_interface").empty();
+        // Populate the interface with control widgets
         kernel.call_event("on_populate_control_screen", machine);
-        
-        $(".gridster").gridster({
-            widget_margins: [10, 10],
-            widget_base_dimensions: [140, 140],
-            widget_selector: "div",
-            
-            draggable: {
-                handle: "div .panel-heading",
-                stop: function(event, ui) {    
-                 var positions = JSON.stringify(this.serialize());
-                 localStorage.setItem("widget_positions", positions);
-                 console.log("Dragged");
-                 }
-            },
-            
-            resize: {
-                enabled: true,
-            },
-            
-            serialize_params: function($w, wgd){
-                return {
-                    id: $($w).attr('id'),
-                    col: wgd.col,
-                    row: wgd.row,
-                    size_x: wgd.size_x,
-                    size_y: wgd.size_y,
-                };
-              }
-        });
+    },
+    
+    // We were asked to add a widget
+    add_widget: function(widget){
+        this.gridster.add_widget(widget.html, widget.sizex, widget.sizey);
     }
 });
 

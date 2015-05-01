@@ -2,7 +2,7 @@
 var Temperaturecontrolwidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("control").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});
         
         // Save the machine and its config
         this.parent_machine = machine;
@@ -38,8 +38,10 @@ var Temperaturecontrolwidget = Module.extend({
         $("#extruder_temperature_input").attr("placeholder", result.temperature.T.target);
         
         // If the machine has a heated bed, display its temperature target
-        if(this.parent_machine.configuration.temperature_control.bed.enable == "true"){
+        if(typeof this.parent_machine !== "undefined" && this.parent_machine.configuration.temperature_control.bed.enable && typeof result.temperature.B !== "undefined"){
             $("#bed_temperature_input").attr("placeholder", result.temperature.B.target);
+        }else {
+            $("#bed_temp_input").hide();
         }
     }
     

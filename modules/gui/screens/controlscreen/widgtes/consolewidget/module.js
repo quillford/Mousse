@@ -1,8 +1,8 @@
 // Creates new consolecontrol objects and attaches them to the controlscreen
 var Consolewidget = Module.extend({
     on_populate_control_screen: function(machine){
-        // We were asked to add the widget to the control screen
-        this.asset("console").find(".panel").appendTo("#widget_interface");
+        // Give the controlscreen the information it needs to add this
+        kernel.call_event("add_widget", {html: this.asset("console"), sizex: 2, sizey: 2});
         
         // Save the machine and its config
         this.parent_machine = machine;
