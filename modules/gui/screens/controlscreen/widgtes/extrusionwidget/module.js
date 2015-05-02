@@ -1,5 +1,8 @@
 // Creates new extrusionwidget objects and attaches them to the controlscreen
 var Extrusionwidget = Module.extend({
+    // TODO
+    // add support for dual extrusion
+    
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});

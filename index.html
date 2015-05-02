@@ -10314,14 +10314,14 @@ var Machinefilesystem = new Class({
 var Printstatuswidget = Module.extend({
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        kernel.call_event("add_widget", {html: this.asset("status"), sizex: 2, sizey: 1});
+        kernel.call_event("add_widget", {html: this.asset("status"), sizex: 2, sizey: 2});
         
         // Save the machine and its config
         this.parent_machine = machine;
         
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
-            // Ask the user if they really want to cancel the print
+            // Confirm that the user wants to abort the print
             bootbox.dialog("Abort the print?", [{
                 "label" : "Abort",
                 "class" : "btn-danger",
@@ -10335,15 +10335,29 @@ var Printstatuswidget = Module.extend({
         });
     },
     
-    // Update the print progress when we are told
+    // Update the print progress when there are new values
     on_value_update: function(result){
-        // Set print_progress
+        // Display print progress
         if (result.progress.playing){
-            $("#print_progress").text(result.progress.string);
+            //$("#print_progress").text(result.progress.string);
+            $("#print_progress_bar").css("width", result.progress.percent_complete);
+            $("#elapsed_print_time").text("Elapsed: " + result.progress.time_elapsed + " seconds");
+            // Make sure that there is an estimated time
+            if(result.progress.est_time.match(/complete/g)){
+                $("#estimated_print_time").text("Estimated Time: Calculating...");
+            }else {
+                $("#estimated_print_time").text("Estimated Time: " + result.progress.est_time + " seconds");    
+            }
+            // Enable the print control buttons
+            $("#abort_print").prop("disabled", false);
         }else {
-            $("#print_progress").text("No print in progress");
+            //$("#print_progress").text("No print in progress");
+            $("#elapsed_print_time").text("Elapsed: ");
+            $("#estimated_print_time").text("Estimated: ");
+            $("#print_progress_bar").css("width", "0%");
+            // Disable the print control buttons
+            $("#abort_print").prop("disabled", true);
         }
-        
     }
     
 });
@@ -10371,6 +10385,9 @@ var Printstatuswidget = Module.extend({
                 
                    <script type="text/javascript"> // Creates new extrusionwidget objects and attaches them to the controlscreen
 var Temperaturecontrolwidget = Module.extend({
+    // TODO
+    // add support for dual extrusion
+    
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});
@@ -10536,8 +10553,11 @@ var Temperaturewidget = Module.extend({
             result.progress.playing = false;
         }else{
             result.progress.playing = true;
+            result.progress.time_elapsed = result.progress.string.split("elapsed time:").pop().split("s").shift().replace(/ /g, '');
+            result.progress.est_time = result.progress.string.split("est time:").pop().split("s").shift().replace(/ /g, '');
+            result.progress.percent_complete = result.progress.string.match(/[^%]*/i)[0].replace(/\s/g, '')+"%";
         }
-
+        
         // We have extracted all the info we need, we can call the event to inform all modules interrested of the information we found
         kernel.call_event("on_value_update", result);
 
@@ -10808,6 +10828,9 @@ var Consolewidget = Module.extend({
                 
                    <script type="text/javascript"> // Creates new extrusionwidget objects and attaches them to the controlscreen
 var Extrusionwidget = Module.extend({
+    // TODO
+    // add support for dual extrusion
+    
     on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
         kernel.call_event("add_widget", {html: this.asset("control"), sizex: 2, sizey: 1});
@@ -43093,11 +43116,19 @@ filter: gray;
                 
                     <div id="printstatuswidget-status" class="wholescreen">
                         
-                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="2">
     <div class="panel-heading">Print Status</div>
     <div class="panel-body">
-        <p id="print_progress"></p>
-        <button class="btn btn-danger" id="abort_print">Abort</button>
+        <div>
+            <p id="elapsed_print_time">Elapsed: </p>
+            <p id="estimated_print_time">Estimated Print Time: </p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" id="print_progress_bar" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            </div>
+            <div>
+                <button class="btn btn-danger" id="abort_print">Abort</button>
+            </div>
+        </div>
     </div>
 </div>
                          
@@ -43896,11 +43927,19 @@ filter: gray;
                 
                     <div id="gui-status" class="wholescreen">
                         
-                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="2">
     <div class="panel-heading">Print Status</div>
     <div class="panel-body">
-        <p id="print_progress"></p>
-        <button class="btn btn-danger" id="abort_print">Abort</button>
+        <div>
+            <p id="elapsed_print_time">Elapsed: </p>
+            <p id="estimated_print_time">Estimated Print Time: </p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" id="print_progress_bar" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            </div>
+            <div>
+                <button class="btn btn-danger" id="abort_print">Abort</button>
+            </div>
+        </div>
     </div>
 </div>
                          
@@ -44323,11 +44362,19 @@ filter: gray;
                 
                     <div id="controlscreen-status" class="wholescreen">
                         
-                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="1">
+                            <div class='panel panel-primary' data-row="1" data-col="6" data-sizex="2" data-sizey="2">
     <div class="panel-heading">Print Status</div>
     <div class="panel-body">
-        <p id="print_progress"></p>
-        <button class="btn btn-danger" id="abort_print">Abort</button>
+        <div>
+            <p id="elapsed_print_time">Elapsed: </p>
+            <p id="estimated_print_time">Estimated Print Time: </p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" id="print_progress_bar" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            </div>
+            <div>
+                <button class="btn btn-danger" id="abort_print">Abort</button>
+            </div>
+        </div>
     </div>
 </div>
                          
