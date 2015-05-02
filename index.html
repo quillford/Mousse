@@ -29504,6 +29504,11 @@ var Joggingwidget = Module.extend({
         // Save the machine and its config
         this.parent_machine = machine;
         
+        var _that = this;
+        
+        // Initially set the jogging increment to 10mm because that is what is checked by default
+        this.jogging_increment = "10";
+        
         // Add a listener for the home all axes button
         $("#home_all").click(function(){
             kernel.call_event("on_send_command", "G28");
@@ -29521,39 +29526,45 @@ var Joggingwidget = Module.extend({
         
         // Add a listener for the home z button
         $("#home_z").click(function(){
+            //console.log(jog_increment);
+            var increment = _that.jogging_increment;
             kernel.call_event("on_send_command", "G28 Z0");
         });
         
         // Add a listener for the jog x buttons
         $("#positive_x").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 X"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_x").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 X-"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog y buttons
         $("#positive_y").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Y"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_y").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Y-"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog z buttons
         $("#positive_z").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Z"+_that.jogging_increment+" F"+$("#z_velocity").val()+" G90");
         });
         $("#negative_z").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Z-"+_that.jogging_increment+" F"+$("#z_velocity").val()+" G90");
         });
         
         // Add a listener for the motors off button
         $("#motors_off").click(function(){
             kernel.call_event("on_send_command", "M18");
         });
+        
+        // Add a listener to get the jogging increment when the user changes it
+        $("input:radio[name=jogging_increments]").change(function(){
+            _that.jogging_increment = this.value;
+        });
     }
-    
 });
 
 
@@ -34000,18 +34011,19 @@ var Temperaturecontrol = Module.extend({
             // Display selected and unselected differently
             if( current === this.selected_machine ){ tab.addClass('active'); }
       
-            // We open the folder if the link is clicked 
+            // We open the folder if the link is clicked
+            var _that = this;
             tab.click(function(machine, screen){
                 return function(){
                     $(this).tab("show");
+                    // Get the index of the machine that the user selected
                     var machine_index = parseInt($(this).find("a").attr("id").split("_")[1]);
-                    controlscreen.select_new_machine_tab(kernel.machines[machine_index]);
+                    _that.select_new_machine_tab(kernel.machines[machine_index]);
                 }; 
             }(machine, this));
             
             // Append to the list 
             tab.appendTo("#control_machine_list");
-
         } 
         // Display this machine's interface
         this.display_control_interface( machine );
@@ -34035,7 +34047,7 @@ var Temperaturecontrol = Module.extend({
                         },
                         
                         resize: {
-                            enabled: true,
+                            enabled: false,
                         }
                     }).data("gridster");
         // Empty all elements and widgets from the view
@@ -43190,7 +43202,7 @@ filter: gray;
     <div class="panel-body">
         <div class="input-group">
             <input type="number" class="form-control" value="5" id="extrude_length">
-            <span class="input-group-addon" id="sizing-addon2">mm @</span>
+            <span class="input-group-addon" id="sizing-addon2">mm@</span>
             <input type="number" class="form-control" value="100" id="e_velocity">
             <span class="input-group-addon" id="sizing-addon2">mm/min</span>
       </div>
@@ -43917,12 +43929,19 @@ filter: gray;
         <div>
             <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
             <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
-        </div>
-        <div>
-            <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon2">Increment</span>
-                <input type="number" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
-                <span class="input-group-addon" id="sizing-addon2">mm</span>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_0.1" value="0.1"> 0.1
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_1" value="1"> 1
+                </label>
+                <label class="btn btn-default active">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_10" value="10"> 10
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_100" value="100"> 100
+                </label>
             </div>
         </div>
         <div class="input-group">
@@ -44037,7 +44056,7 @@ filter: gray;
     <div class="panel-body">
         <div class="input-group">
             <input type="number" class="form-control" value="5" id="extrude_length">
-            <span class="input-group-addon" id="sizing-addon2">mm @</span>
+            <span class="input-group-addon" id="sizing-addon2">mm@</span>
             <input type="number" class="form-control" value="100" id="e_velocity">
             <span class="input-group-addon" id="sizing-addon2">mm/min</span>
       </div>
@@ -44158,12 +44177,19 @@ filter: gray;
         <div>
             <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
             <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
-        </div>
-        <div>
-            <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon2">Increment</span>
-                <input type="number" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
-                <span class="input-group-addon" id="sizing-addon2">mm</span>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_0.1" value="0.1"> 0.1
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_1" value="1"> 1
+                </label>
+                <label class="btn btn-default active">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_10" value="10"> 10
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_100" value="100"> 100
+                </label>
             </div>
         </div>
         <div class="input-group">
@@ -44330,12 +44356,19 @@ filter: gray;
         <div>
             <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
             <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
-        </div>
-        <div>
-            <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon2">Increment</span>
-                <input type="number" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
-                <span class="input-group-addon" id="sizing-addon2">mm</span>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_0.1" value="0.1"> 0.1
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_1" value="1"> 1
+                </label>
+                <label class="btn btn-default active">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_10" value="10"> 10
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_100" value="100"> 100
+                </label>
             </div>
         </div>
         <div class="input-group">
@@ -44450,7 +44483,7 @@ filter: gray;
     <div class="panel-body">
         <div class="input-group">
             <input type="number" class="form-control" value="5" id="extrude_length">
-            <span class="input-group-addon" id="sizing-addon2">mm @</span>
+            <span class="input-group-addon" id="sizing-addon2">mm@</span>
             <input type="number" class="form-control" value="100" id="e_velocity">
             <span class="input-group-addon" id="sizing-addon2">mm/min</span>
       </div>

@@ -77,12 +77,14 @@ var Controlscreen = Module.extend({
             // Display selected and unselected differently
             if( current === this.selected_machine ){ tab.addClass('active'); }
       
-            // We open the folder if the link is clicked 
+            // We open the folder if the link is clicked
+            var _that = this;
             tab.click(function(machine, screen){
                 return function(){
                     $(this).tab("show");
+                    // Get the index of the machine that the user selected
                     var machine_index = parseInt($(this).find("a").attr("id").split("_")[1]);
-                    controlscreen.select_new_machine_tab(kernel.machines[machine_index]);
+                    _that.select_new_machine_tab(kernel.machines[machine_index]);
                 }; 
             }(machine, this));
             
@@ -111,7 +113,7 @@ var Controlscreen = Module.extend({
                         },
                         
                         resize: {
-                            enabled: true,
+                            enabled: false,
                         }
                     }).data("gridster");
         // Empty all elements and widgets from the view

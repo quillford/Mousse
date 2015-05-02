@@ -7,6 +7,11 @@ var Joggingwidget = Module.extend({
         // Save the machine and its config
         this.parent_machine = machine;
         
+        var _that = this;
+        
+        // Initially set the jogging increment to 10mm because that is what is checked by default
+        this.jogging_increment = "10";
+        
         // Add a listener for the home all axes button
         $("#home_all").click(function(){
             kernel.call_event("on_send_command", "G28");
@@ -24,39 +29,45 @@ var Joggingwidget = Module.extend({
         
         // Add a listener for the home z button
         $("#home_z").click(function(){
+            //console.log(jog_increment);
+            var increment = _that.jogging_increment;
             kernel.call_event("on_send_command", "G28 Z0");
         });
         
         // Add a listener for the jog x buttons
         $("#positive_x").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 X"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 X"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_x").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 X-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 X-"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog y buttons
         $("#positive_y").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Y"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Y"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         $("#negative_y").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Y-"+$('#jog_increment').val()+" F"+$("#xy_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Y-"+_that.jogging_increment+" F"+$("#xy_velocity").val()+" G90");
         });
         
         // Add a listener for the jog z buttons
         $("#positive_z").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Z"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Z"+_that.jogging_increment+" F"+$("#z_velocity").val()+" G90");
         });
         $("#negative_z").click(function(){
-            kernel.call_event("on_send_command", "G91 G0 Z-"+$('#jog_increment').val()+" F"+$("#z_velocity").val()+" G90");
+            kernel.call_event("on_send_command", "G91 G0 Z-"+_that.jogging_increment+" F"+$("#z_velocity").val()+" G90");
         });
         
         // Add a listener for the motors off button
         $("#motors_off").click(function(){
             kernel.call_event("on_send_command", "M18");
         });
+        
+        // Add a listener to get the jogging increment when the user changes it
+        $("input:radio[name=jogging_increments]").change(function(){
+            _that.jogging_increment = this.value;
+        });
     }
-    
 });
 
 
