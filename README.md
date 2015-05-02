@@ -12,7 +12,7 @@ This is initially intended to be used with Smoothieboard using it's on-board Eth
 * Universal controller interface for 3D printers, Lasers and CNC mills
 * Incorporate design tools and G-Code generation
 * Oriented towards easy use and ergonomy
-* Ability to fully redegin/configure the interface, and design vendor-specific interfaces
+* Ability to fully redesign/configure the interface, and design vendor-specific interfaces
 * Wizards for everything
 * Fully modular code ( on the model of the Smoothie firmware ) to make it as easy as possible to contribute
 * Dashboard
