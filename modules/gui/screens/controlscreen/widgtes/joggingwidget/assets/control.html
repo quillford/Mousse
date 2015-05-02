@@ -19,12 +19,19 @@
         <div>
             <button type="button" class="btn btn-default" aria-expanded="false" id="home_all">Home all</button>
             <button type="button" class="btn btn-default" aria-expanded="false" id="motors_off">Motors off</button>
-        </div>
-        <div>
-            <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon2">Increment</span>
-                <input type="number" class="form-control" value="10" aria-describedby="sizing-addon2" id="jog_increment">
-                <span class="input-group-addon" id="sizing-addon2">mm</span>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_0.1" value="0.1"> 0.1
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_1" value="1"> 1
+                </label>
+                <label class="btn btn-default active">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_10" value="10"> 10
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="jogging_increments" id="jogging_increment_100" value="100"> 100
+                </label>
             </div>
         </div>
         <div class="input-group">

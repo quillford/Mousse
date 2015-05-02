@@ -1,14 +1,11 @@
 // Creates new printstatuswidget objects and attaches them to the controlscreen
 var Printstatuswidget = Module.extend({
-
-    on_config_parsed: function( machine ){
-        // This object retrieves, stores and allows access to configuration for a specific machine
-        this.parent_machine = machine;
-    },
-
-    on_populate_control_screen: function(){
+    on_populate_control_screen: function(machine){
         // We were asked to add the widget to the control screen
-        this.asset("status").find(".panel").appendTo("#widget_interface");
+        kernel.call_event("add_widget", {html: this.asset("status"), sizex: 2, sizey: 1});
+        
+        // Save the machine and its config
+        this.parent_machine = machine;
         
         // Add a listener for the abort print button
         $("#abort_print").click(function(){
