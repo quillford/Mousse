@@ -7,8 +7,18 @@ var Consolewidget = Module.extend({
         // Save the machine and its config
         this.parent_machine = machine;
         
+        var _that = this;
         // Add a listener for the send_command button
-        $("#send_command").click(function(command_text){ kernel.call_event("on_send_console_command", $("#command_text").val()); });
+        $("#send_command").click(function(command_text){
+            _that.on_send_console_command($("#command_text").val());
+            $("#command_text").val("");
+        });
+        $("#command_text").keypress(function(e){
+            if(e.keyCode == 13){
+                _that.on_send_console_command($("#command_text").val());
+                $("#command_text").val("");
+            }
+        });
     },
     
     on_send_console_command: function( command ){
