@@ -9603,6 +9603,8 @@ var Kernel = Class({
                 
                    <script type="text/javascript"> var Networkdetect = Module.extend({
    
+   // TODO: before sending 'version' to the previously identified boards, check if a file is being played with 'progress' so we don't interrupt the file playing
+   
     on_module_loaded: function(){
         // Start a network scan, without forcing
         this.scan_all( false );
@@ -9772,9 +9774,6 @@ var Kernel = Class({
         this.kernel.call_event('on_machine_discovered', {ip: ip, version: data});
     }
 });
-
-
-
  </script> 
             
                 
@@ -10908,8 +10907,8 @@ var Fancontrolwidget = Module.extend({
  */
 
 /*!
- * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=2436f690cf42466455bb)
- * Config saved to config.json and https://gist.github.com/2436f690cf42466455bb
+ * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=a203b6e2d81ddfb4de8b)
+ * Config saved to config.json and https://gist.github.com/a203b6e2d81ddfb4de8b
  */
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
@@ -11174,8 +11173,8 @@ th {
 }
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url('../fonts/glyphicons-halflings-regular.eot');
-  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+  src: url('fonts/glyphicons-halflings-regular.eot');
+  src: url('fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('fonts/glyphicons-halflings-regular.woff') format('woff'), url('fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
 }
 .glyphicon {
   position: relative;
@@ -19370,8 +19369,8 @@ END
  */
 
 /*!
- * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=2436f690cf42466455bb)
- * Config saved to config.json and https://gist.github.com/2436f690cf42466455bb
+ * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=a203b6e2d81ddfb4de8b)
+ * Config saved to config.json and https://gist.github.com/a203b6e2d81ddfb4de8b
  */
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
@@ -43728,7 +43727,6 @@ filter: gray;
         <h4 class="modal-title" id="myModalLabel">Searching for machines</h4>
       </div>
       <div class="modal-body">
-
           <div id="currently_scanning"> 
               Searching for machines on the local network<br/><br/>
               <div id="scanning_ips" class="well" style="display: inline-block; width:100%; min-height:100px"> </div>  
@@ -44695,7 +44693,6 @@ filter: gray;
         <h4 class="modal-title" id="myModalLabel">Searching for machines</h4>
       </div>
       <div class="modal-body">
-
           <div id="currently_scanning"> 
               Searching for machines on the local network<br/><br/>
               <div id="scanning_ips" class="well" style="display: inline-block; width:100%; min-height:100px"> </div>  
